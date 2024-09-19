@@ -13,10 +13,10 @@ const DebtsPage = () => {
         <div>
             <h2>Debts</h2>
             <hr className="py-2"/>
-            {debts.map((debt, index) => (
-                <div key={index} className="card">
+            {debts.map(({payer, payee, amount}) => (
+                <div key={payer + ':' + payee} className="card">
                     <p>
-                        {debt[0]} owes {debt[1]}: {debt[2].toFixed(2)}
+                        {payer} owes {payee}: {amount}
                     </p>
                     <hr/>
                 </div>

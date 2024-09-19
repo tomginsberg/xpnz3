@@ -128,6 +128,31 @@ export const emptyExpense = {
     splitBetween: [], // [{ member: string, weight: number, normalizedWeight: number }]
 };
 
+export async function getExpenses(ledger) {
+  const expensesPromise = fetch(`http://localhost:3001/transactions?ledger=${ledger}`)
+    .then(res => res.json())
+    .then(expenses => {
+      expenses.forEach(d => {
+        d.income = d.expense_type === 'income';
+        d.paidBy = d.contributions
+          .map(c => ({ member: c.member, amount: c.paid }))
+          .filter(c => c.amount > 0);
+        d.splitBetween = d.contributions
+          .map(c => ({ member: c.member, weight: c.weight, normalizedWeight: c.normalized_weight }))
+          .filter(c => c.weight > 0);
+      });
+      return expenses;
+    });
+
+  const balancesPromise = fetch(`http://localhost:3001/ledgers/${ledger}/balance`).then(res => res.json());
+  const debtsPromise = fetch(`http://localhost:3001/ledgers/${ledger}/settlement`).then(res => res.json());
+
+  const [expenses, balances, debts] = await Promise.all([expensesPromise, balancesPromise, debtsPromise]);
+
+  return { expenses, balances, debts };
+}
+
+
 export const currencies = {
     CAD: '🇨🇦 CAD',
     USD: '🇺🇸 USD',

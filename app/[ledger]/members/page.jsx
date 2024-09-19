@@ -13,10 +13,10 @@ const MembersPage = () => {
         <div>
             <h2>Members</h2>
             <hr className="py-2"/>
-            {Object.entries(balances).map(([member, balance]) => (
-                <div key={member} className="card">
-                    <h3>{member}</h3>
-                    <p>Balance: {balance.toFixed(2)}</p>
+            {balances.map(({name, balance}) => (
+                <div key={name} className="card">
+                    <h3>{name}</h3>
+                    <p>Balance: {balance}</p>
                     <hr/>
                 </div>
             ))}
