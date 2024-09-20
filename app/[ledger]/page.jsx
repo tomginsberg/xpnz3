@@ -51,7 +51,7 @@ const TransactionsPage = () => {
 
     const handleCloseDrawer = (updatedExpense) => {
         // replace the expense with matching ID in the expenses array
-        if (updatedExpense.id) {
+        if (updatedExpense && updatedExpense.id) {
             const updatedExpenses = expenses.map(expense =>
                 expense.id === updatedExpense.id ? updatedExpense : expense
             );
