@@ -3,7 +3,6 @@
 import {useTheme} from "next-themes";
 import {useEffect, useState} from "react";
 import {Moon, Search, Sun} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -69,7 +68,7 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
     return (
 
         <div
-            className="fixed top-0 left-0 right-0 z-10 border-b border-gray-200 bg-gray-100 text-black dark:text-white dark:border-gray-700 dark:bg-gray-800">
+            className="fixed top-0 left-0 right-0 z-10 border-b bg-white dark:bg-black">
             <div className="flex justify-between items-center p-4">
                 <h1 className="text-xl font-bold flex items-center">
 
@@ -92,11 +91,11 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
                                 </button>
 
                             </SheetTrigger>
-                            <SheetContent side="left" className="dark:bg-gray-900">
+                            <SheetContent side="left" className="bg-card">
                                 <SheetHeader>
                                     <SheetTitle>Options</SheetTitle>
                                 </SheetHeader>
-                                <div className="flex flex-col py-4 gap-2">
+                                <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
                                     {/* Home Button */}
                                     <Button
                                         // onClick={() => router.push("/")}
@@ -113,12 +112,14 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
                                     >
                                         <span className="mr-2">🔄</span> Recurring
                                     </Button>
-                                    <Button variant={"outline"} className="justify-start">
+                                    <Button className="justify-start"
+                                            variant="outline">
                                         <span className="mr-2">📊</span> Plots
                                     </Button>
 
                                     {/* Share Button */}
-                                    <Button variant="outline" className="justify-start">
+                                    <Button className="justify-start"
+                                    variant="outline">
                                         <span className="mr-2">📤</span> Share
                                     </Button>
                                     <Separator className="my-2"/>
@@ -171,7 +172,7 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
 
                                 <SheetFooter>
                                     <SheetClose asChild>
-                                        <Button variant="outline">Close</Button>
+                                        <Button variant="secondary">Close</Button>
                                     </SheetClose>
                                 </SheetFooter>
                             </SheetContent>
@@ -194,32 +195,24 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
                     onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                     aria-label="Toggle theme"
                 >
-                    <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"/>
-                    <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"/>
+                    <Sun className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black"/>
+                    <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white"/>
                 </Button>
             </div>
-            <AnimatePresence>
-                {headline === "expenses" && (
-                    <motion.div
-                        key="searchBar"
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
-                        className="px-4 pb-4 overflow-hidden"
-                    >
-                        <div className="relative">
-                            <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                            <Input
-                                type="search"
-                                placeholder="Search expenses..."
-                                className="pb-1.5 w-full pl-10 rounded-lg border border-gray-300 bg-gray-100 text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
-                                onChange={(e) => onSearch(e.target.value)}
-                            />
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/*<AnimatePresence>*/}
+            {headline === "expenses" && (
+                <div className="px-4 pb-4">
+                    <div className="relative">
+                        <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500"/>
+                        <Input
+                            type="search"
+                            placeholder="Search expenses..."
+                            className="pb-1.5 w-full pl-10"
+                            onChange={(e) => onSearch(e.target.value)}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

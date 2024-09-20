@@ -117,13 +117,13 @@ export const categories = [
 export const members = ["Alice", "Bob", "Charlie", "David", "Eve"]
 
 export const emptyExpense = {
-    id: 0,
+    id: "",
     name: "",
-    amount: null,
+    amount: "",
     currency: "CAD",
     income: false,
     date: new Date(),
-    category: null,
+    category: "",
     paidBy: [], // [{ member: string, amount: number }]
     splitBetween: [], // [{ member: string, weight: number, normalizedWeight: number }]
 };
@@ -138,7 +138,7 @@ export async function getExpenses(ledger) {
           .map(c => ({ member: c.member, amount: c.paid }))
           .filter(c => c.amount > 0);
         d.splitBetween = d.contributions
-          .map(c => ({ member: c.member, weight: c.weight, normalizedWeight: c.normalized_weight }))
+          .map(c => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes }))
           .filter(c => c.weight > 0);
       });
       return expenses;

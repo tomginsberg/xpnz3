@@ -2,12 +2,12 @@
 
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
-import { Plus } from "lucide-react";
-import { motion } from "framer-motion";
+import React, {useState, useRef, useEffect} from "react";
+import {Plus} from "lucide-react";
+import {motion} from "framer-motion";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { cn } from "../../lib/utils";
+import {usePathname} from "next/navigation";
+import {cn} from "../../lib/utils";
 
 interface Tab {
     id: string;
@@ -16,17 +16,17 @@ interface Tab {
 
 interface ToolbarProps {
     ledger: string;
-    setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    onClickPlus: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ ledger, setIsDrawerOpen }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
     const pathname = usePathname();
     const [activeTab, setActiveTab] = useState<string>("");
 
     const tabs: Tab[] = [
-        { id: "", label: "💸" },
-        { id: "members", label: "🧑‍🤝‍🧑" },
-        { id: "debts", label: "💳" },
+        {id: "", label: "💸"},
+        {id: "members", label: "🧑‍🤝‍🧑"},
+        {id: "debts", label: "💳"},
     ];
 
     // Reference to hold tab elements
@@ -46,22 +46,22 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, setIsDrawerOpen }) => {
     useEffect(() => {
         const el = tabRefs.current[activeTab];
         if (el) {
-            const { offsetLeft, offsetWidth } = el;
-            setBubbleStyle({ left: offsetLeft, width: offsetWidth });
+            const {offsetLeft, offsetWidth} = el;
+            setBubbleStyle({left: offsetLeft, width: offsetWidth});
         }
     }, [activeTab]);
 
     return (
         <div
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 bg-gray-200 shadow-xl dark:bg-gray-700"
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 shadow-xl border bg-button backdrop-blur-md"
         >
             <div className="flex flex-row gap-2">
                 {/* + Button */}
                 <button
                     className="h-14 w-14 p-2 rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 flex items-center justify-center"
-                    onClick={() => setIsDrawerOpen(true)}
+                    onClick={onClickPlus}
                 >
-                    <Plus className="h-8 w-8 text-white" />
+                    <Plus className="h-8 w-8 text-white"/>
                 </button>
 
                 {/* Tabs */}
@@ -84,14 +84,14 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, setIsDrawerOpen }) => {
 
                     {/* Motion Bubble for Active Tab */}
                     <motion.span
-                        className="absolute z-10 bg-gray-300 dark:bg-gray-600 rounded-full"
+                        className="absolute z-10 bg-accent rounded-full"
                         layout
                         initial={false}
                         animate={{
                             left: bubbleStyle.left,
                             width: bubbleStyle.width,
                         }}
-                        transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
+                        transition={{type: "spring", bounce: 0.4, duration: 0.6}}
                         style={{
                             top: 0,
                             bottom: 0,

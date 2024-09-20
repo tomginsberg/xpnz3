@@ -2,18 +2,25 @@
 
 'use client';
 
-import React, {useState, createContext} from 'react';
+import React, {useState, createContext, useEffect} from 'react';
 import Toolbar from './toolbar';
 import Topbar from './topbar';
-import {compputeBalance, settle} from "../../api/get";
-import {ScrollArea} from "@/components/ui/scroll-area";
+import {compputeBalance, emptyExpense, settle} from "../../api/get";
+import ExpenseDrawer from "../../components/expense-drawer";
 
 export const LedgerDataContext = createContext();
 
 const LedgerLayout = ({ledger, initialData, children}) => {
     const [ledgerData, setLedgerData] = useState(initialData);
+    const {balances} = ledgerData;
+    const members = balances.map((balance) => balance.name);
     const [addTransaction, setAddTransaction] = useState(false);
-    const [search, setSearch] = useState('');
+    const [searchTerm, setSearchTerm] = useState('')
+    const [selectedExpense, setSelectedExpense] = useState(emptyExpense)
+
+    // provide the updated search term to the provider when it changes
+    // this will allow the provider to re-render the children components
+    // that depend on the search term
 
     // Function to update ledgerData (e.g., adding a transaction)
     const addTransactionData = (newTransaction) => {
@@ -31,16 +38,29 @@ const LedgerLayout = ({ledger, initialData, children}) => {
         });
     };
 
-    return (
-        <LedgerDataContext.Provider value={{ledgerData, addTransactionData}}>
-            <div className="min-h-screen flex flex-col">
-                {/* Header */}
-                <Topbar ledger={ledger} onSearch={(value) => setSearch(value)}/>
+    function handlePlus(){
+        setAddTransaction(true)
+    }
 
-                <main className="flex-grow container mx-auto p-4">{children}</main>
+    return (
+        <LedgerDataContext.Provider value={{ledgerData, searchTerm}}>
+            <div className="min-h-screen flex flex-col bg-white dark:bg-black mb-64">
+                {/* Header */}
+                <Topbar ledger={ledger} onSearch={setSearchTerm}/>
+
+                <main className="mx-3 my-4">{children}</main>
+
+                <ExpenseDrawer
+                    isDrawerOpen={addTransaction}
+                    selectedExpense={selectedExpense}
+                    setSelectedExpense={setSelectedExpense}
+                    isEditMode={false}
+                    handleCloseDrawer={() => setAddTransaction(false)}
+                    members={members}
+                />
 
                 {/* Toolbar */}
-                <Toolbar ledger={ledger} setIsDrawerOpen={setAddTransaction}/>
+                <Toolbar onClickPlus={handlePlus} ledger={ledger}/>
             </div>
         </LedgerDataContext.Provider>
     );
