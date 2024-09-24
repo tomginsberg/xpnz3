@@ -129,7 +129,7 @@ export const emptyExpense = {
 };
 
 export async function getExpenses(ledger) {
-  const expensesPromise = fetch(`http://localhost:3001/transactions?ledger=${ledger}`)
+  const expensesPromise = fetch(`http://localhost:3001/transactions?ledger=${ledger}`, { cache: "no-store" })
     .then(res => res.json())
     .then(expenses => {
       expenses.forEach(d => {
@@ -144,8 +144,8 @@ export async function getExpenses(ledger) {
       return expenses;
     });
 
-  const balancesPromise = fetch(`http://localhost:3001/ledgers/${ledger}/balance`).then(res => res.json());
-  const debtsPromise = fetch(`http://localhost:3001/ledgers/${ledger}/settlement`).then(res => res.json());
+  const balancesPromise = fetch(`http://localhost:3001/ledgers/${ledger}/balance`, { cache: "no-store" }).then(res => res.json());
+  const debtsPromise = fetch(`http://localhost:3001/ledgers/${ledger}/settlement`, { cache: "no-store" }).then(res => res.json());
 
   const [expenses, balances, debts] = await Promise.all([expensesPromise, balancesPromise, debtsPromise]);
 
