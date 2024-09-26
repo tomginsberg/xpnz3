@@ -1,101 +1,173 @@
-import Image from "next/image";
+"use client"
+
+import {
+    ArrowUpRightSquareIcon,
+    Loader,
+    Mail,
+    MessageCircle, Moon,
+    MousePointerClickIcon, Sun,
+    User,
+    Waves, X, Search
+} from "lucide-react"
+
+import {useState, useEffect, useContext} from "react";
+import {Button} from "@/components/ui/button"
+import RetroGrid from "../components/ui/retro-grid";
+import {useTheme} from "next-themes";
+import {Input} from "../components/ui/input";
+import {generateRandomExpense} from "../api/get";
+
+import {
+    DynamicContainer,
+    DynamicIsland,
+    DynamicIslandProvider,
+    useDynamicIslandSize,
+    DynamicTitle
+} from "@/components/ui/dynamic-island"
+import AnimatedExpenseCard from "../components/landing-card";
+import {Skeleton} from "../components/ui/skeleton";
+// Sizes for the dynamic island
+const sizePresets = ["compact", "large", "tall", "medium"]
+
+import Masonry from "react-masonry-css";
+import Link from "next/link";
+
+
+const breakpointColumnsObj = {
+    default: 4,
+    1100: 4,
+    700: 3,
+    500: 2,
+};
+
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    const [ledgerName, setLedgerName] = useState('tomisabitch')
+    const [showMemberInput, setShowMemberInput] = useState(false)
+    const [memberName, setMemberName] = useState('')
+    const [members, setMembers] = useState<string[]>([])
+    const [cardCount, setCardCount] = useState(1)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (cardCount > 10) {
+                setCardCount(1)
+            } else {
+                setCardCount(cardCount + 1)
+            }
+
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [cardCount]);
+
+    const handleCreateLedger = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (ledgerName) {
+            setShowMemberInput(true)
+        }
+    }
+
+    const handleAddMember = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (memberName && !members.includes(memberName)) {
+            setMembers([...members, memberName])
+            setMemberName('')
+        }
+    }
+
+    const handleRemoveMember = (member: string) => {
+        setMembers(members.filter(m => m !== member))
+    }
+
+    const {theme, setTheme} = useTheme();
+
+    // make the button route to the ledger page at /ledgerName
+    // im using next file based router
+    const handleSubmit = (e) => {
+        // if the ledger name is empty, do nothing
+        if (!ledgerName) return;
+        e.preventDefault();
+        window.location.href = `/${ledgerName}`;
+    };
+    return (
+        <div className="h-full  min-h-screen bg-gradient-to-b from-[#ffd319] via-[#ff2975] to-[#8c1eff]">
+            <div className="z-0">
+            <RetroGrid/>
+            </div>
+
+            <div
+                className="flex flex-col">
+
+
+                <div className="flex items-start">
+                    <div className="w-full max-w-4xl mx-auto px-4 pt-8 pb-4">
+                        <h1 className="text-6xl md:text-7xl lg:text-8xl font-extrabold leading-none tracking-tight mb-4 md:mb-8 text-center text-black"
+                        >
+                            xpnz
+                        </h1>
+                        <div
+                            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-2xl border border-black p-6 md:p-8">
+
+                            <form className="w-full max-w-md mx-auto" onSubmit={handleSubmit}>
+                                <label
+                                    htmlFor="default-search"
+                                    className="mb-2 text-sm font-medium text-gray-900 block text-center"
+                                >
+                                    Find or Create your Ledger!
+                                </label>
+                                <div className="relative w-full max-w-md mt-3">
+                                    <Search
+                                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-black"
+                                        size={20}/>
+                                    <Input
+                                        value={ledgerName}
+                                        onChange={(e) => setLedgerName(e.target.value)}
+                                        // type="search"
+                                        className="text-black w-full pl-12 pr-12 py-2 bg-none backdrop-blur-2xl border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-opacity-50"
+                                    />
+                                    <ArrowUpRightSquareIcon
+                                        type={"submit"}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-black"
+                                        size={20}/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {/*<div className="columns-2 gap-x-4 space-y-4 px-4 pb-4">*/}
+                {/*create `cardCount` AnimatedExpenseCards*/}
+                <Masonry className="flex w-auto gap-x-4 gap-y-4 px-4"
+                         breakpointCols={{
+                             default: 4,
+                             1100: 4,
+                             700: 3,
+                             500: 2,
+                         }}>
+                    {
+                        Array.from({length: cardCount}).map((_, i) => (
+                            <div className="py-2" key={i}><AnimatedExpenseCard/></div>
+                        ))
+                    }
+                </Masonry>
+                {/*</div>*/}
+
+
+            </div>
+
+            <div className="absolute right-2 top-1 z-10">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                    aria-label="Toggle theme"
+                >
+                    <Sun
+                        className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black"/>
+                    <Moon
+                        className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white"/>
+                </Button>
+            </div>
+
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+    )
 }

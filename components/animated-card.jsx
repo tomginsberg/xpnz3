@@ -76,7 +76,7 @@ export default function AnimatedCard({expense, onClick}) {
             style={{WebkitTapHighlightColor: "transparent"}}
         >
             <motion.div
-                className={"flex flex-col overflow-hidden rounded-lg border bg-card text-card-foreground shadow h-full"
+                className={"flex flex-col overflow-hidden rounded-lg bg-card text-card-foreground h-full"
                     + (showDetails ? " bg-accent" : "")}
                 layout
                 variants={cardVariants}

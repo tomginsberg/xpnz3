@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, ButtonHTMLAttributes, DetailedHTMLProps} from "react";
 import {Plus} from "lucide-react";
 import {motion} from "framer-motion";
 import Link from "next/link";
@@ -16,7 +16,7 @@ interface Tab {
 
 interface ToolbarProps {
     ledger: string;
-    onClickPlus: React.Dispatch<React.SetStateAction<boolean>>;
+    onClickPlus: () => void;
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
@@ -53,7 +53,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
 
     return (
         <div
-            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 shadow-xl border bg-button backdrop-blur-md"
+            className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 shadow-xl border bg-card"
         >
             <div className="flex flex-row gap-2">
                 {/* + Button */}

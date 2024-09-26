@@ -42,8 +42,8 @@ const CommandInput = React.forwardRef<
     React.ElementRef<typeof CommandPrimitive.Input>,
     React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => {
-    const internalRef = useRef(null);
-    const combinedRef = ref || internalRef;
+    const internalRef = useRef<React.ElementRef<typeof CommandPrimitive.Input>>(null);
+    const combinedRef = ref as React.MutableRefObject<React.ElementRef<typeof CommandPrimitive.Input>> || internalRef;
     const [isFocusable] = useState(false);
 
     useEffect(() => {

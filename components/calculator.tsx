@@ -62,16 +62,17 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
         if (value === 'Enter') {
             handleSubmit()
         } else if (value === 'Backspace') {
-            // setInput(prev => {
-            //     const inputElement = document.getElementById('calculator-input') as HTMLInputElement;
-            //     const cursorPosition = inputElement.selectionStart || 0;
-            //     const newValue = (prev || '').toString().slice(0, cursorPosition - 1) + (prev || '').toString().slice(cursorPosition);
-            //     setTimeout(() => {
-            //         inputElement.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
-            //     }, 0);
-            //     return newValue;
-            // })
-            setInput(prev => prev.toString().slice(0, -1))
+            setInput(prev => {
+                const inputElement = document.getElementById('calculator-input') as HTMLInputElement;
+                const cursorPosition = inputElement.selectionStart || 0;
+                const newValue = (prev || '').toString().slice(0, cursorPosition - 1) + (prev || '').toString().slice(cursorPosition);
+                setTimeout(() => {
+                    inputElement.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
+                }, 0);
+                return newValue;
+            })
+            // old implementation to remove last character
+            // setInput(prev => prev.toString().slice(0, -1))
             setIsEvaluated(false)
         } else if (value === '=') {
             if (isEvaluated) {
@@ -80,15 +81,16 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
                 handleEvaluate()
             }
         } else {
-            // setInput(prev => {
-            //     const inputElement = document.getElementById('calculator-input') as HTMLInputElement;
-            //     const cursorPosition = inputElement.selectionStart || 0;
-            //     const newValue = (prev || '').toString().slice(0, cursorPosition) + value + (prev || '').toString().slice(cursorPosition);
-            //     setTimeout(() => {
-            //         inputElement.setSelectionRange(cursorPosition + value.length, cursorPosition + value.length);
-            //     }, 0);
-            //     return newValue;
-            // });
+            setInput(prev => {
+                const inputElement = document.getElementById('calculator-input') as HTMLInputElement;
+                const cursorPosition = inputElement.selectionStart || 0;
+                const newValue = (prev || '').toString().slice(0, cursorPosition) + value + (prev || '').toString().slice(cursorPosition);
+                setTimeout(() => {
+                    inputElement.setSelectionRange(cursorPosition + value.length, cursorPosition + value.length);
+                }, 0);
+                return newValue;
+            });
+            // old implementation to append value to last character
             setInput(prev => prev.toString() + value)
             setIsEvaluated(false)
         }

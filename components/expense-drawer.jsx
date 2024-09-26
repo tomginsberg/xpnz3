@@ -89,7 +89,7 @@ export default function ExpenseDrawer({
     }
 
     return (<Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
-        <DrawerContent className="bg-card text-black dark:text-white max-h-[90%] flex flex-col">
+        <DrawerContent className="bg-drawer text-black dark:text-white max-h-[90%] flex flex-col">
             <DrawerHeader className="text-black dark:text-white">
                 <DrawerTitle>{getDrawerTitle(isEditMode)}</DrawerTitle>
                 <DrawerClose/>
@@ -169,7 +169,7 @@ export default function ExpenseDrawer({
                                     {date ? format(date, "PPP") : <span>Pick a date</span>}
                                 </Button>
                             </DialogTrigger>
-                            <DialogContent className="w-auto p-0 rounded-xl" align="start">
+                            <DialogContent className="w-auto p-0 rounded-xl text-black dark:text-white" align="start">
                                 <Calendar
                                     mode="single"
                                     selected={date}

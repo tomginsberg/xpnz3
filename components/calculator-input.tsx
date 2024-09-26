@@ -66,7 +66,7 @@ export default function CalculatorInput({
                         </DrawerTrigger>
                         <DrawerContent >
                             <Calculator
-                                initialValue={value}
+                                initialValue={value.toString()}
                                 onEnter={handleCalculatorEnter}
                             />
                         </DrawerContent>
