@@ -70,9 +70,10 @@ const MembersPage = () => {
           <Input
             className="bg-card focus-visible:ring-0 peer focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
             onChange={(e) => setNewMember(e.target.value)}
+            placeholder="Who's the new guy?"
           />
           {/* Fake Cursor Indicator */
-            newMember.length === 0 && (<span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>)
+            false && (<span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>)
           }
         </div>
         <div className="flex items-center">
