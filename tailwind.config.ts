@@ -61,10 +61,15 @@ const config: Config = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
 		animation: {
+      blink: 'blink 1s step-start infinite',
 			grid: "grid 15s linear infinite",
 			'gradient-x': 'gradient-x 15s ease infinite',
 		},
 		keyframes: {
+      blink: {
+        '0%, 50%': { opacity: 1 },
+        '50.01%, 100%': { opacity: 0 },
+      },
 			grid: {
 				"0%": { transform: "translateY(-50%)" },
 				"100%": { transform: "translateY(0)" },
@@ -84,4 +89,5 @@ const config: Config = {
   },
   plugins: [require("tailwindcss-animate")],
 };
+
 export default config;
