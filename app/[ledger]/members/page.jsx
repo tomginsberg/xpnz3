@@ -68,7 +68,7 @@ const MembersPage = () => {
       <div className="flex flex-row justify-between my-3 rounded-lg bg-card px-4 py-2 relative">
         <div className="relative flex-1">
           <Input
-            className="bg-card focus-visible:ring-0 peer focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
+            className="bg-card focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
             onChange={(e) => setNewMember(e.target.value)}
             placeholder="Who's the new guy?"
           />
