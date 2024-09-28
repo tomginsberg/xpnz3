@@ -2,8 +2,8 @@
 
 "use client";
 
-import {useContext} from 'react';
-import {LedgerDataContext} from '../ledger-layout';
+import {useParams} from 'next/navigation';
+import {useState, useEffect} from 'react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {
@@ -33,20 +33,20 @@ function MembersRow(props) {
         </div>
 
         <div className="flex items-center">
-          <Button variant="outline" size="icon" className="mx-1">
+          { /* <Button variant="outline" size="icon" className="mx-1" onClick={() => onEdit && onEdit(member)}>
             <UserRoundPen className="text-gray-700 dark:text-gray-200"/>
-          </Button>
+          </Button> */ }
           <TooltipProvider><Tooltip>
             <TooltipTrigger asChild>
               <div className="inline-block mx-1">
-                <Button variant="destructive" size="icon" disabled={member.balance !== 0}>
+                <Button variant="destructive" size="icon" disabled={member.balance !== 0} onClick={() => onDelete && onDelete(member)}>
                   <UserRoundX />
                 </Button>
               </div>
             </TooltipTrigger>
-            <TooltipContent>
-              (member.balance !== 0) && <p>Balance must be zero.</p>
-            </TooltipContent>
+            {member.balance !== 0 && <TooltipContent>
+              <p>Balance must be zero.</p>
+            </TooltipContent>}
           </Tooltip></TooltipProvider>
         </div>
       </div>
@@ -57,36 +57,74 @@ function MembersRow(props) {
 const FakeCursor = () => (<span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>);
 
 function MembersAdd(props) {
-  const {onAdd, placeholder} = props;
+  const {onAdd, placeholder, existingMembers} = props;
+  const [name, setName] = useState('');
+
+  const isDuplicate = existingMembers ? existingMembers.includes(name.trim()) : false;
+
+  const handleAdd = (e) => {
+    e.preventDefault();
+    onAdd && onAdd(name);
+    setName('');
+  };
 
   return (
-    <div className="flex flex-row justify-between my-3 rounded-lg bg-card px-4 py-2 relative">
-      <div className="relative flex-1">
-        <Input
-          className="bg-card shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
-          placeholder={placeholder}
-        />
+    <form onSubmit={handleAdd}>
+      <div
+        className={`flex flex-row justify-between my-3 rounded-lg bg-card px-4 py-2 relative
+          ${isDuplicate ? 'ring-1 ring-red-500' : ''}`}
+      >
+        <div className="relative flex-1">
+          <Input
+            className="bg-card shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
+            placeholder={placeholder}
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+        </div>
+        <div className="flex items-center">
+          <Button variant="outline" size="icon" className="mx-1" disabled={!name.trim() || isDuplicate} type="submit">
+            <UserRoundPlus className="text-gray-700 dark:text-gray-200"/>
+          </Button>
+        </div>
       </div>
-      <div className="flex items-center">
-        <Button variant="outline" size="icon" className="mx-1">
-          <UserRoundPlus className="text-gray-700 dark:text-gray-200"/>
-        </Button>
-      </div>
-    </div>
+    </form>
   );
 }
 
-export default function MembersPage() {
-  const {ledgerData} = useContext(LedgerDataContext);
-  const {balances} = ledgerData;
+async function fetchMembers(ledger) {
+  return await fetch(`http://localhost:3001/ledgers/${ledger}/balance`, {cache: "no-store"}).then(r => r.json()).catch(console.error);
+}
 
-  const MembersRows = () => balances.map((member) => (
-    <MembersRow key={member.name} member={member} />
+export default function MembersPage() {
+  const {ledger} = useParams();
+  const [members, setMembers] = useState([]);
+
+  useEffect(() => {
+    fetchMembers(ledger).then(setMembers);
+  }, [ledger]);
+
+  function onAdd(name) {
+    fetch(`http://localhost:3001/members/${ledger}/${name}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: '{}',
+    }).then(() => fetchMembers(ledger).then(setMembers));
+  }
+
+  function onDelete({name}) {
+    fetch(`http://localhost:3001/members/${ledger}/${name}`, {
+      method: 'DELETE'
+    }).then(() => fetchMembers(ledger).then(setMembers));
+  }
+
+  const MembersRows = () => members.map((member) => (
+    <MembersRow key={member.name} member={member} onDelete={onDelete} />
   ));
 
   return (
     <div className="mt-[70px]">
-      <MembersAdd placeholder="Who's the new guy?" onAdd={() => {}} />
+      <MembersAdd placeholder="Who's the new guy?" onAdd={onAdd} existingMembers={members.map(m => m.name)}/>
       <MembersRows />
     </div>
   );
