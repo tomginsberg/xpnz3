@@ -93,7 +93,7 @@ function MembersAdd(props) {
 }
 
 async function fetchMembers(ledger) {
-  return await fetch(`http://localhost:3001/ledgers/${ledger}/balance`, {cache: "no-store"}).then(r => r.json()).catch(console.error);
+  return await fetch(`http://localhost:3001/ledgers/${encodeURIComponent(ledger)}/balance`, {cache: "no-store"}).then(r => r.json()).catch(console.error);
 }
 
 export default function MembersPage() {
@@ -105,7 +105,10 @@ export default function MembersPage() {
   }, [ledger]);
 
   function onAdd(name) {
-    fetch(`http://localhost:3001/members/${ledger}/${name}`, {
+    const encodedName = encodeURIComponent(name);
+    const encodedLedger = encodeURIComponent(ledger);
+
+    fetch(`http://localhost:3001/members/${encodedLedger}/${encodedName}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: '{}',
@@ -113,7 +116,10 @@ export default function MembersPage() {
   }
 
   function onDelete({name}) {
-    fetch(`http://localhost:3001/members/${ledger}/${name}`, {
+    const encodedName = encodeURIComponent(name);
+    const encodedLedger = encodeURIComponent(ledger);
+
+    fetch(`http://localhost:3001/members/${encodedLedger}/${encodedName}`, {
       method: 'DELETE'
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
