@@ -33,9 +33,9 @@ function MembersRow(props) {
         </div>
 
         <div className="flex items-center">
-          { /* <Button variant="outline" size="icon" className="mx-1" onClick={() => onEdit && onEdit(member)}>
+          <Button variant="outline" size="icon" className="mx-1" onClick={() => onEdit && onEdit(member)}>
             <UserRoundPen className="text-gray-700 dark:text-gray-200"/>
-          </Button> */ }
+          </Button>
           <TooltipProvider><Tooltip>
             <TooltipTrigger asChild>
               <div className="inline-block mx-1">
@@ -105,21 +105,17 @@ export default function MembersPage() {
   }, [ledger]);
 
   function onAdd(name) {
-    const encodedName = encodeURIComponent(name);
-    const encodedLedger = encodeURIComponent(ledger);
+    const newMember = { name, ledger, is_active: true };
 
-    fetch(`http://localhost:3001/members/${encodedLedger}/${encodedName}`, {
-      method: 'PUT',
+    fetch('http://localhost:3001/members', {
+      method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: '{}',
+      body: JSON.stringify(newMember)
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
 
-  function onDelete({name}) {
-    const encodedName = encodeURIComponent(name);
-    const encodedLedger = encodeURIComponent(ledger);
-
-    fetch(`http://localhost:3001/members/${encodedLedger}/${encodedName}`, {
+  function onDelete({id}) {
+    fetch(`http://localhost:3001/members/${id}`, {
       method: 'DELETE'
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
