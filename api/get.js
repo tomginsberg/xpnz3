@@ -1,3 +1,5 @@
+import {api} from '@/app/config.js'
+
 export const expenseNames = [
     "Coffee Break ☕",
     "Pet Supplies 🐾",
@@ -129,7 +131,7 @@ export const emptyExpense = {
 };
 
 export async function getExpenses(ledger) {
-  const expensesPromise = fetch(`http://localhost:3001/transactions?ledger=${ledger}`, { cache: "no-store" })
+  const expensesPromise = fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
     .then(res => res.json())
     .then(expenses => {
       expenses.forEach(d => {
@@ -144,8 +146,8 @@ export async function getExpenses(ledger) {
       return expenses;
     });
 
-  const balancesPromise = fetch(`http://localhost:3001/ledgers/${ledger}/balance`, { cache: "no-store" }).then(res => res.json());
-  const debtsPromise = fetch(`http://localhost:3001/ledgers/${ledger}/settlement`, { cache: "no-store" }).then(res => res.json());
+  const balancesPromise = fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" }).then(res => res.json());
+  const debtsPromise = fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: "no-store" }).then(res => res.json());
 
   const [expenses, balances, debts] = await Promise.all([expensesPromise, balancesPromise, debtsPromise]);
 
