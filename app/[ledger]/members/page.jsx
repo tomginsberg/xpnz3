@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/tooltip"
 import {UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus} from 'lucide-react';
 
+import {api} from '@/app/config';
+
 function MembersRow(props) {
   const {member, onSubmit, onDelete} = props;
   const {name, balance, paid} = member;
@@ -125,7 +127,7 @@ function MembersAdd(props) {
 }
 
 async function fetchMembers(ledger) {
-  return await fetch(`http://localhost:3001/ledgers/${encodeURIComponent(ledger)}/balance`, {cache: "no-store"}).then(r => r.json()).catch(console.error);
+  return await fetch(`${api.base}/ledgers/${encodeURIComponent(ledger)}/balance`, {cache: "no-store"}).then(r => r.json()).catch(console.error);
 }
 
 export default function MembersPage() {
@@ -139,7 +141,7 @@ export default function MembersPage() {
   async function onAdd(name) {
     const newMember = { name, ledger, is_active: true };
 
-    await fetch('http://localhost:3001/members', {
+    await fetch(`${api.base}/members`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(newMember)
@@ -147,7 +149,7 @@ export default function MembersPage() {
   }
 
   async function onDelete({id}) {
-    await fetch(`http://localhost:3001/members/${id}`, {
+    await fetch(`${api.base}/members/${id}`, {
       method: 'DELETE'
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
@@ -157,7 +159,7 @@ export default function MembersPage() {
 
     const updatedMember = { name: newName, ledger, is_active: true };
 
-    await fetch(`http://localhost:3001/members/${member.id}`, {
+    await fetch(`${api.base}/members/${member.id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(updatedMember)
