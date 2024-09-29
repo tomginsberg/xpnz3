@@ -3,7 +3,7 @@
 "use client";
 
 import {useParams} from 'next/navigation';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {
@@ -12,44 +12,76 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import {UserRoundPen, UserRoundX, UserRoundPlus} from 'lucide-react';
+import {UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus} from 'lucide-react';
 
 function MembersRow(props) {
-  const {member, onEdit, onDelete} = props;
+  const {member, onSubmit, onDelete} = props;
   const {name, balance, paid} = member;
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(name);
+
+  const inputRef = useRef(null);
 
   const balanceString = `$${Math.abs(balance).toLocaleString()}`;
   const paidString = `$${Math.abs(paid).toLocaleString()}`;
 
-  return (
-      <div className="flex flex-row justify-between my-3 rounded-lg bg-card px-4 py-3">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{name}</h2>
-          <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
-            {balance === 0 ? '✓ settled up' : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
-            {' • '}
-            {`${paidString} all time`}
-          </p>
-        </div>
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      // Optionally, move the cursor to the end
+      const length = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(length, length);
+    }
+  }, [isEditing]);
 
-        <div className="flex items-center">
-          <Button variant="outline" size="icon" className="mx-1" onClick={() => onEdit && onEdit(member)}>
-            <UserRoundPen className="text-gray-700 dark:text-gray-200"/>
-          </Button>
-          <TooltipProvider><Tooltip>
-            <TooltipTrigger asChild>
-              <div className="inline-block mx-1">
-                <Button variant="destructive" size="icon" disabled={member.balance !== 0} onClick={() => onDelete && onDelete(member)}>
-                  <UserRoundX />
-                </Button>
-              </div>
-            </TooltipTrigger>
-            {member.balance !== 0 && <TooltipContent>
-              <p>Balance must be zero.</p>
-            </TooltipContent>}
-          </Tooltip></TooltipProvider>
-        </div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (isEditing) {
+      onSubmit && await onSubmit(member, newName);
+      setNewName(name);
+    }
+
+    setIsEditing(!isEditing);
+  };
+
+  return (
+  <div className="flex items-center my-3 rounded-lg bg-card px-4 py-3">
+    <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
+      <div className="flex-1">
+        {isEditing ? (
+        <Input
+          className="bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          ref={inputRef}
+        />
+        ) : (
+        <h2 className="flex-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white py-[2px]">{name}</h2>)}
+        <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
+          {balance === 0 ? '✓ settled up' : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
+          {' • '}
+          {`${paidString} all time`}
+        </p>
       </div>
+      <Button variant="outline" size="icon" className="mx-1">
+        {isEditing ? (<UserRoundCheck className="text-gray-700 dark:text-gray-200" />) : (<UserRoundPen className="text-gray-700 dark:text-gray-200" />)}
+      </Button>
+    </form>
+    <TooltipProvider><Tooltip>
+      <TooltipTrigger asChild>
+        <div className="inline-block mx-1">
+          <Button variant="destructive" size="icon" disabled={member.balance !== 0} onClick={async () => onDelete && await onDelete(member)}>
+            <UserRoundX />
+          </Button>
+        </div>
+      </TooltipTrigger>
+      {member.balance !== 0 && <TooltipContent>
+        <p>Balance must be zero.</p>
+      </TooltipContent>}
+    </Tooltip></TooltipProvider>
+  </div>
   );
 }
 
@@ -62,9 +94,9 @@ function MembersAdd(props) {
 
   const isDuplicate = existingMembers ? existingMembers.includes(name.trim()) : false;
 
-  const handleAdd = (e) => {
+  const handleAdd = async (e) => {
     e.preventDefault();
-    onAdd && onAdd(name);
+    onAdd && await onAdd(name);
     setName('');
   };
 
@@ -104,24 +136,36 @@ export default function MembersPage() {
     fetchMembers(ledger).then(setMembers);
   }, [ledger]);
 
-  function onAdd(name) {
+  async function onAdd(name) {
     const newMember = { name, ledger, is_active: true };
 
-    fetch('http://localhost:3001/members', {
+    await fetch('http://localhost:3001/members', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(newMember)
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
 
-  function onDelete({id}) {
-    fetch(`http://localhost:3001/members/${id}`, {
+  async function onDelete({id}) {
+    await fetch(`http://localhost:3001/members/${id}`, {
       method: 'DELETE'
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
 
+  async function onSubmit(member, newName) {
+    if (member.name === newName) return;
+
+    const updatedMember = { name: newName, ledger, is_active: true };
+
+    await fetch(`http://localhost:3001/members/${member.id}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updatedMember)
+    }).then(() => fetchMembers(ledger).then(setMembers));
+  }
+
   const MembersRows = () => members.map((member) => (
-    <MembersRow key={member.name} member={member} onDelete={onDelete} />
+    <MembersRow key={member.id} member={member} onDelete={onDelete} onSubmit={onSubmit} />
   ));
 
   return (
