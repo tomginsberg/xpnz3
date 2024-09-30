@@ -166,13 +166,13 @@ export default function MembersPage() {
     }).then(() => fetchMembers(ledger).then(setMembers));
   }
 
-  const MembersRows = () => members.map((member) => (
+  const MembersRows = () => members ? members.map((member) => (
     <MembersRow key={member.id} member={member} onDelete={onDelete} onSubmit={onSubmit} />
-  ));
+  )) : null;
 
   return (
     <div className="mt-[70px]">
-      <MembersAdd placeholder="Who's the new guy?" onAdd={onAdd} existingMembers={members.map(m => m.name)}/>
+      <MembersAdd placeholder="Who's the new guy?" onAdd={onAdd} existingMembers={members ? members.map(m => m.name) : []}/>
       <MembersRows />
     </div>
   );
