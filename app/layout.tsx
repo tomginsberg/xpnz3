@@ -1,4 +1,3 @@
-"use client";
 import type {Metadata} from "next";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -21,7 +20,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
         <head>
             <meta charSet="UTF-8"/>
             <link
