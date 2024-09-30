@@ -1,4 +1,4 @@
-import {api} from '@/app/config.js'
+import {api} from '@/app/xpnz.config.mjs'
 
 export const expenseNames = [
     "Coffee Break ☕",

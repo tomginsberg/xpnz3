@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/tooltip"
 import {UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus} from 'lucide-react';
 
-import {api} from '@/app/config';
+import {api} from '@/app/xpnz.config';
 
 function MembersRow(props) {
   const {member, onSubmit, onDelete} = props;
