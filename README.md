@@ -71,7 +71,7 @@ react-vite-ui/
   │   │   └── ui/        # shadc/ui components
   │   ├── styles/        # CSS stylesheets
   │   ├── lib/           # Utility functions
-  │   ├── App.tsx        # Application entry point
+  │   ├── App.jsx        # Application entry point
   │   └── index.tsx      # Main rendering file
   ├── .eslintrc.json     # ESLint configuration
   ├── index.html         # HTML entry point
