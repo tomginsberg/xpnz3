@@ -1,13 +1,13 @@
 // App.jsx
-import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {BrowserRouter as Router, Routes, Route, useParams, Navigate} from 'react-router-dom';
 import Toolbar from '@/components/toolbar';
 import Topbar from '@/components/topbar';
 import ExpensesTab from '@/pages/expenses';
 import MembersTab from '@/pages/members'; // Dummy component
 import DebtsTab from '@/pages/debts';     // Dummy component
-import { ThemeProvider } from '@/components/theme-provider';
-import { generateRandomLedgerData } from '@/api/get'; // Your random data generator
+import {ThemeProvider} from '@/components/theme-provider';
+import {generateRandomLedgerData} from '@/api/get'; // Your random data generator
 
 export default function App() {
     return (
