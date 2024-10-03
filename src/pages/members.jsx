@@ -11,7 +11,7 @@ import {UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus} from 'lucide-re
 import {api} from '@/../xpnz.config';
 
 function MembersRow(props) {
-  const {member, onSubmit, onDelete} = props;
+  const {member, onSubmit, onDelete, className} = props;
   const {name, balance, paid} = member;
 
   const [isEditing, setIsEditing] = useState(false);
@@ -43,12 +43,12 @@ function MembersRow(props) {
   };
 
   return (
-  <div className="flex items-center my-3 rounded-lg bg-card px-4 py-3">
+  <div className={`flex ${className} items-center rounded-lg bg-black px-4 py-3`}>
     <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
       <div className="flex-1">
         {isEditing ? (
         <Input
-          className="bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
+          className="bg-black tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           ref={inputRef}
@@ -85,7 +85,7 @@ function MembersRow(props) {
 const FakeCursor = () => (<span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>);
 
 function MembersAdd(props) {
-  const {onAdd, placeholder, existingMembers} = props;
+  const {onAdd, placeholder, existingMembers, className} = props;
   const [name, setName] = useState('');
 
   const isDuplicate = existingMembers ? existingMembers.includes(name.trim()) : false;
@@ -99,12 +99,12 @@ function MembersAdd(props) {
   return (
     <form onSubmit={handleAdd}>
       <div
-        className={`flex flex-row justify-between my-3 rounded-lg bg-card px-4 py-2 relative
+        className={`flex flex-row ${className} justify-between rounded-lg bg-black px-4 py-2 relative
           ${isDuplicate ? 'ring-1 ring-red-500' : ''}`}
       >
         <div className="relative flex-1">
           <Input
-            className="bg-card shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
+            className="bg-black shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
             placeholder={placeholder}
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -125,6 +125,8 @@ async function fetchMembers(ledger) {
 }
 
 export default function MembersPage({ledgerName}) {
+  const ledger = ledgerName;
+
   const [members, setMembers] = useState([]);
 
   useEffect(() => {
@@ -160,11 +162,11 @@ export default function MembersPage({ledgerName}) {
   }
 
   const MembersRows = () => members ? members.map((member) => (
-    <MembersRow key={member.id} member={member} onDelete={onDelete} onSubmit={onSubmit} />
+    <MembersRow key={member.id} className="mt-3" member={member} onDelete={onDelete} onSubmit={onSubmit} />
   )) : null;
 
   return (
-    <div className="mt-[70px]">
+    <div className="mt-[73px] p-3">
       <MembersAdd placeholder="Who's the new guy?" onAdd={onAdd} existingMembers={members ? members.map(m => m.name) : []}/>
       <MembersRows />
     </div>
