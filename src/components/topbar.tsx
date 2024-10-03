@@ -1,7 +1,6 @@
 // component topbar
 
 import {useEffect, useState} from "react";
-import {useLocation} from "react-router-dom";
 
 import {Moon, Search, Sun} from "lucide-react";
 
@@ -32,6 +31,7 @@ import {useTheme} from "@/components/theme-provider"
 interface TopBarProps {
     ledger: string;
     onSearch: (value: string) => void;
+    pageType: string;
 }
 
 
@@ -44,7 +44,7 @@ interface HeadlineMap {
     [key: string]: Headline;
 }
 
-export default function Topbar({ledger, onSearch}: TopBarProps) {
+export default function Topbar({ledger, onSearch, pageType}: TopBarProps) {
     const {setTheme} = useTheme()
     const [themeName, setThemeName] = useState("system")
 
@@ -52,11 +52,6 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
         setThemeName(themeName === "light" ? "dark" : "light")
         setTheme(themeName)
     }
-
-    const location = useLocation();
-    const pathname = location.pathname;
-
-    const [headline, setHeadline] = useState("");
 
     const [currency, setCurrency] = useState("CAD");
 
@@ -69,12 +64,7 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
         "": {emoji: "", label: ""},
     };
 
-
-    useEffect(() => {
-            setHeadline(pathname.split("/")[2] || "expenses")
-        }, [pathname]
-    );
-
+    const headline = headlines[pageType];
 
     return (
 
@@ -195,11 +185,11 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
                         </Sheet>
 
                         <span
-                            aria-label={headlines[headline].label}
+                            aria-label={headline.label}
                             className="text-2xl mr-2"
                         >
-                      {headlines[headline].emoji}
-                    </span> {headlines[headline].label}
+                      {headline.emoji}
+                    </span> {headline.label}
 
                     </div>
 
@@ -218,7 +208,7 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
                 </Button>
             </div>
             {/*<AnimatePresence>*/}
-            {headline === "expenses" && (
+            {pageType === "expenses" && (
                 <div className="px-4 pb-4">
                     <div className="relative">
                         <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500"/>
