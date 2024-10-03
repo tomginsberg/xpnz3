@@ -1,6 +1,8 @@
 // component topbar
 
 import {useEffect, useState} from "react";
+import {useLocation} from "react-router-dom";
+
 import {Moon, Search, Sun} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
@@ -28,7 +30,7 @@ import {useTheme} from "@/components/theme-provider"
 
 
 interface TopBarProps {
-    ledger: string
+    ledger: string;
     onSearch: (value: string) => void;
 }
 
@@ -51,7 +53,9 @@ export default function Topbar({ledger, onSearch}: TopBarProps) {
         setTheme(themeName)
     }
 
-    const pathname = "test"
+    const location = useLocation();
+    const pathname = location.pathname;
+
     const [headline, setHeadline] = useState("");
 
     const [currency, setCurrency] = useState("CAD");
