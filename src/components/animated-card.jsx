@@ -59,7 +59,7 @@ export default function AnimatedCard({expense, onEditClick, onDeleteClick, onCop
         >
             <motion.div
                 className={"flex flex-col overflow-hidden rounded-lg text-card-foreground h-full"
-                    + (showDetails ? " bg-linear" : " bg-black")}
+                    + (showDetails ? " bg-linear-foreground" : " bg-linear")}
                 layout
                 variants={cardVariants}
                 animate={showDetails ? "expanded" : "initial"}
