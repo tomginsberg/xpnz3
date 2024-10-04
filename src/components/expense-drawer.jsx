@@ -1,21 +1,21 @@
-import {Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from "./ui/drawer";
+import {Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from "@/components/ui/drawer";
 import React, {useState, useEffect} from "react";
-import {Label} from "./ui/label";
-import {Input} from "./ui/input";
-import {currencies, categories} from "../api/get";
-import {Select, SelectContent, SelectTrigger, SelectValue, SelectItem} from "./ui/select";
-import {ScrollArea} from "./ui/scroll-area";
-import {Button} from "./ui/button";
-import {Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEmpty} from "./ui/command";
-import {MultiSelect} from "./ui/multi-select";
-import {Switch} from "./ui/switch";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {currencies, categories} from "@/api/get";
+import {Select, SelectContent, SelectTrigger, SelectValue, SelectItem} from "@/components/ui/select";
+import {ScrollArea} from "@/components/ui/scroll-area";
+import {Button} from "@/components/ui/button";
+import {Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEmpty} from "@/components/ui/command";
+import {MultiSelect} from "@/components/ui/multi-select";
+import {Switch} from "@/components/ui/switch";
 import CalculatorInput from "./calculator-input";
 import HoldToDelete from "./delete";
 import {Check} from 'lucide-react';
 import {cn} from "../lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
-import {Calendar} from "./ui/calendar";
+import {Calendar} from "@/components/ui/calendar";
 
 import {
     Dialog,
@@ -25,7 +25,6 @@ import {
 
 export default function ExpenseDrawer({
                                           selectedExpense,
-                                          setSelectedExpense,
                                           isDrawerOpen,
                                           isEditMode,
                                           handleCloseDrawer,
@@ -89,7 +88,7 @@ export default function ExpenseDrawer({
     }
 
     return (<Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
-        <DrawerContent className="bg-drawer text-black dark:text-white max-h-[90%] flex flex-col">
+        <DrawerContent className="bg-background text-black dark:text-white max-h-[90%] flex flex-col">
             <DrawerHeader className="text-black dark:text-white">
                 <DrawerTitle>{getDrawerTitle(isEditMode)}</DrawerTitle>
                 <DrawerClose/>

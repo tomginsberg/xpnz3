@@ -2,7 +2,7 @@
 
 import {useEffect, useState, forwardRef} from "react";
 import {useNavigate} from "react-router-dom";
-
+import {motion} from "framer-motion";
 import {Moon, Search, Sun} from "lucide-react";
 
 import {Button} from "@/components/ui/button";
@@ -18,9 +18,9 @@ import {useTheme} from "@/components/theme-provider"
 function XpnzMenuIcon() {
   return (
     <svg strokeWidth="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
-        <path d="M3 5H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300 group-hover:text-green-600"></path>
-        <path d="M3 12H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300 group-hover:text-blue-600"></path>
-        <path d="M3 19H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transition-all duration-300 group-hover:text-red-600"></path>
+        <path d="M3 5H11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-green-600"></path>
+        <path d="M3 12H16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-blue-600"></path>
+        <path d="M3 19H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="group-hover:text-red-600"></path>
     </svg>
   )
 }
@@ -56,16 +56,17 @@ function XpnzDropdown(props) {
 }
 
 export default function Topbar({ledger, onSearch, pageType}) {
-  const [themeName, setThemeName] = useState("system")
   const [currency, setCurrency]   = useState("CAD");
+  const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark");
 
   const {setTheme} = useTheme()
 
   const navigate = useNavigate();
 
   function toggleTheme() {
-    setThemeName(themeName === "light" ? "dark" : "light")
-    setTheme(themeName)
+    const newTheme = themeName === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    setThemeName(newTheme);
   }
 
   const headlines = {
@@ -81,14 +82,14 @@ export default function Topbar({ledger, onSearch, pageType}) {
   if (!headline) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-10 border-b bg-white dark:bg-black">
+    <div className="fixed top-0 left-0 right-0 z-10 border-b bg-background">
       <div className="flex justify-between items-center p-4">
         <div className="text-black dark:text-white">
           <Sheet>
             <SheetTrigger asChild>
-              <button className="mr-3 ml-2 group">
+              <Button size="icon" variant="ghost" className="group translate-y-[3px] -translate-x-1">
                 <XpnzMenuIcon />
-              </button>
+              </Button>
             </SheetTrigger>
             <SheetContent side="left" className="bg-card">
               <SheetHeader><SheetTitle className="text-left">Options</SheetTitle></SheetHeader>
@@ -99,7 +100,7 @@ export default function Topbar({ledger, onSearch, pageType}) {
                 <XpnzNavigationButton route="/share" icon="🤝" label="Share" />
 
                 <Separator className="my-2"/>
-                
+
                 <h2 className="text-lg font-bold">Settings</h2>
 
                 <XpnzDropdown
@@ -118,7 +119,6 @@ export default function Topbar({ledger, onSearch, pageType}) {
                   value={themeName}
                   onChange={(value) => {setThemeName(value); setTheme(value)}}
                   options={[
-                    {value: "system", text: "System"},
                     {value: "light", text: "Light"},
                     {value: "dark", text: "Dark"}
                   ]}
@@ -133,7 +133,10 @@ export default function Topbar({ledger, onSearch, pageType}) {
             </SheetContent>
           </Sheet>
 
-          <span aria-label={headline.label} className="text-2xl mr-2">{headline.emoji}</span> {headline.label}
+
+            <span aria-label={headline.label} className="text-2xl mr-2">{headline.emoji}</span> <span
+              className="font-semibold text-2xl">{headline.label}</span>
+
         </div>
 
         <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
@@ -143,12 +146,18 @@ export default function Topbar({ledger, onSearch, pageType}) {
       </div>
 
       {pageType === "expenses" && (
-      <div className="px-4 pb-4">
-        <div className="relative">
+      <motion.div
+          className="px-4 overflow-hidden"
+          initial={{ height: 0, opacity: 0 }} // Initially hidden
+          animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
+          exit={{ height: 0, opacity: 0 }} // Shrink back to hidden
+          transition={{ duration: 0.25, ease: "easeInOut" }} // Control the duration of the animation
+      >
+        <div className="relative mb-4 mt-1">
           <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500"/>
-          <Input type="search" placeholder="Search expenses..." className="pb-2.5 w-full pl-10" onChange={(e) => onSearch(e.target.value)}/>
+          <Input type="search" placeholder="Search expenses..." className="pb-2 w-full pl-10 text-black dark:text-white" onChange={(e) => onSearch(e.target.value)}/>
         </div>
-      </div>
+      </motion.div>
       )}
     </div>
   )

@@ -16,6 +16,8 @@ import MembersTab from '@/pages/members'; // Dummy component
 import DebtsTab from '@/pages/debts';     // Dummy component
 import {ThemeProvider} from '@/components/theme-provider';
 import {generateRandomLedgerData} from '@/api/get'; // Your random data generator
+import {emptyExpense} from "@/api/get";
+import ExpenseDrawer from "@/components/expense-drawer.jsx";
 
 function FourOhFour() {
     return <h1 className="text-white">404</h1>;
@@ -39,14 +41,42 @@ export default function App() {
     );
 }
 
+import Fuse from 'fuse.js';
+
 function LedgerApp({target}) {
     const {ledgerName} = useParams();
-    const {expenses} = generateRandomLedgerData(50);
+    const ledgerData = generateRandomLedgerData(50);
+    const [members, setMembers] = useState(Object.keys(ledgerData.balances));
+    const [expenses, setExpenses] = useState(ledgerData.expenses);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredExpenses, setFilteredExpenses] = useState([])
+    const [addTransaction, setaddTransaction] = useState(false);
+
+
+    useEffect(() => {
+        if (searchTerm) {
+            const fuse = new Fuse(expenses, {
+                keys: ['name', 'category'],
+                threshold: 0.1,
+            })
+            const results = fuse.search(searchTerm)
+            setFilteredExpenses(results.map(result => result.item))
+        } else {
+            setFilteredExpenses(expenses)
+        }
+    }, [searchTerm, expenses])
 
     const CurrentTab = () => {
         switch (target) {
             case 'expenses':
-                return <ExpensesTab ledgerName={ledgerName} expenses={expenses}/>;
+                return <ExpensesTab
+                    ledgerName={ledgerName}
+                    expenses={filteredExpenses}
+                    members={members}
+                    setExpenses={setExpenses}
+                    addExpense={addTransaction}
+                    setAddTransaction={setaddTransaction}
+                />;
             case 'members':
                 return <MembersTab ledgerName={ledgerName}/>;
             case 'debts':
@@ -58,9 +88,9 @@ function LedgerApp({target}) {
 
     return (
         <>
-            <Topbar ledger={ledgerName} onSearch={(x) => null} pageType={target}/>
+            <Topbar ledger={ledgerName} onSearch={setSearchTerm} pageType={target}/>
             <CurrentTab/>
-            <Toolbar ledger={ledgerName} onClickPlus={() => null}/>
+            <Toolbar ledger={ledgerName} onClickPlus={() => setaddTransaction(true)}/>
         </>
     );
 }

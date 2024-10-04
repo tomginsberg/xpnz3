@@ -1,8 +1,9 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Plus } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { NavLink, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import React, {useRef, useEffect, useState} from 'react';
+import {Plus} from 'lucide-react';
+import {motion} from 'framer-motion';
+import {NavLink, useLocation, useNavigate} from 'react-router-dom';
+import {cn} from '@/lib/utils';
+import {ConfettiButton} from "@/components/ui/confetti";
 
 interface Tab {
     id: string;
@@ -14,15 +15,16 @@ interface ToolbarProps {
     onClickPlus: () => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
     const tabs: Tab[] = [
-        { id: '', label: '💸' },
-        { id: 'members', label: '🧑‍🤝‍🧑' },
-        { id: 'debts', label: '💳' },
+        {id: '', label: '💸'},
+        {id: 'members', label: '🧑‍🤝‍🧑'},
+        {id: 'debts', label: '💳'},
     ];
 
     const location = useLocation();
     const currentPath = location.pathname.split('/').pop() || '';
+    const navigate = useNavigate();
 
     // Reference to hold tab elements
     const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -37,21 +39,30 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
         const activeTab = currentPath === ledger ? '' : currentPath;
         const el = tabRefs.current[activeTab];
         if (el) {
-            const { offsetLeft, offsetWidth } = el;
-            setBubbleStyle({ left: offsetLeft, width: offsetWidth });
+            const {offsetLeft, offsetWidth} = el;
+            setBubbleStyle({left: offsetLeft, width: offsetWidth});
         }
     }, [currentPath, ledger]);
+
+    function handleClickPlus() {
+        if (currentPath !== ledger) {
+            navigate(`/${ledger}`);
+        }
+        // add confetti
+
+        onClickPlus();
+    }
 
     return (
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 shadow-xl border bg-card">
             <div className="flex flex-row gap-2">
                 {/* + Button */}
-                <button
+                <ConfettiButton
                     className="h-14 w-14 p-2 rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center"
-                    onClick={onClickPlus}
+                    onClick={handleClickPlus}
                 >
-                    <Plus className="h-8 w-8 text-white" />
-                </button>
+                    <Plus className="h-8 w-8 text-white"/>
+                </ConfettiButton>
 
                 {/* Tabs */}
                 <div className="flex flex-grow justify-between items-center relative">
@@ -62,7 +73,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
                             ref={(el) => {
                                 tabRefs.current[tab.id] = el;
                             }}
-                            className={({ isActive }) =>
+                            className={({isActive}) =>
                                 cn(
                                     'relative',
                                     !isActive ? 'hover:scale-125 transition ease-in-out duration-300' : ''
@@ -82,7 +93,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
                             left: bubbleStyle.left,
                             width: bubbleStyle.width,
                         }}
-                        transition={{ type: 'spring', bounce: 0.4, duration: 0.6 }}
+                        transition={{type: 'spring', bounce: 0.4, duration: 0.6}}
                         style={{
                             top: 0,
                             bottom: 0,

@@ -12,8 +12,7 @@ body {
   :root {
     --linear-card: 0 0% 98.4%;
     --linear-card-foreground: 0 0% 96.9%;
- 
-    --background: 0 0% 100%;
+    --background: #ffffff;
     --foreground: 240 10% 3.9%;
     --card: 210, 20%, 98%;
     --drawer: 0 0% 100%;
@@ -45,7 +44,7 @@ body {
     --linear-card: 240 8% 9.8%;
     --linear-card-foreground: 225 13.8% 11.4%;
  
-    --background: 240 10% 3.9%;
+    --background: #000000;
     --foreground: 0 0% 98%;
     --card: 0, 0%, 9%;
     --drawer: 0,0, 0%;

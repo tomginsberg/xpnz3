@@ -43,12 +43,12 @@ function MembersRow(props) {
   };
 
   return (
-  <div className={`flex ${className} items-center rounded-lg dark:bg-black bg-card px-4 py-3`}>
+  <div className={`flex ${className} items-center rounded-lg bg-linear px-4 py-3`}>
     <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
       <div className="flex-1">
         {isEditing ? (
         <Input
-          className="dark:bg-black bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
+          className="bg-linear tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           ref={inputRef}
@@ -99,12 +99,12 @@ function MembersAdd(props) {
   return (
     <form onSubmit={handleAdd}>
       <div
-        className={`flex flex-row ${className} justify-between rounded-lg dark:bg-black bg-card px-4 py-2 relative
+        className={`flex flex-row ${className} justify-between rounded-lg bg-linear-foreground px-4 py-2 relative
           ${isDuplicate ? 'ring-1 ring-red-500' : ''}`}
       >
         <div className="relative flex-1">
           <Input
-            className="dark:bg-black bg-card shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
+            className="bg-linear-foreground shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
             placeholder={placeholder}
             onChange={(e) => setName(e.target.value)}
             value={name}
