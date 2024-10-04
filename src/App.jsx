@@ -1,5 +1,5 @@
 // App.jsx
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {
     BrowserRouter as Router,
     Routes,
@@ -42,6 +42,7 @@ export default function App() {
 }
 
 import Fuse from 'fuse.js';
+import useTransaction from "@/hooks/useTransaction.js";
 
 function LedgerApp({target}) {
     const {ledgerName} = useParams();
@@ -50,21 +51,30 @@ function LedgerApp({target}) {
     const [expenses, setExpenses] = useState(ledgerData.expenses);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredExpenses, setFilteredExpenses] = useState([])
-    const [addTransaction, setAddTransaction] = useState(false);
 
+    const {
+        isDrawerOpen,
+        isEditMode,
+        selectedExpense,
+        openAddExpenseDrawer,
+        openEditExpenseDrawer,
+        closeExpenseDrawer,
+    } = useTransaction();
+
+
+    const fuse = useMemo(() => new Fuse(expenses, {
+        keys: ['name', 'category'],
+        threshold: 0.1,
+    }), [expenses]);
 
     useEffect(() => {
         if (searchTerm) {
-            const fuse = new Fuse(expenses, {
-                keys: ['name', 'category'],
-                threshold: 0.1,
-            })
-            const results = fuse.search(searchTerm)
-            setFilteredExpenses(results.map(result => result.item))
+            const results = fuse.search(searchTerm);
+            setFilteredExpenses(results.map(result => result.item));
         } else {
-            setFilteredExpenses(expenses)
+            setFilteredExpenses(expenses);
         }
-    }, [searchTerm, expenses])
+    }, [searchTerm, fuse, expenses]);
 
     const CurrentTab = () => {
         switch (target) {
@@ -72,10 +82,8 @@ function LedgerApp({target}) {
                 return <ExpensesTab
                     ledgerName={ledgerName}
                     expenses={filteredExpenses}
-                    members={members}
                     setExpenses={setExpenses}
-                    addExpense={addTransaction}
-                    setAddTransaction={setAddTransaction}
+                    openEditDrawer={openEditExpenseDrawer}
                 />;
             case 'members':
                 return <MembersTab ledgerName={ledgerName}/>;
@@ -90,7 +98,17 @@ function LedgerApp({target}) {
         <>
             <Topbar ledger={ledgerName} onSearch={setSearchTerm} pageType={target}/>
             <CurrentTab/>
-            <Toolbar ledger={ledgerName} onClickPlus={() => setAddTransaction(true)}/>
+            <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer}/>
+            {isDrawerOpen && (
+                <ExpenseDrawer
+                    selectedExpense={selectedExpense}
+                    isEditMode={isEditMode}
+                    isDrawerOpen={isDrawerOpen}
+                    handleCloseDrawer={closeExpenseDrawer}
+                    members={members}
+                    setExpenses={setExpenses}
+                />
+            )}
         </>
     );
 }

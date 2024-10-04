@@ -1,62 +1,33 @@
 // components/expenses.jsx
 import AnimatedCard from "../components/animated-card.jsx";
 import Masonry from "react-masonry-css";
-import ExpenseDrawer from "@/components/expense-drawer.jsx";
-import React, {useEffect, useState} from "react";
-import {emptyExpense} from "@/api/get.js";
+import React, {useMemo} from "react";
 
 
-export default function ExpensesTab({expenses, setExpenses, members, addExpense, setAddTransaction}) {
+export default function ExpensesTab({
+                                        expenses,
+                                        setExpenses,
+                                        openEditDrawer,
+}) {
 
-    const [selectedExpense, setSelectedExpense] = useState(emptyExpense)
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-    const [isEditMode, setIsEditMode] = useState(false)
+    const onEditClick = (expense) => {
+        openEditDrawer(expense);
+    };
 
-    function onEditClick(expense) {
-        console.log(expense, members)
-        setSelectedExpense(expense)
-        setIsDrawerOpen(true)
-    }
+    const onCopyClick = (expense) => {
+        setExpenses(prevExpenses => [
+            ...prevExpenses,
+            { ...expense, id: Math.random().toString(36).substr(2, 9) },
+        ]);
+    };
 
-    function handleAddExpense() {
-        setIsDrawerOpen(true)
-        setIsEditMode(false)
-        setSelectedExpense(emptyExpense)
-    }
+    const onDeleteClick = (expense) => {
+        setExpenses(prevExpenses => prevExpenses.filter(e => e.id !== expense.id));
+    };
 
-    // watch addTransaction when it changes to true, open the drawer and set isEditMode to false
-    useEffect(() => {
-        if (addExpense) {
-            handleAddExpense()
-        }
-    }, [addExpense]);
-
-    function onCopyClick(expense) {
-        setExpenses([...expenses, {...expense, id: Math.random().toString(36).substr(2, 9)}])
-    }
-
-    function onDeleteClick(expense) {
-        setExpenses(expenses.filter(e => e.id !== expense.id))
-    }
-
-    function handleCloseDrawer(updatedExpense) {
-        setAddTransaction(false)
-        // replace the expense with matching ID in the expenses array
-        if (updatedExpense && updatedExpense.id) {
-            const updatedExpenses = expenses.map(expense =>
-                expense.id === updatedExpense.id ? updatedExpense : expense
-            );
-            setExpenses(updatedExpenses);
-        }
-        setIsDrawerOpen(false)
-    }
-
-
-    // sort expenses by date
-    expenses.sort((a, b) => {
-            return new Date(b.date) - new Date(a.date);
-        }
-    );
+    const sortedExpenses = useMemo(() => {
+        return [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+    }, [expenses]);
 
     const breakpointColumnsObj = {
         default: 6,
@@ -76,7 +47,7 @@ export default function ExpensesTab({expenses, setExpenses, members, addExpense,
                     className="flex w-auto gap-4"
                     columnClassName="masonry-column"
                 >
-                    {expenses.map((expense) => (
+                    {sortedExpenses.map((expense) => (
                         <MemoizedCard
                             key={expense.id}
                             expense={expense}
@@ -87,11 +58,6 @@ export default function ExpensesTab({expenses, setExpenses, members, addExpense,
                     ))}
                 </Masonry>
             </div>
-            {isDrawerOpen && <ExpenseDrawer selectedExpense={selectedExpense}
-                                            isDrawerOpen={isDrawerOpen}
-                                            isEditMode={isEditMode}
-                                            handleCloseDrawer={handleCloseDrawer}
-                                            members={members}/>}
         </>
     );
 }

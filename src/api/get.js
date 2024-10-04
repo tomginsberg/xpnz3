@@ -300,7 +300,7 @@ export async function getExchangeRate(fromCurrency, toCurrency) {
 }
 
 
-export function compputeBalance(expenses) {
+export function computeBalance(expenses) {
     let balances = {}
     members.forEach(member => balances[member] = 0)
     expenses.forEach(expense => {
@@ -321,7 +321,7 @@ export function generateRandomLedgerData(count) {
         ...generateRandomExpense(),
     }))
     // for each member compute how much they are up or down
-    const balances = compputeBalance(expenses)
+    const balances = computeBalance(expenses)
     const debts = settle(balances)
     return {expenses, balances, debts}
 }

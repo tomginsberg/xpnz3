@@ -100,15 +100,15 @@ const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
 }
 
 export default function HoldToDelete({onConfirm}: { onConfirm: () => void }) {
-    const [dialogOpen, setDialogOpen] = useState(false)
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
 
     const handleDelete = () => {
-        setDialogOpen(false)
+        setIsDrawerOpen(false)
         onConfirm()
     }
 
     return (
-        <Drawer open={dialogOpen} onOpenChange={setDialogOpen}>
+        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <DrawerTrigger asChild>
                 <Button type="button" variant="outline">
                     <span className="mr-2">🗑️</span> Delete

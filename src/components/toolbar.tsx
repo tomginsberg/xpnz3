@@ -1,9 +1,8 @@
-import React, {useRef, useEffect, useState} from 'react';
+import React, {useRef, useEffect, useState, useCallback} from 'react';
 import {Plus} from 'lucide-react';
 import {motion} from 'framer-motion';
 import {NavLink, useLocation, useNavigate} from 'react-router-dom';
 import {cn} from '@/lib/utils';
-import {ConfettiButton} from "@/components/ui/confetti";
 
 interface Tab {
     id: string;
@@ -27,28 +26,32 @@ const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
     const navigate = useNavigate();
 
     // Reference to hold tab elements
-    const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
+    const tabRefs = useRef<{ [key: string]: HTMLAnchorElement | null }>({});
 
     const [bubbleStyle, setBubbleStyle] = useState<{ left: number; width: number }>({
         left: 0,
         width: 0,
     });
 
-    // Update bubble position when route changes
-    useEffect(() => {
+    const updateBubble = useCallback(() => {
         const activeTab = currentPath === ledger ? '' : currentPath;
         const el = tabRefs.current[activeTab];
         if (el) {
-            const {offsetLeft, offsetWidth} = el;
-            setBubbleStyle({left: offsetLeft, width: offsetWidth});
+            const { offsetLeft, offsetWidth } = el;
+            setBubbleStyle({ left: offsetLeft, width: offsetWidth });
         }
     }, [currentPath, ledger]);
 
+    useEffect(() => {
+        updateBubble();
+    }, [updateBubble]);
+
     function handleClickPlus() {
-        if (currentPath !== ledger) {
-            navigate(`/${ledger}`);
-        }
-        // add confetti
+        // TODO: Decide if we want to navigate to the ledger root
+        // if (currentPath !== ledger) {
+        //     navigate(`/${ledger}`);
+        // }
+        // // add confetti
 
         onClickPlus();
     }
@@ -57,12 +60,13 @@ const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
         <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 shadow-xl border bg-card">
             <div className="flex flex-row gap-2">
                 {/* + Button */}
-                <ConfettiButton
+                <button
                     className="h-14 w-14 p-2 rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center"
                     onClick={handleClickPlus}
+                    aria-label="Add Transaction"
                 >
                     <Plus className="h-8 w-8 text-white"/>
-                </ConfettiButton>
+                </button>
 
                 {/* Tabs */}
                 <div className="flex flex-grow justify-between items-center relative">

@@ -10,9 +10,9 @@ import {Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEm
 import {MultiSelect} from "@/components/ui/multi-select";
 import {Switch} from "@/components/ui/switch";
 import CalculatorInput from "./calculator-input";
-import HoldToDelete from "./delete";
+import HoldToDelete from "@/components/delete";
 import {Check} from 'lucide-react';
-import {cn} from "../lib/utils";
+import {cn} from "@/lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
 import {Calendar} from "@/components/ui/calendar";
@@ -29,7 +29,7 @@ export default function ExpenseDrawer({
                                           isDrawerOpen,
                                           isEditMode,
                                           handleCloseDrawer,
-                                            members
+                                          members
                                       }) {
     const [income, setIncome] = useState(selectedExpense.income);
     const [name, setName] = useState(selectedExpense.name);
@@ -84,7 +84,6 @@ export default function ExpenseDrawer({
     }
 
     function handleDelete() {
-        console.log("Delete");
         handleCloseDrawer();
     }
 
@@ -335,7 +334,7 @@ export default function ExpenseDrawer({
                             </Button>
                             <div className="space-x-2">
                                 {isEditMode && (
-                                    <HoldToDelete onConfirm={handleDelete}/>
+                                    <HoldToDelete onConfirm={handleDelete} trigger/>
                                 )}
                                 <ConfettiButton type="submit" variant="outline">
                                     <span className="mr-2">💾️</span> Save
