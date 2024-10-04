@@ -50,7 +50,7 @@ function LedgerApp({target}) {
     const [expenses, setExpenses] = useState(ledgerData.expenses);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredExpenses, setFilteredExpenses] = useState([])
-    const [addTransaction, setaddTransaction] = useState(false);
+    const [addTransaction, setAddTransaction] = useState(false);
 
 
     useEffect(() => {
@@ -75,7 +75,7 @@ function LedgerApp({target}) {
                     members={members}
                     setExpenses={setExpenses}
                     addExpense={addTransaction}
-                    setAddTransaction={setaddTransaction}
+                    setAddTransaction={setAddTransaction}
                 />;
             case 'members':
                 return <MembersTab ledgerName={ledgerName}/>;
@@ -90,7 +90,7 @@ function LedgerApp({target}) {
         <>
             <Topbar ledger={ledgerName} onSearch={setSearchTerm} pageType={target}/>
             <CurrentTab/>
-            <Toolbar ledger={ledgerName} onClickPlus={() => setaddTransaction(true)}/>
+            <Toolbar ledger={ledgerName} onClickPlus={() => setAddTransaction(true)}/>
         </>
     );
 }
