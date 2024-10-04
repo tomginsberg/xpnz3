@@ -294,8 +294,9 @@ function settleRecursive(pos, neg) {
 }
 
 export async function getExchangeRate(fromCurrency, toCurrency) {
-    const api = `https://api.exchangerate-api.com/v4/latest/${toCurrency}`;
-    return fetch(api).then((response) => response.json()).then((data) => data.rates[fromCurrency]);
+    // const api = `https://api.exchangerate-api.com/v4/latest/${toCurrency}`;
+    // return fetch(api).then((response) => response.json()).then((data) => data.rates[fromCurrency]);
+    return 1
 }
 
 
