@@ -1,28 +1,19 @@
 // components/expenses.jsx
-import AnimatedCard from "../components/animated-card.jsx";
+import AnimatedCard from "@/components/animated-card";
 import Masonry from "react-masonry-css";
 import React, {useMemo} from "react";
+import { AnimatePresence } from 'framer-motion';
 
 
 export default function ExpensesTab({
                                         expenses,
-                                        setExpenses,
                                         openEditDrawer,
+                                        onDeleteClick,
+                                        onCopyClick
 }) {
 
     const onEditClick = (expense) => {
         openEditDrawer(expense);
-    };
-
-    const onCopyClick = (expense) => {
-        setExpenses(prevExpenses => [
-            ...prevExpenses,
-            { ...expense, id: Math.random().toString(36).substr(2, 9) },
-        ]);
-    };
-
-    const onDeleteClick = (expense) => {
-        setExpenses(prevExpenses => prevExpenses.filter(e => e.id !== expense.id));
     };
 
     const sortedExpenses = useMemo(() => {
@@ -36,28 +27,27 @@ export default function ExpensesTab({
         500: 2,
     };
 
-    const MemoizedCard = React.memo(AnimatedCard);
-
 
     return (
-        <>
             <div className="mt-[150px] mx-4 mb-[100%]">
+
                 <Masonry
                     breakpointCols={breakpointColumnsObj}
                     className="flex w-auto gap-4"
                     columnClassName="masonry-column"
                 >
                     {sortedExpenses.map((expense) => (
-                        <MemoizedCard
-                            key={expense.id}
+                        <AnimatePresence key={expense.id}>
+                        <AnimatedCard
                             expense={expense}
-                            onEditClick={() => onEditClick(expense)}
-                            onCopyClick={() => onCopyClick(expense)}
-                            onDeleteClick={() => onDeleteClick(expense)}
+                            onEditClick={onEditClick}
+                            onCopyClick={onCopyClick}
+                            onDeleteClick={onDeleteClick}
                         />
+                        </AnimatePresence>
                     ))}
+
                 </Masonry>
             </div>
-        </>
     );
 }

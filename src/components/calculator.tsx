@@ -1,7 +1,7 @@
 import React, {useState, useEffect, KeyboardEvent} from 'react'
 import {Button} from "@/components/ui/button"
 import {Input} from "@/components/ui/input"
-import {AlertCircle, ArrowRight, Delete} from "lucide-react"
+import {AlertCircle, ArrowRight, Delete, X} from "lucide-react"
 import {Alert, AlertDescription} from "@/components/ui/alert"
 
 interface CalculatorProps {
@@ -62,18 +62,10 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
         if (value === 'Enter') {
             handleSubmit()
         } else if (value === 'Backspace') {
-            setInput(prev => {
-                const inputElement = document.getElementById('calculator-input') as HTMLInputElement;
-                const cursorPosition = inputElement.selectionStart || 0;
-                const newValue = (prev || '').toString().slice(0, cursorPosition - 1) + (prev || '').toString().slice(cursorPosition);
-                setTimeout(() => {
-                    inputElement.setSelectionRange(cursorPosition - 1, cursorPosition - 1);
-                }, 0);
-                return newValue;
-            })
-            // old implementation to remove last character
-            // setInput(prev => prev.toString().slice(0, -1))
-            setIsEvaluated(false)
+            if (input) {
+                setInput(prev => prev.toString().slice(0, -1))
+                setIsEvaluated(false)
+            }
         } else if (value === '=') {
             if (isEvaluated) {
                 handleSubmit()
@@ -81,16 +73,6 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
                 handleEvaluate()
             }
         } else {
-            setInput(prev => {
-                const inputElement = document.getElementById('calculator-input') as HTMLInputElement;
-                const cursorPosition = inputElement.selectionStart || 0;
-                const newValue = (prev || '').toString().slice(0, cursorPosition) + value + (prev || '').toString().slice(cursorPosition);
-                setTimeout(() => {
-                    inputElement.setSelectionRange(cursorPosition + value.length, cursorPosition + value.length);
-                }, 0);
-                return newValue;
-            });
-            // old implementation to append value to last character
             setInput(prev => prev.toString() + value)
             setIsEvaluated(false)
         }
@@ -107,6 +89,12 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
             e.preventDefault()
             handleButtonClick('=')
         }
+    }
+
+    const handleClearInput = () => {
+        setInput('')
+        setError(null)
+        setIsEvaluated(false)
     }
 
     const buttons = [
@@ -129,6 +117,7 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
 
     return (
         <div className="w-full max-w-md mx-auto p-4 rounded-lg">
+            <div className="relative">
             <Input
                 type="text"
                 value={input}
@@ -138,8 +127,16 @@ export function Calculator({initialValue, onEnter}: CalculatorProps) {
                 aria-label="Calculator input"
                 id='calculator-input'
                 inputMode="none"
-                readOnly // Add this line
+                readOnly
             />
+            <Button
+                onClick={handleClearInput}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 h-8 w-8"
+                variant="ghost"
+            >
+                <X className="h-4 w-4 text-card-foreground" />
+            </Button>
+            </div>
             {error && (
                 <Alert variant="destructive" className="mb-4">
                     <AlertCircle className="h-4 w-4"/>

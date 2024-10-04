@@ -10,7 +10,7 @@ import {Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEm
 import {MultiSelect} from "@/components/ui/multi-select";
 import {Switch} from "@/components/ui/switch";
 import CalculatorInput from "./calculator-input";
-import HoldToDelete from "@/components/delete";
+import HoldToDelete from "@/components/delete.tsx";
 import {Check} from 'lucide-react';
 import {cn} from "@/lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons"
@@ -29,7 +29,8 @@ export default function ExpenseDrawer({
                                           isDrawerOpen,
                                           isEditMode,
                                           handleCloseDrawer,
-                                          members
+                                          members,
+                                          onDeleteClick
                                       }) {
     const [income, setIncome] = useState(selectedExpense.income);
     const [name, setName] = useState(selectedExpense.name);
@@ -83,9 +84,6 @@ export default function ExpenseDrawer({
         setIsCategoryDrawerOpen(false);
     }
 
-    function handleDelete() {
-        handleCloseDrawer();
-    }
 
     return (<Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
         <DrawerContent className="bg-background text-black dark:text-white max-h-[90%] flex flex-col">
@@ -334,7 +332,11 @@ export default function ExpenseDrawer({
                             </Button>
                             <div className="space-x-2">
                                 {isEditMode && (
-                                    <HoldToDelete onConfirm={handleDelete} trigger/>
+                                    <Button
+                                        onClick={onDeleteClick}
+                                        variant="outline">
+                                        <span className="mr-2">🗑️</span> Delete
+                                    </Button>
                                 )}
                                 <ConfettiButton type="submit" variant="outline">
                                     <span className="mr-2">💾️</span> Save

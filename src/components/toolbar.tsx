@@ -48,9 +48,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
 
     function handleClickPlus() {
         // TODO: Decide if we want to navigate to the ledger root
-        // if (currentPath !== ledger) {
-        //     navigate(`/${ledger}`);
-        // }
+        if (currentPath !== ledger) {
+            navigate(`/${ledger}`);
+        }
         // // add confetti
 
         onClickPlus();
