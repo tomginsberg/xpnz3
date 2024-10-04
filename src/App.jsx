@@ -5,19 +5,20 @@ import {
     Routes,
     Route,
     useParams,
-    useResolvedPath,
-    useLocation,
     Navigate
 } from 'react-router-dom';
 import Toolbar from '@/components/toolbar';
 import Topbar from '@/components/topbar';
 import ExpensesTab from '@/pages/expenses';
-import MembersTab from '@/pages/members'; // Dummy component
-import DebtsTab from '@/pages/debts';     // Dummy component
+import MembersTab from '@/pages/members';
+import DebtsTab from '@/pages/debts';
 import {ThemeProvider} from '@/components/theme-provider';
-import {generateRandomLedgerData} from '@/api/get'; // Your random data generator
-import {emptyExpense} from "@/api/get";
-import ExpenseDrawer from "@/components/expense-drawer.jsx";
+import {generateRandomLedgerData} from '@/api/get';
+import ExpenseDrawer from "@/components/expense-drawer";
+import HoldToDelete from "@/components/delete";
+import Fuse from 'fuse.js';
+import useExpense from "@/hooks/useExpense.js";
+
 
 function FourOhFour() {
     return <h1 className="text-white">404</h1>;
@@ -41,12 +42,10 @@ export default function App() {
     );
 }
 
-import Fuse from 'fuse.js';
-import useTransaction from "@/hooks/useTransaction.js";
+const ledgerData = generateRandomLedgerData(50);
 
 function LedgerApp({target}) {
     const {ledgerName} = useParams();
-    const ledgerData = generateRandomLedgerData(50);
     const [members, setMembers] = useState(Object.keys(ledgerData.balances));
     const [expenses, setExpenses] = useState(ledgerData.expenses);
     const [searchTerm, setSearchTerm] = useState('');
@@ -59,7 +58,12 @@ function LedgerApp({target}) {
         openAddExpenseDrawer,
         openEditExpenseDrawer,
         closeExpenseDrawer,
-    } = useTransaction();
+        isDeleteDrawerOpen,
+        closeDeleteDrawer,
+        onDeleteClick,
+        handleDelete,
+        copyExpense
+    } = useExpense(setExpenses);
 
 
     const fuse = useMemo(() => new Fuse(expenses, {
@@ -76,6 +80,7 @@ function LedgerApp({target}) {
         }
     }, [searchTerm, fuse, expenses]);
 
+
     const CurrentTab = () => {
         switch (target) {
             case 'expenses':
@@ -84,6 +89,8 @@ function LedgerApp({target}) {
                     expenses={filteredExpenses}
                     setExpenses={setExpenses}
                     openEditDrawer={openEditExpenseDrawer}
+                    onDeleteClick={onDeleteClick}
+                    onCopyClick={copyExpense}
                 />;
             case 'members':
                 return <MembersTab ledgerName={ledgerName}/>;
@@ -99,16 +106,20 @@ function LedgerApp({target}) {
             <Topbar ledger={ledgerName} onSearch={setSearchTerm} pageType={target}/>
             <CurrentTab/>
             <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer}/>
-            {isDrawerOpen && (
-                <ExpenseDrawer
+            <ExpenseDrawer
                     selectedExpense={selectedExpense}
                     isEditMode={isEditMode}
                     isDrawerOpen={isDrawerOpen}
                     handleCloseDrawer={closeExpenseDrawer}
                     members={members}
                     setExpenses={setExpenses}
+                    onDeleteClick={onDeleteClick}
                 />
-            )}
+            <HoldToDelete
+                onConfirm={handleDelete}
+                isDrawerOpen={isDeleteDrawerOpen}
+                handleCloseDrawer={closeDeleteDrawer}
+            />
         </>
     );
 }
