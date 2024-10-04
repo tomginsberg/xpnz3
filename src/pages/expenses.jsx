@@ -2,7 +2,7 @@
 import AnimatedCard from "../components/animated-card.jsx";
 import Masonry from "react-masonry-css";
 import ExpenseDrawer from "@/components/expense-drawer.jsx";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {emptyExpense} from "@/api/get.js";
 
 
@@ -65,6 +65,8 @@ export default function ExpensesTab({expenses, setExpenses, members, addExpense,
         500: 2,
     };
 
+    const MemoizedCard = React.memo(AnimatedCard);
+
 
     return (
         <>
@@ -75,7 +77,7 @@ export default function ExpensesTab({expenses, setExpenses, members, addExpense,
                     columnClassName="masonry-column"
                 >
                     {expenses.map((expense) => (
-                        <AnimatedCard
+                        <MemoizedCard
                             key={expense.id}
                             expense={expense}
                             onEditClick={() => onEditClick(expense)}
