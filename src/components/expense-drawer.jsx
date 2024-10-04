@@ -16,6 +16,7 @@ import {cn} from "../lib/utils";
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
 import {Calendar} from "@/components/ui/calendar";
+import {ConfettiButton} from "@/components/ui/confetti";
 
 import {
     Dialog,
@@ -336,10 +337,10 @@ export default function ExpenseDrawer({
                                 {isEditMode && (
                                     <HoldToDelete onConfirm={handleDelete}/>
                                 )}
-                                <Button type="submit" variant="outline">
+                                <ConfettiButton type="submit" variant="outline">
                                     <span className="mr-2">💾️</span> Save
 
-                                </Button>
+                                </ConfettiButton>
                             </div>
                         </div>
                     </DrawerFooter>
