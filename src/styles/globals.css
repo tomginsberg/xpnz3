@@ -14,7 +14,7 @@ body {
     --linear-card-foreground: 0 0% 96.9%;
     --background: #ffffff;
     --foreground: 240 10% 3.9%;
-    --card: 210, 20%, 98%;
+    --card: #F3F4F6;
     --drawer: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
@@ -46,7 +46,7 @@ body {
  
     --background: #000000;
     --foreground: 0 0% 98%;
-    --card: 0, 0%, 9%;
+    --card: #0e161e;
     --drawer: 0,0, 0%;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
