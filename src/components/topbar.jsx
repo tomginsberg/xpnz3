@@ -82,7 +82,7 @@ export default function Topbar({ledger, onSearch, pageType}) {
   if (!headline) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-10 border-b bg-background">
+    <div className="fixed top-0 left-0 right-0 z-10 border-b bg-card">
       <div className="flex justify-between items-center p-4">
         <div className="text-black dark:text-white">
           <Sheet>
@@ -151,7 +151,7 @@ export default function Topbar({ledger, onSearch, pageType}) {
           initial={{ height: 0, opacity: 0 }} // Initially hidden
           animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
           exit={{ height: 0, opacity: 0 }} // Shrink back to hidden
-          transition={{ duration: 0.25, ease: "easeInOut" }} // Control the duration of the animation
+          transition={{ duration: 0.3, ease: "easeInOut" }} // Control the duration of the animation
       >
         <div className="relative mb-4 mt-1">
           <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500"/>
