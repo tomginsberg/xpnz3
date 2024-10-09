@@ -90,7 +90,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ledger, onClickPlus}) => {
 
                     {/* Motion Bubble for Active Tab */}
                     <motion.span
-                        className="absolute z-10 bg-accent rounded-full"
+                        className="absolute z-10 bg-gray-200 dark:bg-gray-700 rounded-full"
                         layout
                         initial={false}
                         animate={{
