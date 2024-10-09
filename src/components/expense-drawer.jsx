@@ -1,5 +1,13 @@
-import {Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger} from "@/components/ui/drawer";
-import React, {useState, useEffect} from "react";
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger
+} from "@/components/ui/drawer";
+import React, {useState, useEffect, useMemo} from "react";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {currencies, categories} from "@/api/get";
@@ -10,13 +18,13 @@ import {Command, CommandInput, CommandGroup, CommandItem, CommandList, CommandEm
 import {MultiSelect} from "@/components/ui/multi-select";
 import {Switch} from "@/components/ui/switch";
 import CalculatorInput from "./calculator-input";
-import HoldToDelete from "@/components/delete.tsx";
 import {Check} from 'lucide-react';
 import {cn} from "@/lib/utils";
-import { CalendarIcon } from "@radix-ui/react-icons"
-import { format } from "date-fns"
+import {CalendarIcon} from "@radix-ui/react-icons"
+import {format} from "date-fns"
 import {Calendar} from "@/components/ui/calendar";
 import {ConfettiButton} from "@/components/ui/confetti";
+import {SquareArrowUpLeft, Trash2, Save} from "lucide-react";
 
 import {
     Dialog,
@@ -54,6 +62,42 @@ export default function ExpenseDrawer({
         setSplitBetween(selectedExpense.splitBetween);
         setCurrency(selectedExpense.currency);
     }, [selectedExpense]);
+
+    const onPaidByMembersChange = (values) => {
+        setPaidBy(values.map((member) => {
+            const existing = paidBy.find((p) => p.member === member);
+            return existing || {member, amount: 0};
+        }));
+    };
+
+    function handlePaidByChange(value, index) {
+        setPaidBy((prev) => {
+            const paidBy = [...prev];
+            paidBy[index] = {...paidBy[index], amount: value};
+            return paidBy;
+        });
+    }
+
+    const sumContributions = (contributions) => {
+        return contributions.reduce((acc, curr) => acc + Number(curr.amount), 0);
+    };
+
+    useEffect(() => {
+
+        if (paidBy.length === 1) {
+            setAmount(paidBy[0].amount);
+        } else if (paidBy.length > 1) {
+            setAmount(sumContributions(paidBy));
+        }
+    }, [paidBy]);
+
+
+    const onSplitBetweenMembersChange = (values) => {
+        setSplitBetween(values.map((member) => {
+            const existing = splitBetween.find((s) => s.member === member);
+            return existing || {member, weight: 1};
+        }));
+    }
 
 
     function getDrawerTitle(edit) {
@@ -126,7 +170,7 @@ export default function ExpenseDrawer({
                                     <CalculatorInput
                                         value={amount}
                                         onChange={setAmount}
-                                        disabled={selectedExpense.paidBy.length > 1}
+                                        disabled={paidBy.length > 1}
                                         useLabel={true}
                                         isIncome={income}
                                     />
@@ -152,29 +196,30 @@ export default function ExpenseDrawer({
 
                         <div className="flex flex-col space-y-2">
                             <Label htmlFor="calButton">Date</Label>
-                            <Dialog>
-                            <DialogTrigger asChild>
-                                <Button
-                                    id="calButton"
-                                    variant="outline"
-                                    className={cn(
-                                        "w-full justify-start text-left font-normal",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="w-auto p-0 rounded-xl text-black dark:text-white" align="start">
-                                <Calendar
-                                    mode="single"
-                                    selected={date}
-                                    onSelect={setDate}
-                                    initialFocus
-                                />
-                            </DialogContent>
-                        </Dialog>
+                            <Drawer>
+                                <DrawerTrigger asChild>
+                                    <Button
+                                        id="calButton"
+                                        variant="outline"
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal",
+                                            !date && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4"/>
+                                        {date ? format(date, "PPP") : <span>Pick a date</span>}
+                                    </Button>
+                                </DrawerTrigger>
+                                <DrawerContent className="items-center w-auto p-0 rounded-xl text-black dark:text-white"
+                                               align="start">
+                                    <Calendar
+                                        mode="single"
+                                        selected={date}
+                                        onSelect={setDate}
+                                        initialFocus
+                                    />
+                                </DrawerContent>
+                            </Drawer>
                         </div>
 
 
@@ -232,14 +277,9 @@ export default function ExpenseDrawer({
                             <Label>Paid By</Label>
                             <MultiSelect
                                 options={members.map((member) => ({label: member, value: member}))}
-                                defaultValue={paidBy.map((p) => p.member)}
+                                defaultValue={selectedExpense.paidBy.map((p) => p.member)}
                                 onValueChange={
-                                    (values) => {
-                                        setPaidBy(values.map((member) => {
-                                            const existing = paidBy.find((p) => p.member === member);
-                                            return existing || {member, amount: 0};
-                                        }));
-                                    }
+                                    onPaidByMembersChange
                                 }
                             />
 
@@ -249,21 +289,12 @@ export default function ExpenseDrawer({
                                     {paidBy.map((payer, index) => (
                                         <div key={payer.member}
                                              className="flex items-center space-x-2 space-y-2">
-                                            {/*<span className="w-20">{payer.member}</span>*/}
                                             <div className="flex-grow">
                                                 <CalculatorInput
                                                     value={payer.amount}
                                                     useLabel={true}
                                                     label={payer.member}
-                                                    onChange={
-                                                        (value) => {
-                                                            setPaidBy((prev) => {
-                                                                const paidBy = [...prev];
-                                                                paidBy[index] = {...paidBy[index], amount: value};
-                                                                return paidBy;
-                                                            });
-                                                        }
-                                                    }
+                                                    onChange={(value) => handlePaidByChange(value, index)}
                                                 />
                                             </div>
                                         </div>
@@ -285,21 +316,13 @@ export default function ExpenseDrawer({
                             <MultiSelect
                                 options={members.map((member) => ({label: member, value: member}))}
                                 defaultValue={splitBetween.map((s) => s.member)}
-                                onValueChange={
-                                    (values) => {
-                                        setSplitBetween(values.map((member) => {
-                                            const existing = splitBetween.find((s) => s.member === member);
-                                            return existing || {member, weight: 1};
-                                        }));
-                                    }
-                                }
+                                onValueChange={onSplitBetweenMembersChange}
                             />
 
                             {isUnequalSplit &&
                                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">{
                                     splitBetween.map((splitter, index) => (
                                         <div key={splitter.member} className="flex items-center space-x-2">
-                                            {/*<span className="w-20 text-sm font-semibold">{splitter.member}</span>*/}
                                             <div className="flex-grow"><CalculatorInput
                                                 value={splitter.weight}
                                                 onChange={
@@ -328,19 +351,18 @@ export default function ExpenseDrawer({
                     <DrawerFooter>
                         <div className="flex justify-between w-full">
                             <Button type="button" variant="outline" onClick={handleCloseDrawer}>
-                                <span className="mr-2">⬅️</span> Cancel
+                                <span className="mr-2"><SquareArrowUpLeft className="size-4"/></span> Cancel
                             </Button>
                             <div className="space-x-2">
                                 {isEditMode && (
                                     <Button
                                         onClick={onDeleteClick}
                                         variant="outline">
-                                        <span className="mr-2">🗑️</span> Delete
+                                        <span className="mr-2"><Trash2 className="size-4"/></span> Delete
                                     </Button>
                                 )}
                                 <ConfettiButton type="submit" variant="outline">
-                                    <span className="mr-2">💾️</span> Save
-
+                                    <span className="mr-2"><Save className="size-4"/></span> Save
                                 </ConfettiButton>
                             </div>
                         </div>
