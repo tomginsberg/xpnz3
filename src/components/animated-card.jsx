@@ -69,7 +69,7 @@ const AnimatedCard = memo(({expense, onEditClick, onDeleteClick, onCopyClick}) =
                 >
                     <motion.div
                         className={"flex flex-col overflow-hidden rounded-lg text-card-foreground h-full"
-                            + (showDetails ? " bg-linear-foreground" : " border bg-popover")}
+                            + (showDetails ? " bg-linear-foreground" : " bg-card")}
                         layout
                         variants={cardVariants}
                         animate={showDetails ? "expanded" : "initial"}
