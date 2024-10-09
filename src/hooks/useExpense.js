@@ -51,10 +51,14 @@ const useExpense = (setExpenses) => {
     }, [expenseToDelete, setExpenses]);
 
     const copyExpense = useCallback((expense) => {
-        setExpenses((prevExpenses) => {
-            return [...prevExpenses, { ...expense, id: Date.now().toString() }];
+        setIsDrawerOpen(true);
+        setIsEditMode(false);
+        setSelectedExpense({
+            ...expense,
+            id: '',
+            date: new Date().toISOString(),
         });
-    }, [setExpenses]);
+    }, []);
 
     return {
         isDrawerOpen,
