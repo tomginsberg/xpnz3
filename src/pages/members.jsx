@@ -43,12 +43,12 @@ function MembersRow(props) {
   };
 
   return (
-  <div className={`flex ${className} items-center rounded-lg bg-linear px-4 py-3`}>
+  <div className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}>
     <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
       <div className="flex-1">
         {isEditing ? (
         <Input
-          className="bg-linear tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
+          className="bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           ref={inputRef}
@@ -167,7 +167,7 @@ export default function MembersPage({ledgerName}) {
 
   return (
     <div className="mt-[73px] p-3">
-      <MembersAdd placeholder="Who's the new guy?" onAdd={onAdd} existingMembers={members ? members.map(m => m.name) : []}/>
+      <MembersAdd placeholder="Add member" onAdd={onAdd} existingMembers={members ? members.map(m => m.name) : []}/>
       <MembersRows />
     </div>
   );
