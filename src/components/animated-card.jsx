@@ -13,7 +13,7 @@ import {Pencil, Trash2, Copy} from "lucide-react";
 const AnimatedCard = memo(({expense, onEditClick, onDeleteClick, onCopyClick}) =>
 {
     const ref = useRef(null);
-    const isInView = useInView(ref, {once: false, amount: 0.2});
+chnaged     const isInView = useInView(ref, {once: false, amount: 0.0});
 
     const [showDetails, setShowDetails] = useState(false);
 
@@ -60,7 +60,7 @@ const AnimatedCard = memo(({expense, onEditClick, onDeleteClick, onCopyClick}) =
                 <motion.div
                     layout
                     ref={ref}
-                    initial={{opacity: 0, y: 50, scale: .8}}
+                    initial={{opacity: 0, y: 30, scale: .8}}
                     animate={isInView ? {opacity: 1, y: 0, scale: 1} : {opacity: 1, y: 30, scale: .8}}
                     transition={{duration: 0.3}}
                     onClick={toggleDetails}
