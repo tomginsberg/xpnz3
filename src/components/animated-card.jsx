@@ -13,7 +13,7 @@ import {Pencil, Trash2, Copy} from "lucide-react";
 const AnimatedCard = memo(({expense, onEditClick, onDeleteClick, onCopyClick}) =>
 {
     const ref = useRef(null);
-chnaged     const isInView = useInView(ref, {once: false, amount: 0.0});
+    const isInView = useInView(ref, {once: false, amount: 0.0});
 
     const [showDetails, setShowDetails] = useState(false);
 
