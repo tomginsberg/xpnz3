@@ -1,26 +1,18 @@
-import { useState, useEffect } from 'react'
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger
-} from '@/components/ui/drawer'
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Button } from '@/components/ui/button'
-import { PlusCircle, SquareArrowUpLeft } from 'lucide-react'
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
+import { useEffect, useState } from "react"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
+import { Button } from "@/components/ui/button"
+import { PlusCircle, SquareArrowUpLeft } from "lucide-react"
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
+import Picker from "@emoji-mart/react"
+import emojiData from "@emoji-mart/data"
 
-import Picker from '@emoji-mart/react'
-import emojiData from '@emoji-mart/data'
+import useEmojiSearch from "@/hooks/emoji-search"
 
-import useEmojiSearch from '@/hooks/emoji-search'
-
-import { Slot } from '@radix-ui/react-slot'
+import { Slot } from "@radix-ui/react-slot"
 
 function CategoryPickerSelector({
   categories,
@@ -28,10 +20,11 @@ function CategoryPickerSelector({
   selectedCategory,
   onChangeCapture,
   onPlusButtonClick,
-  onCategorySelect
+  onCategorySelect,
+  className
 }) {
   return (
-    <Command className="bg-background">
+    <Command className={cn("bg-background", className)}>
       <div className="relative">
         <CommandInput placeholder="Search category..." value={inputValue} onChangeCapture={onChangeCapture} />
         <Button
@@ -68,7 +61,8 @@ function CategoryPickerCreator({
   onInputChange,
   onEmojiChange,
   onBackButtonClick,
-  onAddButtonClick
+  onAddButtonClick,
+  className
 }) {
   const [emojiPickerOpen, setEmojiPickerOpen] = useState(false)
 
@@ -78,7 +72,7 @@ function CategoryPickerCreator({
   }
 
   return (
-    <div className="px-4 pb-4">
+    <div className={cn("px-4 pb-4", className)}>
       <div className="flex items-center space-x-2 mb-4">
         <Dialog open={emojiPickerOpen} onOpenChange={setEmojiPickerOpen}>
           <DialogTrigger asChild>
@@ -86,10 +80,11 @@ function CategoryPickerCreator({
               {emojiValue}
             </Button>
           </DialogTrigger>
-          <DialogContent side="bottom" className="p-0 w-auto border-none rounded-xl items-center justify-center">
-            <VisuallyHidden>
-              <DialogTitle>Emoji Picker</DialogTitle>
-            </VisuallyHidden>
+          <DialogContent
+            className="p-0 w-auto border-none rounded-xl items-center justify-center"
+            aria-describedby="emoji picker"
+          >
+            <DialogTitle className="sr-only">Emoji Picker</DialogTitle>
             <Picker data={emojiData} onEmojiSelect={handleEmojiChange} />
           </DialogContent>
         </Dialog>
@@ -132,8 +127,8 @@ export function CategoryPicker({
   const [isSelectDrawerOpen, setIsSelectDrawerOpen] = useState(false)
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false)
 
-  const [inputValue, setInputValue] = useState('')
-  const [emojiValue, setEmojiValue] = useState('❓')
+  const [inputValue, setInputValue] = useState("")
+  const [emojiValue, setEmojiValue] = useState("❓")
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value)
@@ -145,11 +140,11 @@ export function CategoryPicker({
         setEmojiValue(await emojiSearch(inputValue))
       }
     })()
-  }, [inputValue])
+  }, [emojiSearch, inputValue])
 
   useEffect(() => {
-    setEmojiValue('❓')
-    setInputValue('')
+    setEmojiValue("❓")
+    setInputValue("")
   }, [selectedCategory])
 
   const handlePlusButtonClick = () => {
@@ -191,9 +186,9 @@ export function CategoryPicker({
     <>
       <CategoryPickerTrigger {...props} onClick={() => setIsSelectDrawerOpen(true)} />
       <Drawer open={isSelectDrawerOpen} onClose={() => setIsSelectDrawerOpen(false)}>
-        <DrawerContent side="bottom">
+        <DrawerContent aria-describedby="category picker">
           <DrawerHeader>
-            <DrawerTitle>Select Category</DrawerTitle>
+            <DrawerTitle className="text-primary">Select Category</DrawerTitle>
           </DrawerHeader>
           <CategoryPickerSelector
             categories={categories}
@@ -202,11 +197,15 @@ export function CategoryPicker({
             onChangeCapture={handleInputChange}
             onPlusButtonClick={handlePlusButtonClick}
             onCategorySelect={handleCategorySelect}
+            className="px-4"
           />
         </DrawerContent>
       </Drawer>
       <Drawer open={isCreateDrawerOpen} onClose={() => setIsCreateDrawerOpen(false)}>
-        <DrawerContent side="bottom">
+        <DrawerContent aria-describedby="category picker creator">
+          <DrawerHeader>
+            <DrawerTitle className="text-primary ">Create Category</DrawerTitle>
+          </DrawerHeader>
           <CategoryPickerCreator
             inputValue={inputValue}
             emojiValue={emojiValue}
@@ -214,6 +213,7 @@ export function CategoryPicker({
             onEmojiChange={handleEmojiChange}
             onBackButtonClick={handleBackButtonClick}
             onAddButtonClick={handleAddButtonClick}
+            className="mx-4"
           />
         </DrawerContent>
       </Drawer>
