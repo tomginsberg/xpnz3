@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Calculator } from './calculator'
-import { Banknote, HandCoins, Lock, Calculator as CalculatorIcon } from 'lucide-react'
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Calculator } from "./calculator"
+import { Banknote, HandCoins, Lock, Calculator as CalculatorIcon } from "lucide-react"
+import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 interface CalculatorInputProps {
   value: number
@@ -20,7 +20,7 @@ export default function CalculatorInput({
   onChange,
   disabled,
   useLabel = false,
-  label = 'Amount',
+  label = "Amount",
   isIncome = false
 }: CalculatorInputProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -46,7 +46,7 @@ export default function CalculatorInput({
           <Input
             id="number-input"
             type="number"
-            placeholder={'0.00'}
+            placeholder={"0.00"}
             value={value}
             onChange={(e) => onChange(parseFloat(e.target.value))}
             className="pl-10 rounded-r-none z-10"
@@ -58,7 +58,8 @@ export default function CalculatorInput({
                 {disabled ? <Lock className="h-4 w-4" /> : <CalculatorIcon className="h-4 w-4" />}
               </Button>
             </DrawerTrigger>
-            <DrawerContent>
+            <DrawerContent aria-describedby="Calulator Input">
+              <DrawerTitle className="sr-only">Calculator</DrawerTitle>
               <Calculator initialValue={value.toString()} onEnter={handleCalculatorEnter} />
             </DrawerContent>
           </Drawer>
