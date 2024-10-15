@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/command";
 import {Button} from "@/components/ui/button";
 import {PlusCircle, SquareArrowUpLeft} from "lucide-react";
-import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 
@@ -93,6 +93,7 @@ function CategoryPickerCreator (
             </Button>
           </DialogTrigger>
           <DialogContent side="bottom" className="p-0 w-auto border-none rounded-xl items-center justify-center">
+            <VisuallyHidden><DialogTitle>Emoji Picker</DialogTitle></VisuallyHidden>
             <Picker data={emojiData} onEmojiSelect={handleEmojiChange} />
           </DialogContent>
         </Dialog>
@@ -185,7 +186,7 @@ export function CategoryPicker
 
   const CategoryPickerButton = (props) => (
     <Button type="button" variant="outline" className="w-full justify-start" {...props}>
-      {selectedCategory}
+      {selectedCategory ? selectedCategory : (<span className="text-muted-foreground">Select a category</span>)}
     </Button>
   );
 
