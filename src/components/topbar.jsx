@@ -1,14 +1,14 @@
 // component topbar
 
-import { useEffect, useState, forwardRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Moon, Search, Sun } from 'lucide-react'
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { motion } from "framer-motion"
+import { Moon, Search, Sun } from "lucide-react"
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Sheet,
   SheetClose,
@@ -17,11 +17,11 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger
-} from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
+} from "@/components/ui/sheet"
+import { Separator } from "@/components/ui/separator"
 
-import { currencies } from '@/api/client.js'
-import { useTheme } from '@/components/theme-provider'
+import { currencies } from "@/api/client.js"
+import { useTheme } from "@/components/theme-provider"
 
 function XpnzMenuIcon() {
   return (
@@ -89,25 +89,25 @@ function XpnzDropdown(props) {
 }
 
 export default function Topbar({ ledger, onSearch, pageType }) {
-  const [currency, setCurrency] = useState('CAD')
-  const [themeName, setThemeName] = useState(localStorage.getItem('vite-ui-theme') || 'dark')
+  const [currency, setCurrency] = useState("CAD")
+  const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark")
 
   const { setTheme } = useTheme()
 
   const navigate = useNavigate()
 
   function toggleTheme() {
-    const newTheme = themeName === 'dark' ? 'light' : 'dark'
+    const newTheme = themeName === "dark" ? "light" : "dark"
     setTheme(newTheme)
     setThemeName(newTheme)
   }
 
   const headlines = {
-    expenses: { emoji: '💸', label: 'Expenses' },
-    members: { emoji: '🧑‍🤝‍🧑', label: 'Members' },
-    debts: { emoji: '💳', label: 'Debts' },
-    recurring: { emoji: '🔄', label: 'Recurring' },
-    dash: { emoji: '📊', label: 'Dashboard' }
+    expenses: { emoji: "💸", label: "Expenses" },
+    members: { emoji: "🧑‍🤝‍🧑", label: "Members" },
+    debts: { emoji: "💳", label: "Debts" },
+    recurring: { emoji: "🔄", label: "Recurring" },
+    dash: { emoji: "📊", label: "Dashboard" }
   }
 
   const headline = headlines[pageType]
@@ -157,8 +157,8 @@ export default function Topbar({ ledger, onSearch, pageType }) {
                     setTheme(value)
                   }}
                   options={[
-                    { value: 'light', text: 'Light' },
-                    { value: 'dark', text: 'Dark' }
+                    { value: "light", text: "Light" },
+                    { value: "dark", text: "Dark" }
                   ]}
                 />
 
@@ -174,7 +174,7 @@ export default function Topbar({ ledger, onSearch, pageType }) {
           </Sheet>
           <span aria-label={headline.label} className="text-2xl mr-2">
             {headline.emoji}
-          </span>{' '}
+          </span>{" "}
           <span className="font-semibold text-2xl">{headline.label}</span>
         </div>
 
@@ -184,13 +184,13 @@ export default function Topbar({ ledger, onSearch, pageType }) {
         </Button>
       </div>
 
-      {pageType === 'expenses' && (
+      {pageType === "expenses" && (
         <motion.div
           className="px-4 overflow-hidden"
           initial={{ height: 0, opacity: 0 }} // Initially hidden
-          animate={{ height: 'auto', opacity: 1 }} // Animate to full height and visible
+          animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
           exit={{ height: 0, opacity: 0 }} // Shrink back to hidden
-          transition={{ duration: 0.3, ease: 'easeInOut' }} // Control the duration of the animation
+          transition={{ duration: 0.3, ease: "easeInOut" }} // Control the duration of the animation
         >
           <div className="relative mb-4 mt-1">
             <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
