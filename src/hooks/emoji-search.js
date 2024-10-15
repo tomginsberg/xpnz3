@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import {useCallback, useContext, useEffect, useState} from 'react'
 import data from '@emoji-mart/data'
 import { init, SearchIndex } from 'emoji-mart'
 
@@ -13,8 +13,7 @@ const useEmojiSearch = () => {
     setSearchIndex(SearchIndex)
   }, [])
 
-  // The search function that returns the first emoji or a fallback
-  const emojiSearch = async (searchValue) => {
+  const emojiSearch =  useCallback(async (searchValue) => {
     if (!searchValue || !searchIndex) return '❓' // Fallback if no search term or index is available
 
     const emojis = await searchIndex.search(searchValue)
@@ -24,7 +23,7 @@ const useEmojiSearch = () => {
     }
 
     return '❓' // Fallback if no matches are found
-  }
+  }, [searchIndex]);
 
   return { emojiSearch }
 }
