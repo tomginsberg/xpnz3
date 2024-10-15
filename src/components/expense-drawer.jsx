@@ -22,7 +22,7 @@ import {format} from "date-fns";
 // internal components and utilities
 import {cn} from "@/lib/utils";
 import {categories, currencies} from "@/api/client.js";
-import {CalculatorInput} from "./calculator-input";
+import CalculatorInput from "./calculator-input";
 import {CategoryPicker} from "./category-picker";
 
 export default function ExpenseDrawer
