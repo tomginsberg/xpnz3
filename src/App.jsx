@@ -1,34 +1,37 @@
 // App.jsx
-import { useEffect, useMemo, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from 'react-router-dom'
-import Toolbar from '@/components/toolbar'
-import Topbar from '@/components/topbar'
-import ExpensesTab from '@/pages/expenses'
-import MembersTab from '@/pages/members'
-import DebtsTab from '@/pages/debts'
-import { ThemeProvider } from '@/components/theme-provider'
-import { generateRandomLedgerData } from '@/api/client.js'
-import ExpenseDrawer from '@/components/expense-drawer'
-import HoldToDelete from '@/components/delete'
-import Fuse from 'fuse.js'
-import useExpense from '@/hooks/useExpense.js'
+import { useEffect, useMemo, useState } from "react"
+import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from "react-router-dom"
+import Toolbar from "@/components/toolbar"
+import Topbar from "@/components/topbar"
+import ExpensesTab from "@/pages/expenses"
+import MembersTab from "@/pages/members"
+import DebtsTab from "@/pages/debts"
+import { ThemeProvider } from "@/components/theme-provider"
+import { generateRandomLedgerData } from "@/api/client.js"
+import ExpenseDrawer from "@/components/expense-drawer"
+import HoldToDelete from "@/components/delete"
+import Fuse from "fuse.js"
+import useExpense from "@/hooks/useExpense.js"
 
 function FourOhFour() {
   return <h1 className="text-white">404</h1>
 }
+
+import Home from "@/pages/home"
+import Error from "@/pages/error"
 
 export default function App() {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/trap" />} />
+          <Route path="/" element={<Home />} />
           <Route path="/:ledgerName" element={<LedgerApp target="expenses" />} />
           <Route path="/:ledgerName/expenses" element={<LedgerApp target="expenses" />} />
           <Route path="/:ledgerName/members" element={<LedgerApp target="members" />} />
           <Route path="/:ledgerName/debts" element={<LedgerApp target="debts" />} />
 
-          <Route path="*" element={<FourOhFour />} />
+          <Route path="*" element={<Error />} />
         </Routes>
       </Router>
     </ThemeProvider>
@@ -41,7 +44,7 @@ function LedgerApp({ target }) {
   const { ledgerName } = useParams()
   const [members, setMembers] = useState(Object.keys(ledgerData.balances))
   const [expenses, setExpenses] = useState(ledgerData.expenses)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState("")
   const [filteredExpenses, setFilteredExpenses] = useState([])
 
   const {
@@ -61,7 +64,7 @@ function LedgerApp({ target }) {
   const fuse = useMemo(
     () =>
       new Fuse(expenses, {
-        keys: ['name', 'category'],
+        keys: ["name", "category"],
         threshold: 0.1
       }),
     [expenses]
@@ -78,7 +81,7 @@ function LedgerApp({ target }) {
 
   const CurrentTab = () => {
     switch (target) {
-      case 'expenses':
+      case "expenses":
         return (
           <ExpensesTab
             ledgerName={ledgerName}
@@ -89,9 +92,9 @@ function LedgerApp({ target }) {
             onCopyClick={copyExpense}
           />
         )
-      case 'members':
+      case "members":
         return <MembersTab ledgerName={ledgerName} />
-      case 'debts':
+      case "debts":
         return <DebtsTab ledgerName={ledgerName} />
       default:
         return <FourOhFour />
