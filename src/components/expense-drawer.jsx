@@ -48,15 +48,17 @@ export default function ExpenseDrawer
   const id = selectedExpense.id;
 
   useEffect(() => {
-    setIncome(selectedExpense.income);
-    setName(selectedExpense.name);
-    setAmount(selectedExpense.amount);
-    setDate(selectedExpense.date);
-    setCategory(selectedExpense.category);
-    setPaidBy(selectedExpense.paidBy);
-    setSplitBetween(selectedExpense.splitBetween);
-    setCurrency(selectedExpense.currency);
-  }, [selectedExpense]);
+    if (isDrawerOpen) {
+      setIncome(selectedExpense.income);
+      setName(selectedExpense.name);
+      setAmount(selectedExpense.amount);
+      setDate(selectedExpense.date);
+      setCategory(selectedExpense.category);
+      setPaidBy(selectedExpense.paidBy);
+      setSplitBetween(selectedExpense.splitBetween);
+      setCurrency(selectedExpense.currency);
+    }
+  }, [selectedExpense, isDrawerOpen]);
 
   const onPaidByMembersChange = (values) => {
     setPaidBy(
@@ -215,7 +217,10 @@ export default function ExpenseDrawer
                 </Drawer>
               </div>
 
-              <CategoryPicker categories={categories} selectedCategory={category} onAddCategory={setCategory} onSelectedCategoryChange={setCategory} />
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <CategoryPicker categories={categories} selectedCategory={category} onAddCategory={setCategory} onSelectedCategoryChange={setCategory} />
+              </div>
 
               <div className="space-y-2">
                 <Label>Paid By</Label>

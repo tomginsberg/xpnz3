@@ -27,6 +27,8 @@ import emojiData from "@emoji-mart/data";
 
 import useEmojiSearch from "@/hooks/emoji-search";
 
+import {Slot} from "@radix-ui/react-slot";
+
 function CategoryPickerSelector (
   {
     categories,
@@ -125,6 +127,8 @@ export function CategoryPicker
     selectedCategory,
     onSelectedCategoryChange,
     onAddCategory,
+    asChild,
+    ...props
   }
 ) {
   const {emojiSearch} = useEmojiSearch();
@@ -179,15 +183,18 @@ export function CategoryPicker
     setIsSelectDrawerOpen(false);
   };
 
+  const CategoryPickerButton = (props) => (
+    <Button type="button" variant="outline" className="w-full justify-start" {...props}>
+      {selectedCategory}
+    </Button>
+  );
+
+  const CategoryPickerTrigger = asChild ? Slot : CategoryPickerButton;
+
   return (
     <>
+    <CategoryPickerTrigger {...props} onClick={() => setIsSelectDrawerOpen(true)} />
     <Drawer open={isSelectDrawerOpen} onClose={() => setIsSelectDrawerOpen(false)}>
-      <div className="space-y-2">
-        <Label>Category</Label>
-        <Button type="button" variant="outline" className="w-full justify-start" onClick={() => setIsSelectDrawerOpen(true)}>
-          {selectedCategory}
-        </Button>
-      </div>
       <DrawerContent side="bottom">
         <DrawerHeader><DrawerTitle>Select Category</DrawerTitle></DrawerHeader>
         <CategoryPickerSelector
