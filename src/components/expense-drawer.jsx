@@ -1,37 +1,31 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react"
 
 // shadcn components
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { ConfettiButton } from '@/components/ui/confetti'
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger
-} from '@/components/ui/drawer'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { MultiSelect } from '@/components/ui/multi-select'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Switch } from '@/components/ui/switch'
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { ConfettiButton } from "@/components/ui/confetti"
+import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { MultiSelect } from "@/components/ui/multi-select"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 
 // icons
-import { Check, PlusCircle, Save, SquareArrowUpLeft, Trash2 } from 'lucide-react'
-import { CalendarIcon } from '@radix-ui/react-icons'
+import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
+import { CalendarIcon } from "@radix-ui/react-icons"
 
 // external utilities
-import { format } from 'date-fns'
+import { format } from "date-fns"
 
 // internal components and utilities
-import { cn } from '@/lib/utils'
-import { categories, currencies } from '@/api/client.js'
-import CalculatorInput from './calculator-input'
-import { CategoryPicker } from './category-picker'
+import { cn } from "@/lib/utils"
+import { categories, currencies } from "@/api/client.js"
+import CalculatorInput from "./calculator-input"
+import { CategoryPicker } from "./category-picker"
 
 export default function ExpenseDrawer({
   /* props */ selectedExpense,
@@ -104,8 +98,8 @@ export default function ExpenseDrawer({
   }
 
   function getDrawerTitle(edit) {
-    let type = income ? 'Income' : 'Expense'
-    return edit ? 'Edit ' + type : 'Add New ' + type
+    let type = income ? "Income" : "Expense"
+    return edit ? "Edit " + type : "Add New " + type
   }
 
   function handleSubmit(e) {
@@ -128,7 +122,10 @@ export default function ExpenseDrawer({
 
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
-      <DrawerContent className="bg-background text-black dark:text-white max-h-[90%] flex flex-col">
+      <DrawerContent
+        className="bg-background text-black dark:text-white max-h-[90%] flex flex-col"
+        aria-describedby="Main content area for adding or editing an expense."
+      >
         <DrawerHeader className="text-black dark:text-white">
           <DrawerTitle>{getDrawerTitle(isEditMode)}</DrawerTitle>
           <DrawerClose />
@@ -148,9 +145,9 @@ export default function ExpenseDrawer({
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder={'Expense'}
+                  placeholder={"Expense"}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       e.preventDefault()
                       setTimeout(() => e.target.blur(), 0)
                     }
@@ -175,9 +172,9 @@ export default function ExpenseDrawer({
                   <Label htmlFor="currency">Currency</Label>
                   <Select>
                     <SelectTrigger id="currency">
-                      <SelectValue placeholder={currencies['CAD']} />
+                      <SelectValue placeholder={currencies["CAD"]} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent aria-describedby="currency select">
                       {Object.entries(currencies).map(([code, flag]) => (
                         <SelectItem key={code} value={code}>
                           {flag}
@@ -190,24 +187,24 @@ export default function ExpenseDrawer({
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="calButton">Date</Label>
-                <Drawer>
-                  <DrawerTrigger asChild>
+                <Dialog>
+                  <DialogTrigger asChild>
                     <Button
                       id="calButton"
                       variant="outline"
-                      className={cn('w-full justify-start text-left font-normal', !date && 'text-muted-foreground')}
+                      className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                      {date ? format(date, "PPP") : <span>Pick a date</span>}
                     </Button>
-                  </DrawerTrigger>
-                  <DrawerContent
-                    className="items-center w-auto p-0 rounded-xl text-black dark:text-white"
-                    align="start"
-                  >
+                  </DialogTrigger>
+                  <DialogContent className="w-auto rounded-xl text-primary" aria-describedby="Date Select">
+                    <DialogHeader>
+                      <DialogTitle className="text-primary sr-only">Select Date</DialogTitle>
+                    </DialogHeader>
                     <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-                  </DrawerContent>
-                </Drawer>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <div className="space-y-2">
@@ -244,7 +241,7 @@ export default function ExpenseDrawer({
                           />
                         </div>
                       </div>
-                    ))}{' '}
+                    ))}{" "}
                   </div>
                 )}
               </div>
@@ -300,7 +297,7 @@ export default function ExpenseDrawer({
                 <Button type="button" variant="outline" onClick={handleCloseDrawer}>
                   <span className="mr-2">
                     <SquareArrowUpLeft className="size-4" />
-                  </span>{' '}
+                  </span>{" "}
                   Cancel
                 </Button>
                 <div className="space-x-2">
@@ -308,14 +305,14 @@ export default function ExpenseDrawer({
                     <Button onClick={onDeleteClick} variant="outline">
                       <span className="mr-2">
                         <Trash2 className="size-4" />
-                      </span>{' '}
+                      </span>{" "}
                       Delete
                     </Button>
                   )}
                   <ConfettiButton type="submit" variant="outline">
                     <span className="mr-2">
                       <Save className="size-4" />
-                    </span>{' '}
+                    </span>{" "}
                     Save
                   </ConfettiButton>
                 </div>
