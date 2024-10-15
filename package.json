@@ -10,6 +10,13 @@
     "api": "node ./src/api/app.js",
     "migrate": "node ./scripts/migrate.js"
   },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "printWidth": 120,
+    "tabWidth": 2
+  },
   "dependencies": {
     "@emoji-mart/data": "^1.2.1",
     "@emoji-mart/react": "^1.1.1",
