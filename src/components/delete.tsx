@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Fingerprint } from 'lucide-react'
-import { motion, useAnimation } from 'framer-motion'
+import React, { useState, useRef, useEffect } from "react"
+import { Fingerprint } from "lucide-react"
+import { motion, useAnimation } from "framer-motion"
 
 interface HoldToConfirmButtonProps {
   onConfirm: () => void
   holdTime?: number
-  size?: 'sm' | 'md' | 'lg'
+  size?: "sm" | "md" | "lg"
   baseColor?: string
   activeColor?: string
   gradientColors?: [string, string, string]
@@ -15,13 +14,13 @@ interface HoldToConfirmButtonProps {
   holdText?: string
   className?: string
 }
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 
 const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
   onConfirm,
   holdTime = 1500,
-  activeColor = 'text-primary',
-  gradientColors = ['#3b82f6', '#8b5cf6', '#ec4899']
+  activeColor = "text-primary",
+  gradientColors = ["#3b82f6", "#8b5cf6", "#ec4899"]
 }) => {
   const [isHolding, setIsHolding] = useState(false)
   const holdTimeout = useRef<NodeJS.Timeout | null>(null)
@@ -36,8 +35,8 @@ const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
   const startHolding = () => {
     setIsHolding(true)
     controls.start({
-      strokeDasharray: '283 283',
-      transition: { duration: holdTime / 1000, ease: 'linear' }
+      strokeDasharray: "283 283",
+      transition: { duration: holdTime / 1000, ease: "linear" }
     })
 
     holdTimeout.current = setTimeout(() => {
@@ -48,7 +47,7 @@ const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
 
   const stopHolding = () => {
     setIsHolding(false)
-    controls.start({ strokeDasharray: '0 283' })
+    controls.start({ strokeDasharray: "0 283" })
     if (holdTimeout.current) clearTimeout(holdTimeout.current)
   }
 
@@ -84,7 +83,7 @@ const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
         onTouchEnd={stopHolding}
       >
         <Fingerprint
-          className={`w-12 h-12 ${isHolding ? `${activeColor} animate-pulse` : 'text-secondary-foreground'}`}
+          className={`w-12 h-12 ${isHolding ? `${activeColor} animate-pulse` : "text-secondary-foreground"}`}
         ></Fingerprint>
       </button>
     </div>
@@ -105,7 +104,7 @@ export default function HoldToDelete({ onConfirm, isDrawerOpen, handleCloseDrawe
 
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
-      <DrawerContent className="text-black dark:text-white">
+      <DrawerContent className="text-black dark:text-white" aria-describedby="Delete Expense">
         <DrawerHeader>
           <DrawerTitle>Hold to Delete</DrawerTitle>
         </DrawerHeader>
@@ -115,7 +114,7 @@ export default function HoldToDelete({ onConfirm, isDrawerOpen, handleCloseDrawe
             holdTime={1000}
             baseColor="bg-red-100"
             activeColor="text-red-500"
-            gradientColors={['#ef4444', '#ef4444', '#ef4444']}
+            gradientColors={["#ef4444", "#ef4444", "#ef4444"]}
           />
         </div>
       </DrawerContent>
