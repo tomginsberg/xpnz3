@@ -1,6 +1,6 @@
 // hooks/useTransaction.js
 import { useState, useCallback } from 'react';
-import { emptyExpense } from '@/api/get';
+import { emptyExpense } from '@/api/client.js';
 
 /**
  * Custom hook to manage transaction drawer state.

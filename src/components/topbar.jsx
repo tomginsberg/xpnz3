@@ -12,7 +12,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger} from "@/components/ui/sheet";
 import {Separator} from "@/components/ui/separator";
 
-import {currencies} from "@/api/get";
+import {currencies} from "@/api/client.js";
 import {useTheme} from "@/components/theme-provider"
 
 function XpnzMenuIcon() {

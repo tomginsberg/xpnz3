@@ -2,7 +2,7 @@
 
 import {useState, useEffect} from 'react'
 import {motion, AnimatePresence} from 'framer-motion'
-import {emptyExpense} from "../api/get";
+import {emptyExpense} from "@/api/client.js";
 
 const random = () => Math.random();
 

@@ -13,7 +13,7 @@ import ExpensesTab from '@/pages/expenses';
 import MembersTab from '@/pages/members';
 import DebtsTab from '@/pages/debts';
 import {ThemeProvider} from '@/components/theme-provider';
-import {generateRandomLedgerData} from '@/api/get';
+import {generateRandomLedgerData} from '@/api/client.js';
 import ExpenseDrawer from "@/components/expense-drawer";
 import HoldToDelete from "@/components/delete";
 import Fuse from 'fuse.js';
