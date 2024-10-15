@@ -1,100 +1,116 @@
 // app/[ledger]/members/page.jsx
 
-import {useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react'
 
-import {Button} from '@/components/ui/button';
-import {Input} from '@/components/ui/input';
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
-import {UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus} from 'lucide-react';
+import { UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus } from 'lucide-react'
 
-import {api} from '@/../xpnz.config';
+import { api } from '@/../xpnz.config'
 
 function MembersRow(props) {
-  const {member, onSubmit, onDelete, className} = props;
-  const {name, balance, paid} = member;
+  const { member, onSubmit, onDelete, className } = props
+  const { name, balance, paid } = member
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [newName, setNewName] = useState(name);
+  const [isEditing, setIsEditing] = useState(false)
+  const [newName, setNewName] = useState(name)
 
-  const inputRef = useRef(null);
+  const inputRef = useRef(null)
 
-  const balanceString = `$${Math.abs(balance).toLocaleString()}`;
-  const paidString = `$${Math.abs(paid).toLocaleString()}`;
+  const balanceString = `$${Math.abs(balance).toLocaleString()}`
+  const paidString = `$${Math.abs(paid).toLocaleString()}`
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
       // Optionally, move the cursor to the end
-      const length = inputRef.current.value.length;
-      inputRef.current.setSelectionRange(length, length);
+      const length = inputRef.current.value.length
+      inputRef.current.setSelectionRange(length, length)
     }
-  }, [isEditing]);
+  }, [isEditing])
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     if (isEditing) {
-      onSubmit && await onSubmit(member, newName);
-      setNewName(name);
+      onSubmit && (await onSubmit(member, newName))
+      setNewName(name)
     }
 
-    setIsEditing(!isEditing);
-  };
+    setIsEditing(!isEditing)
+  }
 
   return (
-  <div className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}>
-    <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
-      <div className="flex-1">
-        {isEditing ? (
-        <Input
-          className="bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          ref={inputRef}
-        />
-        ) : (
-        <h2 className="flex-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white py-[2px]">{name}</h2>)}
-        <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
-          {balance === 0 ? '✓ settled up' : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
-          {' • '}
-          {`${paidString} all time`}
-        </p>
-      </div>
-      <Button variant="outline" size="icon" className="mx-1">
-        {isEditing ? (<UserRoundCheck className="text-gray-700 dark:text-gray-200" />) : (<UserRoundPen className="text-gray-700 dark:text-gray-200" />)}
-      </Button>
-    </form>
-    <TooltipProvider><Tooltip>
-      <TooltipTrigger asChild>
-        <div className="inline-block mx-1">
-          <Button variant="destructive" size="icon" disabled={member.balance !== 0} onClick={async () => onDelete && await onDelete(member)}>
-            <UserRoundX />
-          </Button>
+    <div className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}>
+      <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
+        <div className="flex-1">
+          {isEditing ? (
+            <Input
+              className="bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              ref={inputRef}
+            />
+          ) : (
+            <h2 className="flex-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white py-[2px]">{name}</h2>
+          )}
+          <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
+            {balance === 0 ? '✓ settled up' : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
+            {' • '}
+            {`${paidString} all time`}
+          </p>
         </div>
-      </TooltipTrigger>
-      {member.balance !== 0 && <TooltipContent>
-        <p>Balance must be zero.</p>
-      </TooltipContent>}
-    </Tooltip></TooltipProvider>
-  </div>
-  );
+        <Button variant="outline" size="icon" className="mx-1">
+          {isEditing ? (
+            <UserRoundCheck className="text-gray-700 dark:text-gray-200" />
+          ) : (
+            <UserRoundPen className="text-gray-700 dark:text-gray-200" />
+          )}
+        </Button>
+      </form>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="inline-block mx-1">
+              <Button
+                variant="destructive"
+                size="icon"
+                disabled={member.balance !== 0}
+                onClick={async () => onDelete && (await onDelete(member))}
+              >
+                <UserRoundX />
+              </Button>
+            </div>
+          </TooltipTrigger>
+          {member.balance !== 0 && (
+            <TooltipContent>
+              <p>Balance must be zero.</p>
+            </TooltipContent>
+          )}
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  )
 }
 
 // relies on animate-blink defined in tailwind.config.js
-const FakeCursor = () => (<span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>);
+const FakeCursor = () => (
+  <span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>
+)
 
 function MembersAdd(props) {
-  const {onAdd, placeholder, existingMembers, className} = props;
-  const [name, setName] = useState('');
+  const { onAdd, placeholder, existingMembers, className } = props
+  const [name, setName] = useState('')
 
-  const isDuplicate = existingMembers ? existingMembers.includes(name.trim()) : false;
+  const isDuplicate = existingMembers ? existingMembers.includes(name.trim()) : false
 
   const handleAdd = async (e) => {
-    e.preventDefault();
-    onAdd && await onAdd(name);
-    setName('');
-  };
+    e.preventDefault()
+    onAdd && (await onAdd(name))
+    setName('')
+  }
 
   return (
     <form onSubmit={handleAdd}>
@@ -112,63 +128,68 @@ function MembersAdd(props) {
         </div>
         <div className="flex items-center">
           <Button variant="outline" size="icon" className="mx-1" disabled={!name.trim() || isDuplicate} type="submit">
-            <UserRoundPlus className="text-gray-700 dark:text-gray-200"/>
+            <UserRoundPlus className="text-gray-700 dark:text-gray-200" />
           </Button>
         </div>
       </div>
     </form>
-  );
+  )
 }
 
 async function fetchMembers(ledger) {
-  return await fetch(`${api.base}/ledgers/${encodeURIComponent(ledger)}/balance`, {cache: "no-store"}).then(r => r.json()).catch(console.error);
+  return await fetch(`${api.base}/ledgers/${encodeURIComponent(ledger)}/balance`, { cache: 'no-store' })
+    .then((r) => r.json())
+    .catch(console.error)
 }
 
-export default function MembersPage({ledgerName}) {
-  const ledger = ledgerName;
+export default function MembersPage({ ledgerName }) {
+  const ledger = ledgerName
 
-  const [members, setMembers] = useState([]);
+  const [members, setMembers] = useState([])
 
   useEffect(() => {
-    fetchMembers(ledger).then(setMembers);
-  }, [ledger]);
+    fetchMembers(ledger).then(setMembers)
+  }, [ledger])
 
   async function onAdd(name) {
-    const newMember = { name, ledger, is_active: true };
+    const newMember = { name, ledger, is_active: true }
 
     await fetch(`${api.base}/members`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMember)
-    }).then(() => fetchMembers(ledger).then(setMembers));
+    }).then(() => fetchMembers(ledger).then(setMembers))
   }
 
-  async function onDelete({id}) {
+  async function onDelete({ id }) {
     await fetch(`${api.base}/members/${id}`, {
       method: 'DELETE'
-    }).then(() => fetchMembers(ledger).then(setMembers));
+    }).then(() => fetchMembers(ledger).then(setMembers))
   }
 
   async function onSubmit(member, newName) {
-    if (member.name === newName) return;
+    if (member.name === newName) return
 
-    const updatedMember = { name: newName, ledger, is_active: true };
+    const updatedMember = { name: newName, ledger, is_active: true }
 
     await fetch(`${api.base}/members/${member.id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedMember)
-    }).then(() => fetchMembers(ledger).then(setMembers));
+    }).then(() => fetchMembers(ledger).then(setMembers))
   }
 
-  const MembersRows = () => members ? members.map((member) => (
-    <MembersRow key={member.id} className="mt-3" member={member} onDelete={onDelete} onSubmit={onSubmit} />
-  )) : null;
+  const MembersRows = () =>
+    members
+      ? members.map((member) => (
+          <MembersRow key={member.id} className="mt-3" member={member} onDelete={onDelete} onSubmit={onSubmit} />
+        ))
+      : null
 
   return (
     <div className="mt-[73px] p-3">
-      <MembersAdd placeholder="Add member" onAdd={onAdd} existingMembers={members ? members.map(m => m.name) : []}/>
+      <MembersAdd placeholder="Add member" onAdd={onAdd} existingMembers={members ? members.map((m) => m.name) : []} />
       <MembersRows />
     </div>
-  );
-};
+  )
+}
