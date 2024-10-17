@@ -529,13 +529,12 @@ async function updateAddTransaction(transaction, isUpdate) {
         await trx('transactions').insert(newTransaction)
       }
 
-      const transactionsMemberJunctionItems = transaction.members
-        .map((member, index) => ({
+      const transactionsMemberJunctionItems = transaction.contributions
+        .map(c => ({
           transaction_id: transaction.id,
-          member: member,
-          weight: transaction.weights[index],
-          amount: Math.floor(transaction.paid[index] * 100),
-          ledger: transaction.ledger
+          member_id: c.id
+          weight: c.weight
+          amount: Math.floor(c.paid * 100)
         }))
         .filter((item) => item.amount !== 0 || item.weight !== 0)
 
