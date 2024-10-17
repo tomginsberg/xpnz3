@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Edit, Trash2, UserRoundCheck, UserRoundPlus } from "lucide-react"
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast.ts"
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props

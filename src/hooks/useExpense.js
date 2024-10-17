@@ -2,7 +2,7 @@
 import { useState, useCallback } from 'react'
 import { emptyExpense } from '@/api/client.js'
 
-import { useXpnzApi } from '@/hooks/use-xpnz-api.js'
+import { useExpenses } from '@/hooks/use-xpnz-api.js'
 
 /**
  * Custom hook to manage transaction drawer state.
@@ -18,7 +18,7 @@ const useExpense = (ledgerName) => {
   const [isDeleteDrawerOpen, setIsDeleteDrawerOpen] = useState(false)
   const [expenseToDelete, setExpenseToDelete] = useState(null)
 
-  const { expenses, members, deleteExpense } = useXpnzApi(ledgerName)
+  const { expenses, members, deleteExpense } = useExpenses(ledgerName)
 
   const setExpenses = () => {}  // stub
 
