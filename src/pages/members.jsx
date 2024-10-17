@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus } from 'lucide-react'
 
 import { api } from '@/../xpnz.config'
+import { useXpnzApi } from '@/hooks/use-xpnz-api.js'
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props
@@ -136,59 +137,29 @@ function MembersAdd(props) {
   )
 }
 
-async function fetchMembers(ledger) {
-  return await fetch(`${api.base}/ledgers/${encodeURIComponent(ledger)}/balance`, { cache: 'no-store' })
-    .then((r) => r.json())
-    .catch(console.error)
-}
-
 export default function MembersPage({ ledgerName }) {
-  const ledger = ledgerName
-
-  const [members, setMembers] = useState([])
-
-  useEffect(() => {
-    fetchMembers(ledger).then(setMembers)
-  }, [ledger])
-
-  async function onAdd(name) {
-    const newMember = { name, ledger, is_active: true }
-
-    await fetch(`${api.base}/members`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newMember)
-    }).then(() => fetchMembers(ledger).then(setMembers))
-  }
+  const { balance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName);
 
   async function onDelete({ id }) {
-    await fetch(`${api.base}/members/${id}`, {
-      method: 'DELETE'
-    }).then(() => fetchMembers(ledger).then(setMembers))
+    deleteMember(id)
   }
 
   async function onSubmit(member, newName) {
     if (member.name === newName) return
-
-    const updatedMember = { name: newName, ledger, is_active: true }
-
-    await fetch(`${api.base}/members/${member.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updatedMember)
-    }).then(() => fetchMembers(ledger).then(setMembers))
+    editMember(member.id, newName)
   }
 
-  const MembersRows = () =>
-    members
-      ? members.map((member) => (
-          <MembersRow key={member.id} className="mt-3" member={member} onDelete={onDelete} onSubmit={onSubmit} />
-        ))
-      : null
+  const MembersRows = () => {
+    if (balance === undefined) return ( <></> )
+    
+    return balance.map(m => (
+      <MembersRow key={m.id} className="mt-3" member={m} onDelete={onDelete} onSubmit={onSubmit} />
+    ))
+  }
 
-  return (
+  return 
     <div className="mt-[73px] p-3">
-      <MembersAdd placeholder="Add member" onAdd={onAdd} existingMembers={members ? members.map((m) => m.name) : []} />
+      <MembersAdd placeholder="Add member" onAdd={pushMember} existingMembers={balance ? balance.map((m) => m.name) : []} />
       <MembersRows />
     </div>
   )
