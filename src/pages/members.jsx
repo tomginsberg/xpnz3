@@ -1,15 +1,13 @@
 // app/[ledger]/members/page.jsx
 
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from "react"
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-import { UserRoundCheck, UserRoundPen, UserRoundX, UserRoundPlus } from 'lucide-react'
-
-import { api } from '@/../xpnz.config'
-import { useXpnzApi } from '@/hooks/use-xpnz-api.js'
+import { UserRoundCheck, UserRoundPen, UserRoundPlus, UserRoundX } from "lucide-react"
+import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props
@@ -58,8 +56,8 @@ function MembersRow(props) {
             <h2 className="flex-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white py-[2px]">{name}</h2>
           )}
           <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
-            {balance === 0 ? '✓ settled up' : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
-            {' • '}
+            {balance === 0 ? "✓ settled up" : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
+            {" • "}
             {`${paidString} all time`}
           </p>
         </div>
@@ -103,21 +101,21 @@ const FakeCursor = () => (
 
 function MembersAdd(props) {
   const { onAdd, placeholder, existingMembers, className } = props
-  const [name, setName] = useState('')
+  const [name, setName] = useState("")
 
   const isDuplicate = existingMembers ? existingMembers.includes(name.trim()) : false
 
   const handleAdd = async (e) => {
     e.preventDefault()
     onAdd && (await onAdd(name))
-    setName('')
+    setName("")
   }
 
   return (
     <form onSubmit={handleAdd}>
       <div
         className={`flex flex-row ${className} justify-between rounded-lg bg-linear-foreground px-4 py-2 relative
-          ${isDuplicate ? 'ring-1 ring-red-500' : ''}`}
+          ${isDuplicate ? "ring-1 ring-red-500" : ""}`}
       >
         <div className="relative flex-1">
           <Input
@@ -138,28 +136,32 @@ function MembersAdd(props) {
 }
 
 export default function MembersPage({ ledgerName }) {
-  const { balance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName);
+  const { balance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName)
 
   async function onDelete({ id }) {
-    deleteMember(id)
+    await deleteMember(id)
   }
 
   async function onSubmit(member, newName) {
     if (member.name === newName) return
-    editMember(member.id, newName)
+    await editMember(member.id, newName)
   }
 
   const MembersRows = () => {
-    if (balance === undefined) return ( <></> )
-    
-    return balance.map(m => (
+    if (balance === undefined) return <></>
+
+    return balance.map((m) => (
       <MembersRow key={m.id} className="mt-3" member={m} onDelete={onDelete} onSubmit={onSubmit} />
     ))
   }
 
-  return 
+  return (
     <div className="mt-[73px] p-3">
-      <MembersAdd placeholder="Add member" onAdd={pushMember} existingMembers={balance ? balance.map((m) => m.name) : []} />
+      <MembersAdd
+        placeholder="Add member"
+        onAdd={pushMember}
+        existingMembers={balance ? balance.map((m) => m.name) : []}
+      />
       <MembersRows />
     </div>
   )
