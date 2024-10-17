@@ -103,8 +103,11 @@ export function useXpnzApi(ledger) {
   const deleteMember = async (id) => {
     await fetch(`${api.base}/members/${id}`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
     });
+
+    apiGetMembers();
   }
 
 
