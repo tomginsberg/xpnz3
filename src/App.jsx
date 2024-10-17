@@ -1,5 +1,5 @@
 // App.jsx
-import { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
@@ -12,6 +12,7 @@ import ExpenseDrawer from "@/components/expense-drawer"
 import HoldToDelete from "@/components/delete"
 import Fuse from "fuse.js"
 import useExpense from "@/hooks/useExpense.js"
+import { Toaster } from "@/components/ui/toaster"
 
 import Home from "@/pages/home"
 import Error from "@/pages/error"
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>
+      <Toaster />
     </ThemeProvider>
   )
 }
