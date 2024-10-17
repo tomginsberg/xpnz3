@@ -52,9 +52,21 @@ export function useXpnzApi(ledger) {
 
   useEffect(() => {
     apiGetBalance();
+  }, [ledger, members, expenses]);
+
+  useEffect(() => {
     apiGetExpenses();
+  }, [ledger, members]);
+
+  useEffect(() => {
     apiGetSettlement();
+  }, [ledger, members, expenses]);
+
+  useEffect(() => {
     apiGetMembers();
+  }, [ledger]);
+
+  useEffect(() => {
     apiGetLedgerInfo();
   }, [ledger]);
 
@@ -63,7 +75,7 @@ export function useXpnzApi(ledger) {
     setCategories(categories);
   }, [expenses]);
 
-
+  
   const pushMember = async (name) => {
     const member = { name, ledger, is_active: true };
     
