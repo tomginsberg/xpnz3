@@ -2,19 +2,25 @@
 import { useState, useCallback } from 'react'
 import { emptyExpense } from '@/api/client.js'
 
+import { useXpnzApi } from '@/hooks/use-xpnz-api.js'
+
 /**
  * Custom hook to manage transaction drawer state.
  *
  * @param {Function} setExpenses - Function to update the expenses list.
  * @returns {Object} - Contains drawer states and handler functions.
  */
-const useExpense = (setExpenses) => {
+const useExpense = (ledgerName) => {
   // TODO: add api logic here
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
   const [selectedExpense, setSelectedExpense] = useState(emptyExpense)
   const [isDeleteDrawerOpen, setIsDeleteDrawerOpen] = useState(false)
   const [expenseToDelete, setExpenseToDelete] = useState(null)
+
+  const { expenses, members, deleteExpense } = useXpnzApi(ledgerName)
+
+  const setExpenses = () => {}  // stub
 
   const openAddExpenseDrawer = useCallback(() => {
     setIsDrawerOpen(true)
@@ -43,7 +49,7 @@ const useExpense = (setExpenses) => {
 
   const handleDelete = useCallback(() => {
     if (expenseToDelete) {
-      setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== expenseToDelete.id))
+      deleteExpense(expenseToDelete.id)
     }
     setIsDeleteDrawerOpen(false)
     setExpenseToDelete(null)
@@ -70,7 +76,9 @@ const useExpense = (setExpenses) => {
     closeDeleteDrawer,
     onDeleteClick,
     handleDelete,
-    copyExpense
+    copyExpense,
+    members,
+    expenses
   }
 }
 

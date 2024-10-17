@@ -38,8 +38,6 @@ const ledgerData = generateRandomLedgerData(50)
 
 function LedgerApp({ target }) {
   const { ledgerName } = useParams()
-  const [members, setMembers] = useState(Object.keys(ledgerData.balances))
-  const [expenses, setExpenses] = useState(ledgerData.expenses)
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredExpenses, setFilteredExpenses] = useState([])
 
@@ -54,8 +52,10 @@ function LedgerApp({ target }) {
     closeDeleteDrawer,
     onDeleteClick,
     handleDelete,
-    copyExpense
-  } = useExpense(setExpenses)
+    copyExpense,
+    expenses,
+    members
+  } = useExpense(ledgerName)
 
   const fuse = useMemo(
     () =>
@@ -80,9 +80,7 @@ function LedgerApp({ target }) {
       case "expenses":
         return (
           <ExpensesTab
-            ledgerName={ledgerName}
-            expenses={filteredExpenses}
-            setExpenses={setExpenses}
+            expenses={expenses}
             openEditDrawer={openEditExpenseDrawer}
             onDeleteClick={onDeleteClick}
             onCopyClick={copyExpense}
@@ -104,11 +102,10 @@ function LedgerApp({ target }) {
       <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} />
       <ExpenseDrawer
         selectedExpense={selectedExpense}
-        isEditMode={isEditMode}
         isDrawerOpen={isDrawerOpen}
+        isEditMode={isEditMode}
         handleCloseDrawer={closeExpenseDrawer}
-        members={members}
-        setExpenses={setExpenses}
+        members={members.map((member) => member.name)}
         onDeleteClick={onDeleteClick}
       />
       <HoldToDelete onConfirm={handleDelete} isDrawerOpen={isDeleteDrawerOpen} handleCloseDrawer={closeDeleteDrawer} />
