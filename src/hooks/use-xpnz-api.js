@@ -51,30 +51,16 @@ export function useXpnzApi(ledger) {
   }
 
   useEffect(() => {
-    apiGetBalance();
-  }, [ledger, members, expenses]);
-
-  useEffect(() => {
-    apiGetExpenses();
-  }, [ledger, members]);
-
-  useEffect(() => {
-    apiGetSettlement();
-  }, [ledger, members, expenses]);
-
-  useEffect(() => {
-    apiGetMembers();
-  }, [ledger]);
-
-  useEffect(() => {
-    apiGetLedgerInfo();
+    const fetchData = async () => {
+      await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()]);
+    };
+    fetchData();
   }, [ledger]);
 
   useEffect(() => {
     const categories = uniq (expenses.map((e) => e.category));
     setCategories(categories);
   }, [expenses]);
-
   
   const pushMember = async (name) => {
     const member = { name, ledger, is_active: true };
@@ -86,6 +72,7 @@ export function useXpnzApi(ledger) {
     });
 
     apiGetMembers();
+    apiGetBalance();
   }
 
   const editMember = async (id, name) => {
@@ -98,6 +85,8 @@ export function useXpnzApi(ledger) {
     });
 
     apiGetMembers();
+    apiGetBalance();
+    apiGetSettlement();
   }
 
   const deleteMember = async (id) => {
@@ -108,6 +97,7 @@ export function useXpnzApi(ledger) {
     });
 
     apiGetMembers();
+    apiGetBalance();
   }
 
   const pushExpense = async (name, currency, category, date, expense_type, contributions) => {
@@ -122,6 +112,8 @@ export function useXpnzApi(ledger) {
     });
 
     apiGetExpenses();
+    apiGetBalance();
+    apiGetSettlement();
   }
 
   const editExpense = async (id, name, currency, category, date, expense_type, contributions) => {
@@ -136,6 +128,8 @@ export function useXpnzApi(ledger) {
     });
 
     apiGetExpenses();
+    apiGetBalance();
+    apiGetSettlement();
   }
 
   const deleteExpense = async (id) => {
@@ -146,8 +140,9 @@ export function useXpnzApi(ledger) {
     });
 
     apiGetExpenses();
+    apiGetBalance();
+    apiGetSettlement();
   }
-
 
   return {
     balance,
