@@ -13,10 +13,6 @@ import HoldToDelete from "@/components/delete"
 import Fuse from "fuse.js"
 import useExpense from "@/hooks/useExpense.js"
 
-function FourOhFour() {
-  return <h1 className="text-white">404</h1>
-}
-
 import Home from "@/pages/home"
 import Error from "@/pages/error"
 
@@ -97,7 +93,7 @@ function LedgerApp({ target }) {
       case "debts":
         return <DebtsTab ledgerName={ledgerName} />
       default:
-        return <FourOhFour />
+        return <Error />
     }
   }
 
