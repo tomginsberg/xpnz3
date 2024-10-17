@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 
-import { Check, Edit3, Trash, ClipboardCheck, Share } from "lucide-react"
+import { Check, Edit3, Trash, ClipboardCheck, Share, CircleCheckBig } from "lucide-react"
 // import { useXpnzApi } from "@/hooks/useXpnzApi"
 import { useParams } from "react-router-dom"
 
@@ -103,18 +103,18 @@ const DebtsTab = () => {
       {debts.map((member, index) => (
         <div key={index} className="flex items-center rounded-lg bg-card p-4 my-3">
           <div className="flex-1">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
               {member[0]} → {member[1]}
             </h2>
             <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">${member[2]}</p>
           </div>
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="mx-1 bg-linear transition-none"
+            className="mx-1 transition-none"
             onClick={() => openSettleDialog(member[0], member[1], member[2])}
           >
-            <Check className="text-gray-700 dark:text-gray-200" />
+            <CircleCheckBig className="text-gray-700 dark:text-gray-200" />
           </Button>
         </div>
       ))}

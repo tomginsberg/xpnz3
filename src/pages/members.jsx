@@ -1,17 +1,19 @@
 // app/[ledger]/members/page.jsx
 
 import { useEffect, useRef, useState } from "react"
-
+import { AnimatePresence, motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-import { UserRoundCheck, UserRoundPen, UserRoundPlus, UserRoundX } from "lucide-react"
+import { Edit, Trash2, UserRoundCheck, UserRoundPlus } from "lucide-react"
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
+import { useToast } from "@/hooks/use-toast"
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props
   const { name, balance, paid } = member
+  const { toast } = useToast()
 
   const [isEditing, setIsEditing] = useState(false)
   const [newName, setNewName] = useState(name)
@@ -34,6 +36,7 @@ function MembersRow(props) {
     e.preventDefault()
 
     if (isEditing) {
+      console.log("submitting", newName)
       onSubmit && (await onSubmit(member, newName))
       setNewName(name)
     }
@@ -41,56 +44,97 @@ function MembersRow(props) {
     setIsEditing(!isEditing)
   }
 
+  function handleDelete() {
+    if (balance !== 0) {
+      toast({
+        title: "Cannot delete member",
+        description: "Balance must be zero.",
+        variant: "default"
+      })
+    } else {
+      onDelete(member)
+      toast({
+        title: "Member deleted",
+        description: `${name}`,
+        variant: "default"
+      })
+    }
+  }
+
   return (
-    <div className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}>
-      <form className="flex-1 flex items-center" onSubmit={handleSubmit}>
-        <div className="flex-1">
-          {isEditing ? (
-            <Input
-              className="bg-card tracking-tight shadow-none focus-visible:ring-0 text-gray-900 dark:text-white border-none p-0 ring-0 text-2xl font-bold w-full"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              ref={inputRef}
-            />
-          ) : (
-            <h2 className="flex-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white py-[2px]">{name}</h2>
-          )}
-          <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
-            {balance === 0 ? "✓ settled up" : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
-            {" • "}
-            {`${paidString} all time`}
-          </p>
-        </div>
-        <Button variant="outline" size="icon" className="mx-1 bg-linear">
-          {isEditing ? (
-            <UserRoundCheck className="text-gray-700 dark:text-gray-200" />
-          ) : (
-            <UserRoundPen className="text-gray-700 dark:text-gray-200" />
-          )}
-        </Button>
-      </form>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="inline-block mx-1">
-              <Button
-                variant="destructive"
-                size="icon"
-                disabled={member.balance !== 0}
-                onClick={async () => onDelete && (await onDelete(member))}
-              >
-                <UserRoundX />
-              </Button>
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <div className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}>
+          <form className="flex-row flex items-center justify-end w-full" onSubmit={handleSubmit}>
+            <div className="flex-grow">
+              <Input
+                className="bg-card shadow-none focus-visible:ring-0 text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full disabled:opacity-100 disabled:cursor-text"
+                value={isEditing ? newName : name}
+                onChange={(e) => setNewName(e.target.value)}
+                ref={inputRef}
+                disabled={!isEditing}
+              />
+
+              <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
+                {balance === 0 ? "✓ settled up" : balance > 0 ? `↑ ${balanceString}` : `↓ ${balanceString}`}
+                {" • "}
+                {`${paidString} all time`}
+              </p>
             </div>
-          </TooltipTrigger>
-          {member.balance !== 0 && (
-            <TooltipContent>
-              <p>Balance must be zero.</p>
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </TooltipProvider>
-    </div>
+            <Button variant="ghost" size="icon" className="mx-1" onClick={handleSubmit} type="button">
+              <AnimatePresence mode="wait" initial={false}>
+                {isEditing ? (
+                  <motion.div
+                    key="check"
+                    initial={{ opacity: 0, rotate: -90 }}
+                    animate={{ opacity: 1, rotate: 0 }}
+                    exit={{ opacity: 0, rotate: 90 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <UserRoundCheck className="text-gray-700 dark:text-gray-200" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="edit"
+                    initial={{ opacity: 0, rotate: -90 }}
+                    animate={{ opacity: 1, rotate: 0 }}
+                    exit={{ opacity: 0, rotate: 90 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Edit className="text-gray-700 dark:text-gray-200" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </Button>
+          </form>
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        {isEditing ? (
+          <ContextMenuItem
+            onSelect={() => {
+              setIsEditing(false)
+            }}
+          >
+            <UserRoundCheck className="mr-2 h-4 w-4" />
+            <span>Save</span>
+          </ContextMenuItem>
+        ) : (
+          <ContextMenuItem
+            onSelect={() => {
+              setIsEditing(true)
+            }}
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            <span>Edit</span>
+          </ContextMenuItem>
+        )}
+        <ContextMenuItem onSelect={() => handleDelete(member)}>
+          <Trash2 className="mr-2 h-4 w-4" />
+          <span>Delete</span>
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }
 
@@ -126,7 +170,7 @@ function MembersAdd(props) {
           />
         </div>
         <div className="flex items-center">
-          <Button variant="outline" size="icon" className="mx-1" disabled={!name.trim() || isDuplicate} type="submit">
+          <Button variant="ghost" size="icon" className="mx-1" disabled={!name.trim() || isDuplicate} type="submit">
             <UserRoundPlus className="text-gray-700 dark:text-gray-200" />
           </Button>
         </div>
