@@ -110,6 +110,44 @@ export function useXpnzApi(ledger) {
     apiGetMembers();
   }
 
+  const pushExpense = async (name, currency, category, date, expense_type, contributions) => {
+    // contributions = [{ id, paid, weight }]
+
+    const expense = { name, ledger, currency, category, date, expense_type, contributions };
+
+    await fetch(`${api.base}/transactions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(expense)
+    });
+
+    apiGetExpenses();
+  }
+
+  const editExpense = async (id, name, currency, category, date, expense_type, contributions) => {
+    // contributions = [{ id, paid, weight }]
+
+    const expense = { name, ledger, currency, category, date, expense_type, contributions };
+
+    await fetch(`${api.base}/transactions/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(expense)
+    });
+
+    apiGetExpenses();
+  }
+
+  const deleteExpense = async (id) => {
+    await fetch(`${api.base}/transactions/${id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}'
+    });
+
+    apiGetExpenses();
+  }
+
 
   return {
     balance,
@@ -120,6 +158,9 @@ export function useXpnzApi(ledger) {
     settlement,
     pushMember,
     editMember,
-    deleteMember
+    deleteMember,
+    pushExpense,
+    editExpense,
+    deleteExpense
   };
 }
