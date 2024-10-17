@@ -136,7 +136,13 @@ function MembersAdd(props) {
 }
 
 export default function MembersPage({ ledgerName }) {
-  const { balance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName)
+  const { balance: trueBalance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName)
+
+  const [balance, setBalance] = useState(trueBalance)
+
+  useEffect(() => {
+    setBalance(trueBalance)
+  }, [trueBalance])
 
   async function onDelete({ id }) {
     await deleteMember(id)
@@ -144,7 +150,20 @@ export default function MembersPage({ ledgerName }) {
 
   async function onSubmit(member, newName) {
     if (member.name === newName) return
+
+    // optimistically update the name
+    // by finding the index of the member in the balance array
+    // and updating the name in the balance array
+    const index = balance.findIndex((m) => m.id === member.id)
+    const newBalance = [...balance]
+    newBalance[index] = { ...newBalance[index], name: newName }
+    setBalance(newBalance)
+
     await editMember(member.id, newName)
+  }
+
+  async function onAdd(name) {
+    await pushMember(name)
   }
 
   const MembersRows = () => {
