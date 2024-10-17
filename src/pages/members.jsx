@@ -61,7 +61,7 @@ function MembersRow(props) {
             {`${paidString} all time`}
           </p>
         </div>
-        <Button variant="outline" size="icon" className="mx-1">
+        <Button variant="outline" size="icon" className="mx-1 bg-linear">
           {isEditing ? (
             <UserRoundCheck className="text-gray-700 dark:text-gray-200" />
           ) : (
@@ -114,12 +114,12 @@ function MembersAdd(props) {
   return (
     <form onSubmit={handleAdd}>
       <div
-        className={`flex flex-row ${className} justify-between rounded-lg bg-linear-foreground px-4 py-2 relative
+        className={`flex flex-row ${className} justify-between rounded-lg bg-card px-4 py-2 relative
           ${isDuplicate ? "ring-1 ring-red-500" : ""}`}
       >
         <div className="relative flex-1">
           <Input
-            className="bg-linear-foreground shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
+            className="bg-card shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
             placeholder={placeholder}
             onChange={(e) => setName(e.target.value)}
             value={name}
