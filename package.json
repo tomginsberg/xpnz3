@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "stmux -e ERROR -m beep,system -- [ 'vite' .. 'npm run api' ]",
+    "dev": "vite",
+    "hound": "tmux new-session -d -s dev 'vite' \\; split-window -h 'npm run api' \\; attach",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "api": "node ./src/api/app.js",
