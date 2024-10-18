@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Outlet, Route, Routes, useParams } from "react
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
 import { ThemeProvider } from "@/components/theme-provider"
-import { emptyExpense } from "@/api/client.js"
 import ExpenseDrawer from "@/components/expense-drawer"
 import HoldToDelete from "@/components/delete"
 import useExpense from "@/hooks/use-expense.js"
@@ -22,32 +21,23 @@ function LedgerLayout() {
   const { ledgerName } = useParams()
   const [searchTerm, setSearchTerm] = React.useState("")
 
-  // State for ExpenseDrawer
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
-  const [isEditMode, setIsEditMode] = React.useState(false)
-  const [selectedExpense, setSelectedExpense] = React.useState(emptyExpense)
-
   // Expense data and functions
-  const { expenses, members, isDeleteDrawerOpen, closeDeleteDrawer, onDeleteClick, handleDelete, copyExpense } =
-    useExpense(ledgerName)
-  const memberNames = members.map((member) => member.name)
-
-  // Functions to control ExpenseDrawer
-  const openAddExpenseDrawer = React.useCallback(() => {
-    setIsDrawerOpen(true)
-    setIsEditMode(false)
-    setSelectedExpense(emptyExpense)
-  }, [])
-
-  const openEditExpenseDrawer = React.useCallback((expense) => {
-    setIsDrawerOpen(true)
-    setIsEditMode(true)
-    setSelectedExpense(expense)
-  }, [])
-
-  const closeExpenseDrawer = React.useCallback(() => {
-    setIsDrawerOpen(false)
-  }, [])
+  const {
+    expenses,
+    members,
+    memberNames,
+    isDeleteDrawerOpen,
+    closeDeleteDrawer,
+    onDeleteClick,
+    handleDelete,
+    copyExpense,
+    openAddExpenseDrawer,
+    openEditExpenseDrawer,
+    closeExpenseDrawer,
+    isDrawerOpen,
+    isEditMode,
+    selectedExpense
+  } = useExpense(ledgerName)
 
   // Context value to pass to child components
   const outletContext = {
