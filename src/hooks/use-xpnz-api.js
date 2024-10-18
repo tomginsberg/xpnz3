@@ -1,110 +1,112 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from "react"
 
-import { uniq } from 'lodash-es';
+import { uniq } from "lodash-es"
 
-import { api } from '@/../xpnz.config.js';
+import { api } from "@/../xpnz.config.js"
 
 export function useExpenses(ledger) {
-  const [members, setMembers]  = useState([]);
-  const [expenses, setExpenses] = useState([]);
+  const [members, setMembers] = useState([])
+  const [expenses, setExpenses] = useState([])
 
   const apiGetExpenses = async () => {
-    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: 'no-store' })
-    const expenses = await response.json();
-    const expensesPlus = expenses.map(expense => { 
-      return { 
+    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
+    const expenses = await response.json()
+    const expensesPlus = expenses.map((expense) => {
+      return {
         ...expense,
-        income: expense.expense_type === 'income',
+        income: expense.expense_type === "income",
         paidBy: expense.contributions.map((c) => ({ member: c.member, amount: c.paid })).filter((c) => c.amount > 0),
-        splitBetween: expense.contributions.map((c) => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes })).filter((c) => c.weight > 0)
+        splitBetween: expense.contributions
+          .map((c) => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes }))
+          .filter((c) => c.weight > 0)
       }
-    });
-    setExpenses(expensesPlus);
-  }
-  
-  const apiGetMembers = async () => {
-    const response = await fetch(`${api.base}/members?ledger=${ledger}`, { cache: 'no-store' });
-    const members = await response.json();
-    setMembers(members);
+    })
+    setExpenses(expensesPlus)
   }
 
-  useEffect(() => {
+  const apiGetMembers = async () => {
+    const response = await fetch(`${api.base}/members?ledger=${ledger}`, { cache: "no-store" })
+    const members = await response.json()
+    setMembers(members)
+  }
+
+  useEffect(async () => {
     const fetchData = async () => {
-      await Promise.all([apiGetMembers(), apiGetExpenses()]);
-    };
-    fetchData();
-  }, [ledger]);
+      await Promise.all([apiGetMembers(), apiGetExpenses()])
+    }
+    await fetchData()
+  }, [ledger])
 
   const pushMember = async (name) => {
-    const member = { name, ledger, is_active: true };
-    
-    await fetch(`${api.base}/members`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(member)
-    });
+    const member = { name, ledger, is_active: true }
 
-    apiGetMembers();
+    await fetch(`${api.base}/members`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(member)
+    })
+
+    await apiGetMembers()
   }
 
   const editMember = async (id, name) => {
-    const member = { name, ledger, is_active: true };
-   
-    await fetch(`${api.base}/members/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(member)
-    });
+    const member = { name, ledger, is_active: true }
 
-    apiGetMembers();
+    await fetch(`${api.base}/members/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(member)
+    })
+
+    await apiGetMembers()
   }
 
   const deleteMember = async (id) => {
     await fetch(`${api.base}/members/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    })
 
-    apiGetMembers();
+    await apiGetMembers()
   }
 
   const pushExpense = async (name, currency, category, date, expense_type, contributions) => {
     // contributions = [{ id, paid, weight }]
 
-    const expense = { name, ledger, currency, category, date, expense_type, contributions };
+    const expense = { name, ledger, currency, category, date, expense_type, contributions }
 
     await fetch(`${api.base}/transactions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(expense)
-    });
+    })
 
-    apiGetExpenses();
+    await apiGetExpenses()
   }
 
   const editExpense = async (id, name, currency, category, date, expense_type, contributions) => {
     // contributions = [{ id, paid, weight }]
 
-    const expense = { name, ledger, currency, category, date, expense_type, contributions };
+    const expense = { name, ledger, currency, category, date, expense_type, contributions }
 
     await fetch(`${api.base}/transactions/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(expense)
-    });
+    })
 
-    apiGetExpenses();
+    await apiGetExpenses()
   }
 
   const deleteExpense = async (id) => {
     await fetch(`${api.base}/transactions/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    })
 
-    apiGetExpenses();
+    await apiGetExpenses()
   }
 
   return {
@@ -116,148 +118,169 @@ export function useExpenses(ledger) {
     pushExpense,
     editExpense,
     deleteExpense
-  };
+  }
 }
 
 export function useXpnzApi(ledger) {
-  const [balance, setBalance] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [expenses, setExpenses] = useState([]);
-  const [ledgerInfo, setLedgerInfo] = useState({});
-  const [members, setMembers]  = useState([]);
-  const [settlement, setSettlement] = useState([]);
+  const [balance, setBalance] = useState([])
+  // const [categories, setCategories] = useState([])
+  const [expenses, setExpenses] = useState([])
+  const [ledgerInfo, setLedgerInfo] = useState({})
+  const [members, setMembers] = useState([])
+  const [settlement, setSettlement] = useState([])
+  const categories = useMemo(() => uniq(expenses.map((e) => e.category)), [expenses])
 
   const apiGetBalance = async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: 'no-store' });
-    const balance = await response.json();
-    setBalance(balance);
+    const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" })
+    const balance = await response.json()
+    setBalance(balance)
   }
 
   const apiGetExpenses = async () => {
-    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: 'no-store' })
-    const expenses = await response.json();
-    const expensesPlus = expenses.map(expense => { 
-      return { 
+    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
+    const expenses = await response.json()
+    const expensesPlus = expenses.map((expense) => {
+      return {
         ...expense,
-        income: expense.expense_type === 'income',
+        income: expense.expense_type === "income",
         paidBy: expense.contributions.map((c) => ({ member: c.member, amount: c.paid })).filter((c) => c.amount > 0),
-        splitBetween: expense.contributions.map((c) => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes })).filter((c) => c.weight > 0)
+        splitBetween: expense.contributions
+          .map((c) => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes }))
+          .filter((c) => c.weight > 0)
       }
-    });
-    setExpenses(expensesPlus);
+    })
+    setExpenses(expensesPlus)
   }
 
   const apiGetSettlement = async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: 'no-store' });
-    const settlement = await response.json();
-    setSettlement(settlement);
+    const response = await fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: "no-store" })
+    const settlement = await response.json()
+    setSettlement(settlement)
   }
 
   const apiGetMembers = async () => {
-    const response = await fetch(`${api.base}/members?ledger=${ledger}`, { cache: 'no-store' });
-    const members = await response.json();
-    setMembers(members);
+    const response = await fetch(`${api.base}/members?ledger=${ledger}`, { cache: "no-store" })
+    const members = await response.json()
+    setMembers(members)
   }
 
   const apiGetLedgerInfo = async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}`, { cache: 'no-store' });
-    const ledgerInfo = await response.json();
-    setLedgerInfo(ledgerInfo);
+    const response = await fetch(`${api.base}/ledgers/${ledger}`, { cache: "no-store" })
+    const ledgerInfo = await response.json()
+    setLedgerInfo(ledgerInfo)
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     const fetchData = async () => {
-      await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()]);
-    };
-    fetchData();
-  }, [ledger]);
+      await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()])
+    }
+    await fetchData()
+  }, [ledger])
 
-  useEffect(() => {
-    const categories = uniq (expenses.map((e) => e.category));
-    setCategories(categories);
-  }, [expenses]);
-  
-  const pushMember = async (name) => {
-    const member = { name, ledger, is_active: true };
-    
-    await fetch(`${api.base}/members`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(member)
-    });
+  // useEffect(() => {
+  //   const categories = uniq(expenses.map((e) => e.category))
+  //   setCategories(categories)
+  // }, [expenses])
 
-    apiGetMembers();
-    apiGetBalance();
-  }
+  const pushMember = useCallback(
+    async (name) => {
+      const member = { name, ledger, is_active: true }
 
-  const editMember = async (id, name) => {
-    const member = { name, ledger, is_active: true };
-   
-    await fetch(`${api.base}/members/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(member)
-    });
+      await fetch(`${api.base}/members`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(member)
+      })
 
-    apiGetMembers();
-    apiGetBalance();
-    apiGetSettlement();
-  }
+      await apiGetMembers()
+      await apiGetBalance()
+    },
+    [ledger, apiGetMembers, apiGetBalance]
+  )
 
-  const deleteMember = async (id) => {
-    await fetch(`${api.base}/members/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
+  const editMember = useCallback(
+    async (id, name) => {
+      const member = { name, ledger, is_active: true }
 
-    apiGetMembers();
-    apiGetBalance();
-  }
+      await fetch(`${api.base}/members/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(member)
+      })
 
-  const pushExpense = async (name, currency, category, date, expense_type, contributions) => {
-    // contributions = [{ id, paid, weight }]
+      await apiGetMembers()
+      await apiGetBalance()
+      await apiGetSettlement()
+    },
+    [ledger, apiGetMembers, apiGetBalance, apiGetSettlement]
+  )
 
-    const expense = { name, ledger, currency, category, date, expense_type, contributions };
+  const deleteMember = useCallback(
+    async (id) => {
+      await fetch(`${api.base}/members/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: "{}"
+      })
 
-    await fetch(`${api.base}/transactions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(expense)
-    });
+      await apiGetMembers()
+      await apiGetBalance()
+    },
+    [ledger, apiGetMembers, apiGetBalance]
+  )
 
-    apiGetExpenses();
-    apiGetBalance();
-    apiGetSettlement();
-  }
+  const pushExpense = useCallback(
+    async (name, currency, category, date, expense_type, contributions) => {
+      // contributions = [{ id, paid, weight }]
 
-  const editExpense = async (id, name, currency, category, date, expense_type, contributions) => {
-    // contributions = [{ id, paid, weight }]
+      const expense = { name, ledger, currency, category, date, expense_type, contributions }
 
-    const expense = { name, ledger, currency, category, date, expense_type, contributions };
+      await fetch(`${api.base}/transactions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(expense)
+      })
 
-    await fetch(`${api.base}/transactions/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(expense)
-    });
+      await apiGetExpenses()
+      await apiGetBalance()
+      await apiGetSettlement()
+    },
+    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
+  )
 
-    apiGetExpenses();
-    apiGetBalance();
-    apiGetSettlement();
-  }
+  const editExpense = useCallback(
+    async (id, name, currency, category, date, expense_type, contributions) => {
+      // contributions = [{ id, paid, weight }]
 
-  const deleteExpense = async (id) => {
-    await fetch(`${api.base}/transactions/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: '{}'
-    });
+      const expense = { name, ledger, currency, category, date, expense_type, contributions }
 
-    apiGetExpenses();
-    apiGetBalance();
-    apiGetSettlement();
-  }
+      await fetch(`${api.base}/transactions/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(expense)
+      })
+
+      await apiGetExpenses()
+      await apiGetBalance()
+      await apiGetSettlement()
+    },
+    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
+  )
+
+  const deleteExpense = useCallback(
+    async (id) => {
+      await fetch(`${api.base}/transactions/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: "{}"
+      })
+
+      await apiGetExpenses()
+      await apiGetBalance()
+      await apiGetSettlement()
+    },
+    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
+  )
 
   return {
     balance,
@@ -272,5 +295,5 @@ export function useXpnzApi(ledger) {
     pushExpense,
     editExpense,
     deleteExpense
-  };
+  }
 }
