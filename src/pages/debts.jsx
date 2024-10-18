@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Drawer,
-  DrawerTrigger,
+  DrawerClose,
   DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
   DrawerDescription,
   DrawerFooter,
-  DrawerClose
+  DrawerHeader,
+  DrawerTitle
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 
-import { Check, Edit3, Trash, ClipboardCheck, Share, CircleCheckBig } from "lucide-react"
+import { Check, CircleCheckBig, ClipboardCheck } from "lucide-react"
 // import { useXpnzApi } from "@/hooks/useXpnzApi"
 import { useParams } from "react-router-dom"
 
-function useXpnzApi(ledgerId) {
-  return {
+const DebtsTab = () => {
+  const xpnzApi = {
     debts: [
       ["Alice", "Bob", 20],
       ["Bob", "Charlie", 30],
@@ -26,11 +25,9 @@ function useXpnzApi(ledgerId) {
       console.log("Settling debt")
     }
   }
-}
 
-const DebtsTab = () => {
-  const [debts, setDebts] = useState([])
-  const [loaded, setLoaded] = useState(false)
+  const [debts, setDebts] = useState(xpnzApi.debts)
+  const [loaded, setLoaded] = useState(true)
   const { ledgerId } = useParams()
   const [settleVisible, setSettleVisible] = useState(false)
   const [settleMemberFrom, setSettleMemberFrom] = useState("")
@@ -38,20 +35,7 @@ const DebtsTab = () => {
   const [settleAmount, setSettleAmount] = useState(0)
   const [copied, setCopied] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
-  const [buttonClass, setButtonClass] = useState(
-    "bg-gray-200 hover:bg-blue-500 dark:bg-gray-700 dark:hover:bg-blue-600"
-  )
-
-  const xpnzApi = useXpnzApi(ledgerId)
-
-  useEffect(() => {
-    const fetchDebts = () => {
-      const debtsData = xpnzApi.debts
-      setDebts(debtsData)
-      setLoaded(true)
-    }
-    fetchDebts()
-  }, [ledgerId, xpnzApi])
+  const [buttonClass, setButtonClass] = useState("")
 
   const openSettleDialog = (memberFrom, memberTo, amount) => {
     setSettleMemberFrom(memberFrom)
@@ -121,7 +105,7 @@ const DebtsTab = () => {
 
       {debts.length !== 0 && loaded && (
         <div className="flex w-8">
-          <Button onClick={copyDebts} className={`rounded-lg p-3 shadow-lg dark:text-white ${buttonClass}`}>
+          <Button onClick={copyDebts} variant={"ghost"} className={`rounded-lg p-3 text-primary ${buttonClass}`}>
             {!animationComplete ? <ClipboardCheck className="w-5 h-6" /> : <Check className="w-5 h-6" />}
           </Button>
         </div>
