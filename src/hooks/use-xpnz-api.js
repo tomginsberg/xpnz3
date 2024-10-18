@@ -30,11 +30,17 @@ export function useExpenses(ledger) {
     setMembers(members)
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([apiGetMembers(), apiGetExpenses()])
+      try {
+        // Fetch members and expenses concurrently
+        await Promise.all([apiGetMembers(), apiGetExpenses()])
+      } catch (error) {
+        console.error("Failed to fetch data:", error)
+      }
     }
-    await fetchData()
+
+    fetchData() // Call the async function immediately
   }, [ledger])
 
   const pushMember = async (name) => {
@@ -170,11 +176,17 @@ export function useXpnzApi(ledger) {
     setLedgerInfo(ledgerInfo)
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()])
+      try {
+        // Fetch all data concurrently
+        await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()])
+      } catch (error) {
+        console.error("Failed to fetch data:", error)
+      }
     }
-    await fetchData()
+
+    fetchData() // Call the async function immediately
   }, [ledger])
 
   // useEffect(() => {
