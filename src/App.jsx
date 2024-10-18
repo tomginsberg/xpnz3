@@ -1,11 +1,8 @@
 // App.jsx
-import React, { useEffect, useMemo, useState } from "react"
-import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from "react-router-dom"
+import React, { Suspense, useEffect, useMemo, useState } from "react"
+import { BrowserRouter as Router, Route, Routes, useParams } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
-import ExpensesTab from "@/pages/expenses"
-import MembersTab from "@/pages/members"
-import DebtsTab from "@/pages/debts"
 import { ThemeProvider } from "@/components/theme-provider"
 import { generateRandomLedgerData } from "@/api/client.js"
 import ExpenseDrawer from "@/components/expense-drawer"
@@ -16,6 +13,11 @@ import { Toaster } from "@/components/ui/toaster"
 
 import Home from "@/pages/home"
 import Error from "@/pages/error"
+import Loading from "@/components/loading"
+
+const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
+const MembersTab = React.lazy(() => import("@/pages/members"))
+const DebtsTab = React.lazy(() => import("@/pages/debts"))
 
 export default function App() {
   return (
@@ -23,11 +25,32 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/:ledgerName" element={<LedgerApp target="expenses" />} />
-          <Route path="/:ledgerName/expenses" element={<LedgerApp target="expenses" />} />
-          <Route path="/:ledgerName/members" element={<LedgerApp target="members" />} />
-          <Route path="/:ledgerName/debts" element={<LedgerApp target="debts" />} />
-
+          <Route path="/:ledgerName">
+            <Route
+              index
+              element={
+                <Suspense fallback={<Loading />}>
+                  <LedgerApp target="expenses" />
+                </Suspense>
+              }
+            />
+            <Route
+              path="members"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <LedgerApp target="members" />
+                </Suspense>
+              }
+            />
+            <Route
+              path="debts"
+              element={
+                <Suspense fallback={<Loading />}>
+                  <LedgerApp target="debts" />
+                </Suspense>
+              }
+            />
+          </Route>
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>
