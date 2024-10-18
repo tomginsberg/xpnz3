@@ -9,6 +9,7 @@ import { Edit, Trash2, UserRoundCheck, UserRoundPlus } from "lucide-react"
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { useToast } from "@/hooks/use-toast.ts"
+import { useParams } from "react-router-dom"
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props
@@ -138,11 +139,6 @@ function MembersRow(props) {
   )
 }
 
-// relies on animate-blink defined in tailwind.config.js
-const FakeCursor = () => (
-  <span className="absolute focus:hidden peer-focus:hidden flex top-[0.3rem] left-0 h-[1.6rem] w-px bg-white animate-blink"></span>
-)
-
 function MembersAdd(props) {
   const { onAdd, placeholder, existingMembers, className } = props
   const [name, setName] = useState("")
@@ -179,7 +175,8 @@ function MembersAdd(props) {
   )
 }
 
-export default function MembersPage({ ledgerName }) {
+export default function MembersPage() {
+  const { ledgerName } = useParams()
   const { balance: trueBalance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName)
 
   const [balance, setBalance] = useState(trueBalance)
