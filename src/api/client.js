@@ -1,141 +1,141 @@
-import { api } from '../../xpnz.config.js'
+import { api } from "../../xpnz.config.js"
 
 export const expenseNames = [
-  'Coffee Break ☕',
-  'Pet Supplies 🐾',
-  'Book Club 📚',
-  'Movie Night 🎬',
-  'Travel Fund ✈️',
-  'Art Supplies 🎨',
-  'Game Night 🎲',
-  'Concert Tickets 🎟️',
-  'Tech Gadgets 📱',
-  'Gardening Tools 🌱',
-  'Pizza Party 🍕',
-  'Ice Cream Treats 🍦',
-  'Sunday Brunch 🍳',
-  'Fitness Club 🏋️',
-  'Spa Day 💆',
-  'Chocolate Stash 🍫',
-  'Sushi Date 🍣',
-  'Beach Day 🏖️',
-  'Happy Hour 🍹',
-  'Cheese Platter 🧀',
-  'DIY Projects 🔨',
-  'Tea Time 🫖',
-  'Vegan Snacks 🥑',
-  'Wine Night 🍷',
-  'Burger Bash 🍔',
-  'Music Streaming 🎵',
-  'Magic Show 🎩',
-  'Vintage Finds 🕰️',
-  'Plant Babies 🪴',
-  'Candle Collection 🕯️',
-  'Makeup Magic 💄',
-  'Baking Bonanza 🧁',
-  'Holiday Gifts 🎁',
-  'Car Wash 🚗',
-  'Photography 📸',
-  'Knitting Kit 🧶',
-  'Craft Beer 🍺',
-  'Smoothie Sips 🥤',
-  'Science Fiction 🛸',
-  'Sports Gear ⚽',
-  'Picnic Party 🧺',
-  'Comedy Club 😂',
-  'Thrift Shopping 🛍️',
-  'Aquarium Visit 🐠',
-  'Skate Session 🛹',
-  'Ballet Tickets 🩰',
-  'Poetry Books 📖',
-  'Farmers Market 🥦',
-  'Star Gazing 🔭',
-  'Puzzle Pieces 🧩',
-  'Herbal Remedies 🌿',
-  'Video Games 🎮',
-  'Jazz Night 🎷',
-  'Camping Trip ⛺',
-  'Fast Food Frenzy 🍟',
-  'New Sneakers 👟',
-  'Online Course 🖥️',
-  'Fishing Trip 🎣',
-  'Tailgate Party 🍗',
-  'Ghost Tour 👻',
-  ''
+  "Coffee Break ☕",
+  "Pet Supplies 🐾",
+  "Book Club 📚",
+  "Movie Night 🎬",
+  "Travel Fund ✈️",
+  "Art Supplies 🎨",
+  "Game Night 🎲",
+  "Concert Tickets 🎟️",
+  "Tech Gadgets 📱",
+  "Gardening Tools 🌱",
+  "Pizza Party 🍕",
+  "Ice Cream Treats 🍦",
+  "Sunday Brunch 🍳",
+  "Fitness Club 🏋️",
+  "Spa Day 💆",
+  "Chocolate Stash 🍫",
+  "Sushi Date 🍣",
+  "Beach Day 🏖️",
+  "Happy Hour 🍹",
+  "Cheese Platter 🧀",
+  "DIY Projects 🔨",
+  "Tea Time 🫖",
+  "Vegan Snacks 🥑",
+  "Wine Night 🍷",
+  "Burger Bash 🍔",
+  "Music Streaming 🎵",
+  "Magic Show 🎩",
+  "Vintage Finds 🕰️",
+  "Plant Babies 🪴",
+  "Candle Collection 🕯️",
+  "Makeup Magic 💄",
+  "Baking Bonanza 🧁",
+  "Holiday Gifts 🎁",
+  "Car Wash 🚗",
+  "Photography 📸",
+  "Knitting Kit 🧶",
+  "Craft Beer 🍺",
+  "Smoothie Sips 🥤",
+  "Science Fiction 🛸",
+  "Sports Gear ⚽",
+  "Picnic Party 🧺",
+  "Comedy Club 😂",
+  "Thrift Shopping 🛍️",
+  "Aquarium Visit 🐠",
+  "Skate Session 🛹",
+  "Ballet Tickets 🩰",
+  "Poetry Books 📖",
+  "Farmers Market 🥦",
+  "Star Gazing 🔭",
+  "Puzzle Pieces 🧩",
+  "Herbal Remedies 🌿",
+  "Video Games 🎮",
+  "Jazz Night 🎷",
+  "Camping Trip ⛺",
+  "Fast Food Frenzy 🍟",
+  "New Sneakers 👟",
+  "Online Course 🖥️",
+  "Fishing Trip 🎣",
+  "Tailgate Party 🍗",
+  "Ghost Tour 👻",
+  ""
 ]
 export const categories = [
-  '🚰 Utilities',
-  '🛒 Groceries',
-  '🏠 Rent',
-  '🚗 Auto',
-  '💳 Subscriptions',
-  '🛍️ Shopping',
-  '🏥 Health',
-  '🍽️ Dining',
-  '🚌 Transit',
-  '🎉 Entertainment',
-  '🏋️ Fitness',
-  '📚 Education',
-  '🐾 Pets',
-  '🎁 Gifts',
-  '🧹 Household',
-  '💻 Internet',
-  '📱 Phone',
-  '🛫 Travel',
-  '🍷 Alcohol',
-  '🧴 Personal Care',
-  '💡 Electricity',
-  '🌊 Water',
-  '🚿 Gas',
-  '🌐 Cable',
-  '📉 Investments',
-  '🛡️ Insurance',
-  '📬 Postal',
-  '🧾 Taxes',
-  '👶 Childcare',
-  '🎓 Tuition',
-  '🧰 Maintenance',
-  '🎨 Crafts',
-  '📸 Photography',
-  '🎠 Hobbies',
-  '🚸 School Supplies',
-  '🧢 Sportswear',
-  '⚽ Sports',
-  '👟 Footwear',
-  '🔧 Tools',
-  '💊 Supplements',
-  '💒 Donations',
-  '❓ Misc',
-  '🖥️ Tech',
-  '📖 Books',
-  '🧽 Cleaning',
-  '🚪 Home Improvement',
-  '🏛️ Museums',
-  '🎸 Music Instruments',
-  '🎭 Theater',
-  '🚬 Tobacco',
-  ''
+  "🚰 Utilities",
+  "🛒 Groceries",
+  "🏠 Rent",
+  "🚗 Auto",
+  "💳 Subscriptions",
+  "🛍️ Shopping",
+  "🏥 Health",
+  "🍽️ Dining",
+  "🚌 Transit",
+  "🎉 Entertainment",
+  "🏋️ Fitness",
+  "📚 Education",
+  "🐾 Pets",
+  "🎁 Gifts",
+  "🧹 Household",
+  "💻 Internet",
+  "📱 Phone",
+  "🛫 Travel",
+  "🍷 Alcohol",
+  "🧴 Personal Care",
+  "💡 Electricity",
+  "🌊 Water",
+  "🚿 Gas",
+  "🌐 Cable",
+  "📉 Investments",
+  "🛡️ Insurance",
+  "📬 Postal",
+  "🧾 Taxes",
+  "👶 Childcare",
+  "🎓 Tuition",
+  "🧰 Maintenance",
+  "🎨 Crafts",
+  "📸 Photography",
+  "🎠 Hobbies",
+  "🚸 School Supplies",
+  "🧢 Sportswear",
+  "⚽ Sports",
+  "👟 Footwear",
+  "🔧 Tools",
+  "💊 Supplements",
+  "💒 Donations",
+  "❓ Misc",
+  "🖥️ Tech",
+  "📖 Books",
+  "🧽 Cleaning",
+  "🚪 Home Improvement",
+  "🏛️ Museums",
+  "🎸 Music Instruments",
+  "🎭 Theater",
+  "🚬 Tobacco",
+  ""
 ]
-export const members = ['Alice', 'Bob', 'Charlie', 'David', 'Eve']
+export const members = ["Alice", "Bob", "Charlie", "David", "Eve"]
 
 export const emptyExpense = {
-  id: '',
-  name: '',
-  amount: '',
-  currency: 'CAD',
+  id: "",
+  name: "",
+  amount: "",
+  currency: "CAD",
   income: false,
   date: new Date(),
-  category: '',
+  category: "",
   paidBy: [], // [{ member: string, amount: number }]
   splitBetween: [] // [{ member: string, weight: number, normalizedWeight: number }]
 }
 
 export async function getExpenses(ledger) {
-  const expensesPromise = fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: 'no-store' })
+  const expensesPromise = fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
     .then((res) => res.json())
     .then((expenses) => {
       expenses.forEach((d) => {
-        d.income = d.expense_type === 'income'
+        d.income = d.expense_type === "income"
         d.paidBy = d.contributions.map((c) => ({ member: c.member, amount: c.paid })).filter((c) => c.amount > 0)
         d.splitBetween = d.contributions
           .map((c) => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes }))
@@ -144,10 +144,10 @@ export async function getExpenses(ledger) {
       return expenses
     })
 
-  const balancesPromise = fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: 'no-store' }).then((res) =>
+  const balancesPromise = fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" }).then((res) =>
     res.json()
   )
-  const debtsPromise = fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: 'no-store' }).then((res) =>
+  const debtsPromise = fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: "no-store" }).then((res) =>
     res.json()
   )
 
@@ -157,27 +157,27 @@ export async function getExpenses(ledger) {
 }
 
 export const currencies = {
-  CAD: '🇨🇦 CAD',
-  USD: '🇺🇸 USD',
-  EUR: '🇪🇺 EUR',
-  JPY: '🇯🇵 JPY',
-  GBP: '🇬🇧 GBP',
-  PLN: '🇵🇱 PLN',
-  CNY: '🇨🇳 CNY',
-  INR: '🇮🇳 INR',
-  RUB: '🇷🇺 RUB',
-  BRL: '🇧🇷 BRL',
-  MXN: '🇲🇽 MXN',
-  AUD: '🇦🇺 AUD',
-  KRW: '🇰🇷 KRW',
-  IDR: '🇮🇩 IDR',
-  TRY: '🇹🇷 TRY',
-  ZAR: '🇿🇦 ZAR',
-  NGN: '🇳🇬 NGN',
-  SEK: '🇸🇪 SEK'
+  CAD: "🇨🇦 CAD",
+  USD: "🇺🇸 USD",
+  EUR: "🇪🇺 EUR",
+  JPY: "🇯🇵 JPY",
+  GBP: "🇬🇧 GBP",
+  PLN: "🇵🇱 PLN",
+  CNY: "🇨🇳 CNY",
+  INR: "🇮🇳 INR",
+  RUB: "🇷🇺 RUB",
+  BRL: "🇧🇷 BRL",
+  MXN: "🇲🇽 MXN",
+  AUD: "🇦🇺 AUD",
+  KRW: "🇰🇷 KRW",
+  IDR: "🇮🇩 IDR",
+  TRY: "🇹🇷 TRY",
+  ZAR: "🇿🇦 ZAR",
+  NGN: "🇳🇬 NGN",
+  SEK: "🇸🇪 SEK"
 }
 
-export function generateRandomExpense(defaultCurrency = 'CAD') {
+export function generateRandomExpense(defaultCurrency = "CAD") {
   let name = expenseNames[Math.floor(Math.random() * expenseNames.length)]
 
   const date = new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000).toDateString()
@@ -187,8 +187,8 @@ export function generateRandomExpense(defaultCurrency = 'CAD') {
   let exchangeRate = getExchangeRate(currency, defaultCurrency)
   const income = false
 
-  if (name === '') {
-    name = 'Expense'
+  if (name === "") {
+    name = "Expense"
   }
 
   // Generate random paidBy
@@ -310,7 +310,7 @@ export function computeBalance(expenses) {
       balances[split.member] += split.normalizedWeight * incomeFactor
     })
   })
-  return balances
+  return Object.keys(balances)
 }
 
 export function generateRandomLedgerData(count) {
