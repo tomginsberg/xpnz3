@@ -29,7 +29,7 @@ function LedgerLayout() {
 
   // Expense data and functions
   const { expenses, members, isDeleteDrawerOpen, closeDeleteDrawer, onDeleteClick, handleDelete, copyExpense } =
-    React.useMemo(() => useExpense(ledgerName), [ledgerName])
+    useExpense(ledgerName)
   const memberNames = members.map((member) => member.name)
 
   // Functions to control ExpenseDrawer
