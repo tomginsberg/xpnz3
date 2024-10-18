@@ -56,6 +56,7 @@ function XpnzMenuIcon() {
 
 function XpnzNavigationButton(props) {
   const { route, icon, label } = props
+  const navigate = useNavigate()
 
   return (
     <Button onClick={() => navigate(route)} variant="outline" className="justify-start">
@@ -88,13 +89,11 @@ function XpnzDropdown(props) {
   )
 }
 
-export default function Topbar({ ledger, onSearch, pageType }) {
+export default function Topbar({ onSearch, pageType }) {
   const [currency, setCurrency] = useState("CAD")
   const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark")
 
   const { setTheme } = useTheme()
-
-  const navigate = useNavigate()
 
   function toggleTheme() {
     const newTheme = themeName === "dark" ? "light" : "dark"
