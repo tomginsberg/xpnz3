@@ -8,7 +8,7 @@ import { generateRandomLedgerData } from "@/api/client.js"
 import ExpenseDrawer from "@/components/expense-drawer"
 import HoldToDelete from "@/components/delete"
 import Fuse from "fuse.js"
-import useExpense from "@/hooks/useExpense.js"
+import useExpense from "@/hooks/use-expense.js"
 import { Toaster } from "@/components/ui/toaster"
 
 import Home from "@/pages/home"
@@ -59,8 +59,6 @@ export default function App() {
   )
 }
 
-const ledgerData = generateRandomLedgerData(50)
-
 function LedgerApp({ target }) {
   const { ledgerName } = useParams()
   const [searchTerm, setSearchTerm] = useState("")
@@ -105,7 +103,7 @@ function LedgerApp({ target }) {
       case "expenses":
         return (
           <ExpensesTab
-            expenses={expenses}
+            expenses={filteredExpenses}
             openEditDrawer={openEditExpenseDrawer}
             onDeleteClick={onDeleteClick}
             onCopyClick={copyExpense}
@@ -122,7 +120,7 @@ function LedgerApp({ target }) {
 
   return (
     <>
-      <Topbar ledger={ledgerName} onSearch={setSearchTerm} pageType={target} />
+      <Topbar onSearch={setSearchTerm} pageType={target} />
       <CurrentTab />
       <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} />
       <ExpenseDrawer
