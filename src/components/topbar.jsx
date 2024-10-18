@@ -1,7 +1,7 @@
 // component topbar
 
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import { Moon, Search, Sun } from "lucide-react"
 
@@ -22,6 +22,7 @@ import { Separator } from "@/components/ui/separator"
 
 import { currencies } from "@/api/client.js"
 import { useTheme } from "@/components/theme-provider"
+import Error from "@/pages/error"
 
 function XpnzMenuIcon() {
   return (
@@ -89,7 +90,13 @@ function XpnzDropdown(props) {
   )
 }
 
-export default function Topbar({ onSearch, pageType }) {
+export default function Topbar({ onSearch }) {
+  const location = useLocation()
+  // Extract the page type from the pathname
+  const pathSegments = location.pathname.split("/")
+  console.log(pathSegments)
+  const pageType = pathSegments[2] || "expenses"
+
   const [currency, setCurrency] = useState("CAD")
   const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark")
 
@@ -111,7 +118,7 @@ export default function Topbar({ onSearch, pageType }) {
 
   const headline = headlines[pageType]
 
-  if (!headline) return null
+  if (!headline) return <Error />
 
   return (
     <div className="fixed top-0 left-0 right-0 z-10 border-b bg-card">
@@ -185,11 +192,12 @@ export default function Topbar({ onSearch, pageType }) {
 
       {pageType === "expenses" && (
         <motion.div
-          className="px-4 overflow-hidden"
-          initial={{ height: 0, opacity: 0 }} // Initially hidden
-          animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
-          exit={{ height: 0, opacity: 0 }} // Shrink back to hidden
-          transition={{ duration: 0.3, ease: "easeInOut" }} // Control the duration of the animation
+          className="px-4"
+          // disabled animations ofr now
+          // initial={{ height: 0, opacity: 0 }} // Initially hidden
+          // animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
+          // exit={{ height: 0, opacity: 0 }} // Shrink back to hidden
+          // transition={{ duration: 0.3, ease: "easeInOut" }} // Control the duration of the animation
         >
           <div className="relative mb-4 mt-1">
             <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
