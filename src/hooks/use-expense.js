@@ -18,6 +18,7 @@ const useExpense = (ledgerName) => {
   const [expenseToDelete, setExpenseToDelete] = useState(null)
 
   const { expenses, members, deleteExpense } = useExpenses(ledgerName)
+  const memberNames = members.map((member) => member.name)
 
   const setExpenses = () => {} // stub
 
@@ -77,6 +78,7 @@ const useExpense = (ledgerName) => {
     handleDelete,
     copyExpense,
     members,
+    memberNames,
     expenses
   }
 }
