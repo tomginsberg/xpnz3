@@ -7,8 +7,10 @@ import { api } from "@/../xpnz.config.js"
 export function useExpenses(ledger) {
   const [members, setMembers] = useState([])
   const [expenses, setExpenses] = useState([])
+  const [loading, setLoading] = useState(true) // Add loading state
 
   const apiGetExpenses = async () => {
+    console.log("fetching expenses")
     const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
     const expenses = await response.json()
     const expensesPlus = expenses.map((expense) => {
@@ -31,16 +33,23 @@ export function useExpenses(ledger) {
   }
 
   useEffect(() => {
+    // get current time for logging
+    const now = new Date().toISOString()
     const fetchData = async () => {
       try {
-        // Fetch members and expenses concurrently
+        setLoading(true)
+        console.log("fetch loading", loading)
         await Promise.all([apiGetMembers(), apiGetExpenses()])
       } catch (error) {
         console.error("Failed to fetch data:", error)
+      } finally {
+        // print elapsed time since now in ms
+        console.log("fetchData in", new Date().getTime() - new Date(now).getTime(), "ms")
+        setLoading(false) // Set loading to false after data is fetched
       }
     }
 
-    fetchData() // Call the async function immediately
+    fetchData()
   }, [ledger])
 
   const pushMember = async (name) => {
@@ -118,6 +127,7 @@ export function useExpenses(ledger) {
   return {
     expenses,
     members,
+    loading,
     pushMember,
     editMember,
     deleteMember,
