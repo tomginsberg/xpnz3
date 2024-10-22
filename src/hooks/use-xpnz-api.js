@@ -123,7 +123,6 @@ export function useExpenses(ledger) {
   return {
     expenses,
     members,
-    loading,
     pushMember,
     editMember,
     deleteMember,
