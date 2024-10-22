@@ -94,7 +94,6 @@ export default function Topbar({ onSearch }) {
   const location = useLocation()
   // Extract the page type from the pathname
   const pathSegments = location.pathname.split("/")
-  console.log(pathSegments)
   const pageType = pathSegments[2] || "expenses"
 
   const [currency, setCurrency] = useState("CAD")
@@ -192,12 +191,11 @@ export default function Topbar({ onSearch }) {
 
       {pageType === "expenses" && (
         <motion.div
-          className="px-4"
-          // disabled animations ofr now
-          // initial={{ height: 0, opacity: 0 }} // Initially hidden
+          className="px-4 overflow-hidden"
+          // disabled animations for now
+          // initial={{ height: 0, opacity: 1 }} // Initially hidden
           // animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
-          // exit={{ height: 0, opacity: 0 }} // Shrink back to hidden
-          // transition={{ duration: 0.3, ease: "easeInOut" }} // Control the duration of the animation
+          // transition={{ duration: 5 }} // Control the duration of the animation
         >
           <div className="relative mb-4 mt-1">
             <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
