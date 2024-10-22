@@ -49,12 +49,13 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick })
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div
+        <motion.div
           // layout
           // ref={ref}
-          // initial={{ opacity: 0, y: 30, scale: 0.8 }}
+          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           // animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 1, y: 30, scale: 0.8 }}
-          // transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3 }}
           onClick={toggleDetails}
           // exit={{ opacity: 0, scale: 0.8 }}
           className="break-inside-avoid select-none mb-4"
@@ -137,7 +138,7 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick })
               )}
             </AnimatePresence>
           </motion.div>
-        </div>
+        </motion.div>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onClick={handleEditClick}>
