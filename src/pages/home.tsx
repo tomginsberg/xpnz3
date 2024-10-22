@@ -1,4 +1,4 @@
-import { ArrowUpRightSquareIcon, Moon, Search, Sun } from "lucide-react"
+import { ArrowUpRightSquareIcon, Check, ChevronsUpDown, Moon, Search, Sun } from "lucide-react"
 
 import React, { useEffect, useState } from "react"
 import RetroGrid from "../components/ui/retro-grid"
@@ -20,51 +20,28 @@ import {
 } from "@/components/ui/drawer"
 import { Label } from "../components/ui/label"
 
-const sampleLedgers = [
-  { label: "Vacation 2023", value: "vacation-2023", icon: "Plane" },
-  { label: "Roommates", value: "roommates", icon: "Home" },
-  { label: "Office Lunch", value: "office-lunch", icon: "Utensils" }
-]
-
-import { Check, ChevronsUpDown } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js"
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit"
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js"
-  },
-  {
-    value: "remix",
-    label: "Remix"
-  },
-  {
-    value: "astro",
-    label: "Astro"
-  }
+const sampleLedgers = [
+  { label: "Trap 2", value: "trap2", icon: "Plane" },
+  { label: "Trap", value: "trap", icon: "Home" },
+  { label: "Test", value: "test", icon: "Utensils" },
+  { label: "Lions Head", value: "lionshead", icon: "Users" },
+  { label: "Camping", value: "camping", icon: "Users" }
 ]
 
-export function ComboboxDemo() {
+export function Combobox({ value, setValue }: { value: string; setValue: (value: string) => void }) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const navigate = useNavigate()
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="secondary" role="combobox" aria-expanded={open} className="w-full justify-between">
-          {value ? frameworks.find((framework) => framework.value === value)?.label : "Find a ledger..."}
+          {value ? value : "Find a ledger..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -74,17 +51,16 @@ export function ComboboxDemo() {
           <CommandList>
             <CommandEmpty>No ledger found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {sampleLedgers.map((ledger) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue)
-                    setOpen(false)
+                  key={ledger.value}
+                  value={ledger.label}
+                  onSelect={(x) => {
+                    navigate(`/${ledger.value}`)
                   }}
                 >
-                  <Check className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
-                  {framework.label}
+                  <Check className={cn("mr-2 h-4 w-4", value === ledger.value ? "opacity-100" : "opacity-0")} />
+                  {ledger.label}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -106,31 +82,37 @@ export default function Home() {
   const [step, setStep] = useState(1)
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-transparent border border-white text-white rounded-lg shadow-xl p-8 w-full max-w-md"
-      >
-        <div className="mb-4">
-          <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4b8/512.gif" alt="Group Expense" />
-        </div>
-        <h1 className="text-4xl font-bold text-center mb-6">xpnz</h1>
-        <p className="text-center mb-6">Track group expenses with ease</p>
-
-        <div className="mb-6">
-          <ComboboxDemo />
-        </div>
-
-        <Button
-          onClick={() => setIsCreateDrawerOpen(true)}
-          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded"
+    <>
+      <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-transparent border border-white text-white rounded-lg shadow-xl p-8 w-full max-w-md"
         >
-          Create New Ledger
-        </Button>
-      </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: -200, scale: 1 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 2, bounce: 0.5, type: "spring" }}
+            className="mb-4"
+          >
+            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4b8/512.gif" alt="Group Expense" />
+          </motion.div>
+          <h1 className="text-4xl font-bold text-center mb-6">xpnz</h1>
+          <p className="text-center mb-6">Track group expenses with ease</p>
 
+          <div className="mb-6">
+            <Combobox value={selectedLedger} setValue={setSelectedLedger} />
+          </div>
+
+          <Button
+            onClick={() => setIsCreateDrawerOpen(true)}
+            className="w-full border border-gray-400 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg"
+          >
+            Create New Ledger
+          </Button>
+        </motion.div>
+      </div>
       <Drawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen}>
         <DrawerContent>
           <DrawerHeader>
@@ -204,7 +186,7 @@ export default function Home() {
           )}
         </DrawerContent>
       </Drawer>
-    </div>
+    </>
   )
 }
 
