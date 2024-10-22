@@ -686,7 +686,7 @@ async function transactionsDeleteHandler(request, reply) {
 }
 
 const ledgersGetHandler = async (request, reply) => {
-  return await db("ledgers").select()
+  return db("ledgers").select()
 }
 
 async function ledgersGetHandlerWithRoute(request, reply) {
