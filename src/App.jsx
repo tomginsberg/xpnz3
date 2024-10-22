@@ -35,15 +35,13 @@ function LedgerLayout() {
     closeExpenseDrawer,
     isDrawerOpen,
     isEditMode,
-    selectedExpense,
-    loading
+    selectedExpense
   } = useExpense(ledgerName)
 
   // Context value to pass to child components
   const outletContext = {
     searchTerm,
     expenses,
-    loading,
     openEditExpenseDrawer,
     onDeleteClick,
     copyExpense

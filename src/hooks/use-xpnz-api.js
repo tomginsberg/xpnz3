@@ -7,7 +7,6 @@ import { api } from "@/../xpnz.config.js"
 export function useExpenses(ledger) {
   const [members, setMembers] = useState([])
   const [expenses, setExpenses] = useState([])
-  const [loading, setLoading] = useState(true) // Add loading state
 
   const apiGetExpenses = async () => {
     console.log("fetching expenses")
@@ -37,15 +36,12 @@ export function useExpenses(ledger) {
     const now = new Date().toISOString()
     const fetchData = async () => {
       try {
-        setLoading(true)
-        console.log("fetch loading", loading)
         await Promise.all([apiGetMembers(), apiGetExpenses()])
       } catch (error) {
         console.error("Failed to fetch data:", error)
       } finally {
         // print elapsed time since now in ms
         console.log("fetchData in", new Date().getTime() - new Date(now).getTime(), "ms")
-        setLoading(false) // Set loading to false after data is fetched
       }
     }
 

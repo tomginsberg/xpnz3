@@ -5,7 +5,7 @@ import { useOutletContext } from "react-router-dom"
 import Fuse from "fuse.js"
 
 export default function ExpenseMasonary() {
-  const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense, loading } = useOutletContext()
+  const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense } = useOutletContext()
   const [filteredExpenses, setFilteredExpenses] = useState([])
 
   const fuse = useMemo(
