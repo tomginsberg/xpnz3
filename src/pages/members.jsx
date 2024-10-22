@@ -65,7 +65,12 @@ function MembersRow(props) {
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}>
+        <motion.div
+          className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}
+          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
           <form className="flex-row flex items-center justify-end w-full" onSubmit={handleSubmit}>
             <div className="flex-grow">
               <Input
@@ -108,7 +113,7 @@ function MembersRow(props) {
               </AnimatePresence>
             </Button>
           </form>
-        </div>
+        </motion.div>
       </ContextMenuTrigger>
       <ContextMenuContent>
         {isEditing ? (
@@ -153,7 +158,10 @@ function MembersAdd(props) {
 
   return (
     <form onSubmit={handleAdd}>
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 30, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.3 }}
         className={`flex flex-row ${className} justify-between rounded-lg bg-card px-4 py-2 relative
           ${isDuplicate ? "ring-1 ring-red-500" : ""}`}
       >
@@ -170,7 +178,7 @@ function MembersAdd(props) {
             <UserRoundPlus className="text-gray-700 dark:text-gray-200" />
           </Button>
         </div>
-      </div>
+      </motion.div>
     </form>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import {
   Drawer,
   DrawerClose,
@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 
-import { Check, CircleCheckBig, ClipboardCheck } from "lucide-react"
-// import { useXpnzApi } from "@/hooks/useXpnzApi"
+import { Check, CircleCheckBig, ClipboardCheck, Share2 } from "lucide-react"
 import { useParams } from "react-router-dom"
+import { motion } from "framer-motion"
 
 const DebtsTab = () => {
   const xpnzApi = {
@@ -28,7 +28,7 @@ const DebtsTab = () => {
 
   const [debts, setDebts] = useState(xpnzApi.debts)
   const [loaded, setLoaded] = useState(true)
-  const { ledgerId } = useParams()
+  const { ledgerName } = useParams()
   const [settleVisible, setSettleVisible] = useState(false)
   const [settleMemberFrom, setSettleMemberFrom] = useState("")
   const [settleMemberTo, setSettleMemberTo] = useState("")
@@ -59,7 +59,7 @@ const DebtsTab = () => {
     let text = debts.map((debt) => `${debt[0]} → ${debt[1]}: $${debt[2]}`).join("\n")
     console.log(text)
 
-    text = `📈 Debts\n\n${text}\n\nsee expenses @ https://www.xpnz.ca/${ledgerId}`
+    text = `📈 Debts\n\n${text}\n\nsee expenses @ https://www.xpnz.ca/${ledgerName}`
 
     if (navigator.share) {
       await navigator.share({ text })
@@ -78,14 +78,20 @@ const DebtsTab = () => {
     setTimeout(() => {
       setCopied(false)
       setAnimationComplete(false)
-      setButtonClass("bg-gray-200 hover:bg-blue-500 dark:bg-gray-700 dark:hover:bg-blue-600")
+      setButtonClass("")
     }, 1500)
   }
 
   return (
     <div className="mt-[85px] px-2">
       {debts.map((member, index) => (
-        <div key={index} className="flex items-center rounded-lg bg-card p-4 my-3">
+        <motion.div
+          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          key={index}
+          className="flex items-center rounded-lg bg-card p-4 my-3"
+        >
           <div className="flex-1">
             <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
               {member[0]} → {member[1]}
@@ -100,15 +106,20 @@ const DebtsTab = () => {
           >
             <CircleCheckBig className="text-gray-700 dark:text-gray-200" />
           </Button>
-        </div>
+        </motion.div>
       ))}
 
       {debts.length !== 0 && loaded && (
-        <div className="flex w-8">
-          <Button onClick={copyDebts} variant={"ghost"} className={`rounded-lg p-3 text-primary ${buttonClass}`}>
-            {!animationComplete ? <ClipboardCheck className="w-5 h-6" /> : <Check className="w-5 h-6" />}
+        <motion.div
+          initial={{ opacity: 0, x: -200, scale: 0.8 }}
+          animate={{ opacity: 1, x: 0, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className=""
+        >
+          <Button onClick={copyDebts} variant={"outline"} className={`rounded-lg p-3 text-primary ${buttonClass}`}>
+            {!animationComplete ? <Share2 className="w-5 h-6" /> : <Check className="w-5 h-6" />}
           </Button>
-        </div>
+        </motion.div>
       )}
 
       {debts.length === 0 && loaded && (
