@@ -1,4 +1,5 @@
 // components/expenses.jsx
+
 import React, { Suspense } from "react"
 import { MasonaryLoading } from "@/components/loading"
 

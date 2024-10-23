@@ -4,7 +4,9 @@ import { motion, useInView, AnimatePresence } from "framer-motion"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Pencil, Trash2, Copy } from "lucide-react"
 
-const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick }) => {
+import { cn } from "@/lib/utils"
+
+const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, className }) => {
   // const ref = useRef(null)
   // const isInView = useInView(ref, { once: false, amount: 0.0 })
 
@@ -58,7 +60,7 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick })
           transition={{ duration: 0.3 }}
           onClick={toggleDetails}
           // exit={{ opacity: 0, scale: 0.8 }}
-          className="break-inside-avoid select-none mb-4"
+          className={cn("break-inside-avoid select-none", className)}
         >
           <motion.div
             className={
