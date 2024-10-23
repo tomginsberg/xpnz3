@@ -9,7 +9,7 @@ export function MasonaryLoading() {
 
   return (
     <div className="px-4 mt-[150px]">
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-[50px]">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-[50px]">
         {items.map((item) => (
           <Skeleton
             key={item.id}
@@ -24,7 +24,7 @@ export function MasonaryLoading() {
   )
 }
 
-function FlatLoading() {
+export function FlatLoading() {
   const items = Array.from({ length: 6 }, (_, i) => ({
     id: i
   }))
