@@ -24,7 +24,6 @@ function LedgerLayout() {
   // Expense data and functions
   const {
     expenses,
-    members,
     memberNames,
     isDeleteDrawerOpen,
     closeDeleteDrawer,
@@ -43,11 +42,9 @@ function LedgerLayout() {
   const outletContext = {
     searchTerm,
     expenses,
-    members,
     openEditExpenseDrawer,
     onDeleteClick,
-    copyExpense,
-    ledgerName
+    copyExpense
   }
 
   return (
