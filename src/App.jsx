@@ -8,17 +8,18 @@ import ExpenseDrawer from "@/components/expense-drawer"
 import HoldToDelete from "@/components/delete"
 import useExpense from "@/hooks/use-expense.js"
 import { Toaster } from "@/components/ui/toaster"
-
 import Home from "@/pages/home"
 import Error from "@/pages/error"
-import Loading from "@/components/loading"
+import { FlatLoading } from "@/components/loading"
+import ExpensesTab from "@/pages/expenses"
 
-const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
 const MembersTab = React.lazy(() => import("@/pages/members"))
 const DebtsTab = React.lazy(() => import("@/pages/debts"))
 
 function LedgerLayout() {
   const { ledgerName } = useParams()
+  const { tab } = useParams()
+  console.log(tab)
   const [searchTerm, setSearchTerm] = React.useState("")
 
   // Expense data and functions
@@ -50,9 +51,7 @@ function LedgerLayout() {
   return (
     <>
       <Topbar onSearch={setSearchTerm} />
-      <Suspense fallback={<Loading />}>
-        <Outlet context={outletContext} />
-      </Suspense>
+      <Outlet context={outletContext} />
       <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} />
       <ExpenseDrawer
         selectedExpense={selectedExpense}
@@ -73,11 +72,27 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/:ledgerName" element={<LedgerLayout />}>
+
+          <Route path="/:ledgerName/:tab?" element={<LedgerLayout />}>
             <Route index element={<ExpensesTab />} />
-            <Route path="members" element={<MembersTab />} />
-            <Route path="debts" element={<DebtsTab />} />
+            <Route
+              path="members"
+              element={
+                <Suspense fallback={<FlatLoading />}>
+                  <MembersTab />
+                </Suspense>
+              }
+            />
+            <Route
+              path="debts"
+              element={
+                <Suspense fallback={<FlatLoading />}>
+                  <DebtsTab />
+                </Suspense>
+              }
+            />
           </Route>
+
           <Route path="*" element={<Error />} />
         </Routes>
       </Router>
