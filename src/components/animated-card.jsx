@@ -1,15 +1,12 @@
 // components/animated-card.jsx
-import { useRef, useState, memo } from "react"
-import { motion, useInView, AnimatePresence } from "framer-motion"
+import { useState, memo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Pencil, Trash2, Copy } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
 const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, className }) => {
-  // const ref = useRef(null)
-  // const isInView = useInView(ref, { once: false, amount: 0.0 })
-
   const [showDetails, setShowDetails] = useState(false)
 
   const toggleDetails = () => {
@@ -52,15 +49,13 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
     <ContextMenu>
       <ContextMenuTrigger>
         <motion.div
-          // layout
-          // ref={ref}
           initial={{ opacity: 0, y: 30, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          // animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 1, y: 30, scale: 0.8 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3 }}
+          exit={{ opacity: 0, scale: 0.8, y: 30 }}
           onClick={toggleDetails}
-          // exit={{ opacity: 0, scale: 0.8 }}
           className={cn("break-inside-avoid select-none", className)}
+          viewport={{ once: false, amount: 0.25 }} // Optional: customize viewport behavior
         >
           <motion.div
             className={
