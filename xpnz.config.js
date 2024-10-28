@@ -1,1 +1,1 @@
-export const api = { base: 'http://localhost:3001' }  // API base URL
+export const api = { base: 'http://api2.xpnz.ca' }  // API base URL
