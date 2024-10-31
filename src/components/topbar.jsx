@@ -120,7 +120,7 @@ export default function Topbar({ onSearch }) {
   if (!headline) return <Error />
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-10 border-b bg-card">
+    <div className="fixed top-0 left-0 right-0 z-20 border-b bg-card">
       <div className="flex justify-between items-center p-4">
         <div className="text-black dark:text-white">
           <Sheet>
