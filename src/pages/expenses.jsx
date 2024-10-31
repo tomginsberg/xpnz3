@@ -4,10 +4,11 @@ import React, { Suspense } from "react"
 import { MasonaryLoading } from "@/components/loading"
 
 export default function ExpensesTab() {
-  const ExpenseMasonary = React.lazy(() => import("@/components/expense-masonary"))
+  const ExpenseMasonry = React.lazy(() => import("@/components/expense-masonry.jsx"))
+
   return (
     <Suspense fallback={<MasonaryLoading />}>
-      <ExpenseMasonary />
+      <ExpenseMasonry />
     </Suspense>
   )
 }
