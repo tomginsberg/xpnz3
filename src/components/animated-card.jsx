@@ -49,12 +49,12 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
     <ContextMenu>
       <ContextMenuTrigger>
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.8 }}
+          initial={{ opacity: 1, y: 30, scale: 0.8 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3 }}
-          exit={{ opacity: 0, scale: 0.8, y: 30 }}
+          // exit={{ opacity: 1, scale: 0.8, y: 30 }}
           onClick={toggleDetails}
-          className={cn("break-inside-avoid select-none", className)}
+          className={cn("break-inside-avoid select-none z-0", className)}
           viewport={{ once: false, amount: 0.25 }} // Optional: customize viewport behavior
         >
           <motion.div
