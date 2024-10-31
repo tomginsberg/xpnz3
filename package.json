@@ -51,6 +51,7 @@
     "knex": "^3.1.0",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.447.0",
+    "masonic": "^4.0.1",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.2.0",
