@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import {
   Drawer,
   DrawerClose,
@@ -10,25 +10,28 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 
+import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { Check, CircleCheckBig, ClipboardCheck, Share2 } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { motion } from "framer-motion"
 
 const DebtsTab = () => {
+  const { ledgerName } = useParams()
+  const { settlement: trueSettlement } = useXpnzApi(ledgerName)
   const xpnzApi = {
-    debts: [
-      ["Alice", "Bob", 20],
-      ["Bob", "Charlie", 30],
-      ["Charlie", "Alice", 40]
-    ],
+    // Order should be [Payer, Payee, Amount]
+    debts: trueSettlement.map(({payer, payee, amount}) => [payer, payee, amount]),
     settleDebt: () => {
       console.log("Settling debt")
     }
   }
-
   const [debts, setDebts] = useState(xpnzApi.debts)
+
+  useEffect(() => {
+    setDebts(xpnzApi.debts)
+  }, [trueSettlement])
+
   const [loaded, setLoaded] = useState(true)
-  const { ledgerName } = useParams()
   const [settleVisible, setSettleVisible] = useState(false)
   const [settleMemberFrom, setSettleMemberFrom] = useState("")
   const [settleMemberTo, setSettleMemberTo] = useState("")
