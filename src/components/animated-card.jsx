@@ -1,13 +1,16 @@
 // components/animated-card.jsx
-import { useState, memo } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { memo, useEffect, useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
-import { Pencil, Trash2, Copy } from "lucide-react"
+import { Copy, Pencil, Trash2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useOutletContext } from "react-router-dom"
 
 const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, className }) => {
-  const [showDetails, setShowDetails] = useState(false)
+  const { expandAll } = useOutletContext()
+
+  const [showDetails, setShowDetails] = useState(expandAll)
 
   const toggleDetails = () => {
     setShowDetails((prev) => !prev)

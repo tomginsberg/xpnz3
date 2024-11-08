@@ -1,5 +1,5 @@
 // App.jsx
-import React, { Suspense } from "react"
+import React, { Suspense, useCallback, useState } from "react"
 import { BrowserRouter as Router, Outlet, Route, Routes, useParams } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
@@ -18,8 +18,6 @@ const DebtsTab = React.lazy(() => import("@/pages/debts"))
 
 function LedgerLayout() {
   const { ledgerName } = useParams()
-  const { tab } = useParams()
-  console.log(tab)
   const [searchTerm, setSearchTerm] = React.useState("")
 
   // Expense data and functions
@@ -39,18 +37,24 @@ function LedgerLayout() {
     selectedExpense
   } = useExpense(ledgerName)
 
+  const [expandAll, setExpandAll] = useState(false)
+  const toggleExpansion = useCallback(() => {
+    setExpandAll(!expandAll)
+  }, [expandAll])
+
   // Context value to pass to child components
   const outletContext = {
     searchTerm,
     expenses,
     openEditExpenseDrawer,
     onDeleteClick,
-    copyExpense
+    copyExpense,
+    expandAll
   }
 
   return (
     <>
-      <Topbar onSearch={setSearchTerm} />
+      <Topbar onSearch={setSearchTerm} toggleExpansion={toggleExpansion} />
       <Outlet context={outletContext} />
       <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} />
       <ExpenseDrawer
