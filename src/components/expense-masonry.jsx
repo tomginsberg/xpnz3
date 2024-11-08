@@ -3,7 +3,7 @@ import { Masonry } from "masonic"
 import React, { useEffect, useMemo, useState } from "react"
 import { useOutletContext } from "react-router-dom"
 import Fuse from "fuse.js"
-import { ChevronDown, ChevronUp, Edit, UserRoundCheck } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +31,7 @@ export function ExpenseMasonry() {
     }
   }, [searchTerm, expenses, fuse])
 
-  const renderCard = ({ index, data }) => (
+  const renderCard = ({ data }) => (
     <AnimatedCard
       key={data.id}
       expense={data}
@@ -44,6 +44,7 @@ export function ExpenseMasonry() {
   return (
     <div className="mt-[150px] mx-4">
       <Masonry
+        key={filteredExpenses.length}
         items={filteredExpenses}
         columnGutter={14}
         rowGutter={14}
@@ -99,7 +100,7 @@ export default function ExpenseMasonryGrouped() {
       .sort((a, b) => new Date(b.expenses[0].date).getTime() - new Date(a.expenses[0].date).getTime())
   }, [filteredExpenses])
 
-  const renderCard = ({ index, data }) => (
+  const renderCard = ({ data }) => (
     <AnimatedCard
       key={data.id}
       expense={data}
@@ -110,9 +111,9 @@ export default function ExpenseMasonryGrouped() {
   )
 
   return (
-    <div className="mt-[133px]">
-      {groupedExpenses.map(({ monthYear, expenses }, index) => (
-        <MasonryMonth expenses={expenses} monthYear={monthYear} renderCard={renderCard} />
+    <div className="mt-[133px] mb-[20vh]">
+      {groupedExpenses.map(({ monthYear, expenses }) => (
+        <MasonryMonth key={monthYear} expenses={expenses} monthYear={monthYear} renderCard={renderCard} />
       ))}
     </div>
   )
@@ -138,25 +139,45 @@ function MasonryMonth({ monthYear, expenses, renderCard }) {
     <div key={monthYear}>
       <div
         className={cn(
-          "sticky top-[130px] bg-linear ps-6 pe-4 text-primary z-10 border-b pb-2 pt-3 flex flex-row justify-between",
-          visible && "bg-background"
+          "sticky top-[132px] bg-background z-10 w-full py-1"
+          // visible && "border-none"
         )}
         onClick={() => setVisible(!visible)}
       >
-        <h2 className="text-xl font-bold">{monthYear}</h2>
-        <div className="flex flex-row">
-          <span className="text-black dark:text-zinc-400">
-            ${expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2)}
-          </span>
-          <div className="ms-2 text-black dark:text-zinc-400">
-            <ChevronDown className={cn("transition-all", !visible && "-rotate-180 text-primary")} />
+        <motion.div
+          className={cn(
+            "rounded-lg mx-4 my-2 pe-4 text-primary z-10 flex flex-row justify-between"
+            // visible ? "bg-background" : "bg-card"
+          )}
+          animate={{
+            paddingLeft: visible ? "0.5rem" : "1.5rem",
+            paddingTop: visible ? "0.25rem" : "0.625rem",
+            paddingBottom: visible ? "0.25rem" : "0.625rem",
+            backgroundColor: visible ? "var(--background)" : "var(--card)"
+          }}
+          transition={{
+            paddingLeft: { duration: 0.2, ease: "linear" },
+            paddingTop: { duration: 0.2, ease: "linear" },
+            paddingBottom: { duration: 0.2, ease: "linear" },
+            backgroundColor: { duration: 0.2, ease: "linear" }
+          }}
+        >
+          <h2 className="text-xl font-bold">{monthYear}</h2>
+          <div className="flex flex-row mt-1 gap-3">
+            <span className="text-black dark:text-zinc-400">
+              ${expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2)}
+            </span>
+            <div className="text-black dark:text-zinc-400">
+              <ChevronDown className={cn("transition-all", !visible && "-rotate-180 text-primary")} />
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
       <AnimatePresence initial={false}>
         {visible && (
-          <motion.div initial="closed" animate="open" exit="closed" className="mx-4 mt-4" variants={detailsVariants}>
+          <motion.div initial="closed" animate="open" exit="closed" className="mx-4 mt-2" variants={detailsVariants}>
             <Masonry
+              key={expenses.length}
               items={expenses}
               columnGutter={14}
               rowGutter={14}
