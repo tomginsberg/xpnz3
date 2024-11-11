@@ -17,7 +17,7 @@ import { motion } from "framer-motion"
 
 const DebtsTab = () => {
   const { ledgerName } = useParams()
-  const { settlement: trueSettlement } = useXpnzApi(ledgerName)
+  const { loaded, settlement: trueSettlement } = useXpnzApi(ledgerName)
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({payer, payee, amount}) => [payer, payee, amount]),
@@ -31,7 +31,6 @@ const DebtsTab = () => {
     setDebts(xpnzApi.debts)
   }, [trueSettlement])
 
-  const [loaded, setLoaded] = useState(true)
   const [settleVisible, setSettleVisible] = useState(false)
   const [settleMemberFrom, setSettleMemberFrom] = useState("")
   const [settleMemberTo, setSettleMemberTo] = useState("")

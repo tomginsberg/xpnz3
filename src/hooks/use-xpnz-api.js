@@ -133,6 +133,7 @@ export function useExpenses(ledger) {
 }
 
 export function useXpnzApi(ledger) {
+  const [loaded, setLoaded] = useState(false)
   const [balance, setBalance] = useState([])
   // const [categories, setCategories] = useState([])
   const [expenses, setExpenses] = useState([])
@@ -183,12 +184,14 @@ export function useXpnzApi(ledger) {
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoaded(false)
       try {
         // Fetch all data concurrently
         await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()])
       } catch (error) {
         console.error("Failed to fetch data:", error)
       }
+      setLoaded(true)
     }
 
     fetchData() // Call the async function immediately
@@ -311,6 +314,7 @@ export function useXpnzApi(ledger) {
     deleteMember,
     pushExpense,
     editExpense,
-    deleteExpense
+    deleteExpense,
+    loaded
   }
 }
