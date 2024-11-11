@@ -1,6 +1,6 @@
 import { ChevronsUpDown } from "lucide-react"
 
-import React, { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "../components/ui/input"
 import { useTheme } from "@/components/theme-provider"
 import { useNavigate } from "react-router-dom"
@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
+import { api } from "@/../xpnz.config.js"
+
 const sampleLedgers = [
   { label: "Trap 2", value: "trap2", icon: "Plane" },
   { label: "Trap", value: "trap", icon: "Home" },
@@ -27,8 +29,8 @@ const sampleLedgers = [
   { label: "Camping", value: "camping", icon: "Users" }
 ]
 
-export function Combobox() {
-  const [open, setOpen] = React.useState(false)
+export function Combobox({values}) {
+  const [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
   return (
@@ -45,15 +47,15 @@ export function Combobox() {
           <CommandList>
             <CommandEmpty>No ledger found.</CommandEmpty>
             <CommandGroup>
-              {sampleLedgers.map((ledger) => (
+              {values.map(({key, value, link}) => (
                 <CommandItem
-                  key={ledger.value}
-                  value={ledger.label}
+                  key={key}
+                  value={value}
                   onSelect={() => {
-                    navigate(`/${ledger.value}`)
+                    navigate(`/${link}`)
                   }}
                 >
-                  {ledger.label}
+                  {value}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -67,11 +69,24 @@ export function Combobox() {
 export default function Home() {
   const { setTheme } = useTheme()
   setTheme("light")
+
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false)
   const [newLedgerName, setNewLedgerName] = useState("")
   const [newLedgerIcon, setNewLedgerIcon] = useState("")
   const [newLedgerMembers, setNewLedgerMembers] = useState("")
   const [step, setStep] = useState(1)
+
+  const [ledgers, setLedgers] = useState([])
+
+  useEffect(() => {
+    const getLedgers = async () => {
+      const response = await fetch(`${api.base}/ledgers`, { cache: "no-store" })
+      const ledgers = await response.json()
+      setLedgers(ledgers)
+    }
+
+    getLedgers()
+  }, [])
 
   return (
     <>
@@ -94,7 +109,7 @@ export default function Home() {
           <p className="text-center mb-6">Track group expenses with ease</p>
 
           <div className="mb-6">
-            <Combobox />
+            <Combobox values={ledgers.map(ledger => ({ key: ledger.name, value: ledger.name, link: ledger.name }))} />
           </div>
 
           <Button
