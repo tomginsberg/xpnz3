@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from "react"
 import { uniq } from "lodash-es"
 
 import { api } from "@/../xpnz.config.js"
+import { getDateString } from "@/api/utilities.js"
 
 export function useExpenses(ledger) {
   const [members, setMembers] = useState([])
@@ -85,7 +86,18 @@ export function useExpenses(ledger) {
   const pushExpense = async (name, currency, category, date, expense_type, contributions) => {
     // contributions = [{ id, paid, weight }]
 
-    const expense = { name, ledger, currency, category, date, expense_type, contributions }
+    const expense = {
+      name,
+      ledger,
+      currency,
+      category,
+      date,
+      expense_type,
+      members: contributions.map((c) => c.name),
+      paid: contributions.map((c) => c.amount),
+      weights: contributions.map((c) => c.weight)
+    }
+    console.log("pushing expense", expense)
 
     await fetch(`${api.base}/transactions`, {
       method: "POST",
@@ -253,7 +265,18 @@ export function useXpnzApi(ledger) {
     async (name, currency, category, date, expense_type, contributions) => {
       // contributions = [{ id, paid, weight }]
 
-      const expense = { name, ledger, currency, category, date, expense_type, contributions }
+      const expense = {
+        name,
+        ledger,
+        currency,
+        category,
+        date,
+        expense_type,
+        members: contributions.map((c) => c.name),
+        amounts: contributions.map((c) => c.amount),
+        weights: contributions.map((c) => c.weight)
+      }
+      console.log("pushing expense", expense)
 
       await fetch(`${api.base}/transactions`, {
         method: "POST",
