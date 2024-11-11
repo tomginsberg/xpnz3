@@ -1,7 +1,6 @@
-import { ChevronsUpDown } from "lucide-react"
+import { AlertCircle, ChevronsUpDown } from "lucide-react"
 
-import { useState, useEffect } from "react"
-import { Input } from "../components/ui/input"
+import { useEffect, useState } from "react"
 import { useTheme } from "@/components/theme-provider"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
@@ -13,13 +12,14 @@ import {
   DrawerHeader,
   DrawerTitle
 } from "@/components/ui/drawer"
-import { Label } from "../components/ui/label"
 
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { FloatingLabelInput } from "@/components/ui/floating-label"
 
 import { api } from "@/../xpnz.config.js"
+import { TagInput } from "emblor"
 
 const sampleLedgers = [
   { label: "Trap 2", value: "trap2", icon: "Plane" },
@@ -29,7 +29,7 @@ const sampleLedgers = [
   { label: "Camping", value: "camping", icon: "Users" }
 ]
 
-export function Combobox({values}) {
+export function Combobox({ values }) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
@@ -47,7 +47,7 @@ export function Combobox({values}) {
           <CommandList>
             <CommandEmpty>No ledger found.</CommandEmpty>
             <CommandGroup>
-              {values.map(({key, value, link}) => (
+              {values.map(({ key, value, link }) => (
                 <CommandItem
                   key={key}
                   value={value}
@@ -71,10 +71,11 @@ export default function Home() {
   setTheme("light")
 
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false)
-  const [newLedgerName, setNewLedgerName] = useState("")
-  const [newLedgerIcon, setNewLedgerIcon] = useState("")
-  const [newLedgerMembers, setNewLedgerMembers] = useState("")
+  const [name, setName] = useState("")
+  const [newLedgerMembers, setNewLedgerMembers] = useState([])
   const [step, setStep] = useState(1)
+  const [error, setError] = useState("")
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
 
   const [ledgers, setLedgers] = useState([])
 
@@ -87,6 +88,35 @@ export default function Home() {
 
     getLedgers()
   }, [])
+
+  const handleSubmit = () => {
+    if (!error && name) {
+      // Here you would typically handle the ledger creation
+      console.log("Creating ledger:", formatLedgerName(name))
+      setIsCreateDrawerOpen(false)
+      setName("")
+    }
+  }
+
+  useEffect(() => {
+    const normalizedName = formatLedgerName(name)
+    if (ledgers.map((x) => x.name).includes(normalizedName)) {
+      setError("This ledger name already exists.")
+    } else {
+      setError("")
+    }
+  }, [name])
+
+  const formatLedgerName = (input: string) => {
+    // Remove non-alphanumeric characters and replace spaces with dashes
+    return input
+      .trim()
+      .replace(/[^a-zA-Z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .toLowerCase()
+  }
+  const baseURl = "https://xpnz.ca/"
+  const previewUrl = `${baseURl}${formatLedgerName(name)}`
 
   return (
     <>
@@ -109,7 +139,13 @@ export default function Home() {
           <p className="text-center mb-6">Track group expenses with ease</p>
 
           <div className="mb-6">
-            <Combobox values={ledgers.map(ledger => ({ key: ledger.name, value: ledger.name, link: ledger.name }))} />
+            <Combobox
+              values={ledgers.map((ledger) => ({
+                key: ledger.name,
+                value: ledger.name,
+                link: ledger.name
+              }))}
+            />
           </div>
 
           <Button
@@ -125,63 +161,55 @@ export default function Home() {
           <DrawerHeader>
             <DrawerTitle>{step === 1 ? "Create New Ledger" : "Add Members"}</DrawerTitle>
             <DrawerDescription>
-              {step === 1
-                ? "Enter a name and choose an icon for your new ledger."
-                : "Don't worry, you can add more members later!"}
+              {step === 1 ? "Enter a name your new ledger." : "Don't worry, you can add more members later!"}
             </DrawerDescription>
           </DrawerHeader>
           {step === 1 ? (
             <>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input
+              <div className="flex flex-col gap-4 py-4 mx-8">
+                <div className="space-y-2">
+                  <FloatingLabelInput
+                    label="Enter Ledger Name"
                     id="name"
-                    value={newLedgerName}
-                    onChange={(e) => setNewLedgerName(e.target.value)}
-                    className="col-span-3"
+                    placeholder={"My Ledger"}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="flex-grow"
                   />
+                  {error && (
+                    <div className="flex items-center text-red-500 text-sm mt-1">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {error}
+                    </div>
+                  )}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="icon" className="text-right">
-                    Icon
-                  </Label>
-                  <select
-                    id="icon"
-                    value={newLedgerIcon}
-                    onChange={(e) => setNewLedgerIcon(e.target.value)}
-                    className="col-span-3"
-                  >
-                    <option value="">Select an icon</option>
-                    <option value="Plane">✈️ Plane</option>
-                    <option value="Home">🏠 Home</option>
-                    <option value="Utensils">🍴 Utensils</option>
-                  </select>
-                </div>
+
+                <FloatingLabelInput
+                  label="URL Preview"
+                  id="preview"
+                  value={name ? previewUrl : ""}
+                  disabled={true}
+                  className="flex-grow text-black font-mono break-all"
+                />
               </div>
               <DrawerFooter>
-                <Button type="submit" onClick={() => setStep(2)}>
+                <Button type="submit" onClick={() => setStep(2)} disabled={!!error || !name}>
                   Next
                 </Button>
               </DrawerFooter>
             </>
           ) : (
             <>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="members" className="text-right">
-                    Members
-                  </Label>
-                  <Input
-                    id="members"
-                    value={newLedgerMembers}
-                    onChange={(e) => setNewLedgerMembers(e.target.value)}
-                    className="col-span-3"
-                    placeholder="Enter member names, separated by commas"
-                  />
-                </div>
+              <div className="px-4">
+                <TagInput
+                  tags={newLedgerMembers}
+                  setTags={(newMembers) => setNewLedgerMembers(newMembers)}
+                  placeholder={"Add members..."}
+                  activeTagIndex={activeTagIndex}
+                  setActiveTagIndex={setActiveTagIndex}
+                  inlineTags={false}
+                  size="md"
+                />
               </div>
               <DrawerFooter>
                 <Button type="button" variant="outline" onClick={() => setStep(1)}>
