@@ -146,11 +146,11 @@ function MasonryMonth({ monthYear, expenses, renderCard }) {
       >
         <motion.div
           className={cn(
-            "rounded-lg mx-4 my-2 pe-4 text-primary z-10 flex flex-row justify-between"
+            "rounded-lg mx-4 my-2 pe-3 text-primary z-10 flex flex-row justify-between"
             // visible ? "bg-background" : "bg-card"
           )}
           animate={{
-            paddingLeft: visible ? "0.5rem" : "1.5rem",
+            // paddingLeft: visible ? "0.5rem" : "1.5rem",
             paddingTop: visible ? "0.25rem" : "0.625rem",
             paddingBottom: visible ? "0.25rem" : "0.625rem",
             backgroundColor: visible ? "var(--background)" : "var(--card)"
@@ -162,7 +162,7 @@ function MasonryMonth({ monthYear, expenses, renderCard }) {
             backgroundColor: { duration: 0.2, ease: "linear" }
           }}
         >
-          <h2 className="text-xl font-bold">{monthYear}</h2>
+          <h2 className="ps-2 text-xl font-bold">{monthYear}</h2>
           <div className="flex flex-row mt-1 gap-3">
             <span className="text-black dark:text-zinc-400">
               ${expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2)}
