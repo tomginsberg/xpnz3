@@ -41,6 +41,7 @@ export default function ExpenseDrawer({
   const [date, setDate] = useState(selectedExpense.date)
   const [category, setCategory] = useState(selectedExpense.category)
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
+
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
   const [currency, setCurrency] = useState(selectedExpense.currency)
   const [isUnequalSplit, setIsUnequalSplit] = useState(false)
@@ -60,6 +61,11 @@ export default function ExpenseDrawer({
   }, [selectedExpense, isDrawerOpen])
 
   const onPaidByMembersChange = (values) => {
+    console.log(values)
+    if (values.length === 1) {
+      setPaidBy([{ member: values[0], amount }])
+      return
+    }
     setPaidBy(
       values.map((member) => {
         const existing = paidBy.find((p) => p.member === member)
@@ -82,7 +88,7 @@ export default function ExpenseDrawer({
 
   useEffect(() => {
     if (paidBy.length === 1) {
-      setAmount(paidBy[0].amount)
+      setAmount(amount)
     } else if (paidBy.length > 1) {
       setAmount(sumContributions(paidBy))
     }
