@@ -61,14 +61,14 @@ export function TagInput({
           value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleInputKeyDown}
-          className="w-full pr-10"
+          className="w-full pr-10 text-primary"
           aria-label="Tag input"
         />
         <Button
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute right-0 top-1/2 -translate-y-1/2"
+          className="absolute right-0 top-1/2 -translate-y-1/2 text-primary"
           onClick={addTag}
           disabled={inputValue.trim() === "" || tags.includes(inputValue.trim()) || tags.length >= maxTags}
           aria-label="Add tag"
