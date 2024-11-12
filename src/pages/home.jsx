@@ -11,6 +11,7 @@ import {
   DrawerHeader,
   DrawerTitle
 } from "@/components/ui/drawer"
+import { currencies } from "@/api/client.js"
 
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
@@ -21,175 +22,6 @@ import { api } from "@/../xpnz.config.js"
 import { TagInput } from "@/components/ui/tag-input"
 import { ScrollArea } from "../components/ui/scroll-area"
 import { cn } from "@/lib/utils"
-
-const currencyFlags = {
-  AED: "🇦🇪",
-  AFN: "🇦🇫",
-  ALL: "🇦🇱",
-  AMD: "🇦🇲",
-  ANG: "🇳🇱",
-  AOA: "🇦🇴",
-  ARS: "🇦🇷",
-  AUD: "🇦🇺",
-  AWG: "🇦🇼",
-  AZN: "🇦🇿",
-  BAM: "🇧🇦",
-  BBD: "🇧🇧",
-  BDT: "🇧🇩",
-  BGN: "🇧🇬",
-  BHD: "🇧🇭",
-  BIF: "🇧🇮",
-  BMD: "🇧🇲",
-  BND: "🇧🇳",
-  BOB: "🇧🇴",
-  BRL: "🇧🇷",
-  BSD: "🇧🇸",
-  BTN: "🇧🇹",
-  BWP: "🇧🇼",
-  BYN: "🇧🇾",
-  BYR: "🇧🇾",
-  BZD: "🇧🇿",
-  CAD: "🇨🇦",
-  CDF: "🇨🇩",
-  CHF: "🇨🇭",
-  CLF: "🇨🇱",
-  CLP: "🇨🇱",
-  CNY: "🇨🇳",
-  COP: "🇨🇴",
-  CRC: "🇨🇷",
-  CUC: "🇨🇺",
-  CUP: "🇨🇺",
-  CVE: "🇨🇻",
-  CZK: "🇨🇿",
-  DJF: "🇩🇯",
-  DKK: "🇩🇰",
-  DOP: "🇩🇴",
-  DZD: "🇩🇿",
-  EGP: "🇪🇬",
-  ERN: "🇪🇷",
-  ETB: "🇪🇹",
-  EUR: "🇪🇺",
-  FJD: "🇫🇯",
-  FKP: "🇫🇰",
-  GBP: "🇬🇧",
-  GEL: "🇬🇪",
-  GHS: "🇬🇭",
-  GIP: "🇬🇮",
-  GMD: "🇬🇲",
-  GNF: "🇬🇳",
-  GTQ: "🇬🇹",
-  GYD: "🇬🇾",
-  HKD: "🇭🇰",
-  HNL: "🇭🇳",
-  HRK: "🇭🇷",
-  HTG: "🇭🇹",
-  HUF: "🇭🇺",
-  IDR: "🇮🇩",
-  ILS: "🇮🇱",
-  INR: "🇮🇳",
-  IQD: "🇮🇶",
-  IRR: "🇮🇷",
-  ISK: "🇮🇸",
-  JMD: "🇯🇲",
-  JOD: "🇯🇴",
-  JPY: "🇯🇵",
-  KES: "🇰🇪",
-  KGS: "🇰🇬",
-  KHR: "🇰🇭",
-  KMF: "🇰🇲",
-  KPW: "🇰🇵",
-  KRW: "🇰🇷",
-  KWD: "🇰🇼",
-  KYD: "🇰🇾",
-  KZT: "🇰🇿",
-  LAK: "🇱🇦",
-  LBP: "🇱🇧",
-  LKR: "🇱🇰",
-  LRD: "🇱🇷",
-  LSL: "🇱🇸",
-  LTL: "🇱🇹",
-  LVL: "🇱🇻",
-  LYD: "🇱🇾",
-  MAD: "🇲🇦",
-  MDL: "🇲🇩",
-  MGA: "🇲🇬",
-  MKD: "🇲🇰",
-  MMK: "🇲🇲",
-  MNT: "🇲🇳",
-  MOP: "🇲🇴",
-  MRO: "🇲🇷",
-  MUR: "🇲🇺",
-  MVR: "🇲🇻",
-  MWK: "🇲🇼",
-  MXN: "🇲🇽",
-  MYR: "🇲🇾",
-  MZN: "🇲🇿",
-  NAD: "🇳🇦",
-  NGN: "🇳🇬",
-  NIO: "🇳🇮",
-  NOK: "🇳🇴",
-  NPR: "🇳🇵",
-  NZD: "🇳🇿",
-  OMR: "🇴🇲",
-  PAB: "🇵🇦",
-  PEN: "🇵🇪",
-  PGK: "🇵🇬",
-  PHP: "🇵🇭",
-  PKR: "🇵🇰",
-  PLN: "🇵🇱",
-  PYG: "🇵🇾",
-  QAR: "🇶🇦",
-  RON: "🇷🇴",
-  RSD: "🇷🇸",
-  RUB: "🇷🇺",
-  RWF: "🇷🇼",
-  SAR: "🇸🇦",
-  SBD: "🇸🇧",
-  SCR: "🇸🇨",
-  SDG: "🇸🇩",
-  SEK: "🇸🇪",
-  SGD: "🇸🇬",
-  SHP: "🇸🇭",
-  SLE: "🇸🇱",
-  SLL: "🇸🇱",
-  SOS: "🇸🇴",
-  SRD: "🇸🇷",
-  STD: "🇸🇹",
-  SYP: "🇸🇾",
-  SZL: "🇸🇿",
-  THB: "🇹🇭",
-  TJS: "🇹🇯",
-  TMT: "🇹🇲",
-  TND: "🇹🇳",
-  TOP: "🇹🇴",
-  TRY: "🇹🇷",
-  TTD: "🇹🇹",
-  TWD: "🇹🇼",
-  TZS: "🇹🇿",
-  UAH: "🇺🇦",
-  UGX: "🇺🇬",
-  USD: "🇺🇸",
-  UYU: "🇺🇾",
-  UZS: "🇺🇿",
-  VEF: "🇻🇪",
-  VES: "🇻🇪",
-  VND: "🇻🇳",
-  VUV: "🇻🇺",
-  WST: "🇼🇸",
-  XAF: "🇨🇲",
-  XCD: "🇦🇮",
-  XOF: "🇧🇯",
-  XPF: "🇵🇫",
-  YER: "🇾🇪",
-  ZAR: "🇿🇦",
-  ZMW: "🇿🇲",
-  ZWL: "🇿🇼"
-}
-
-const currencies = Object.entries(currencyFlags).map(([code, flag]) => ({
-  value: code,
-  label: `${flag} ${code}`
-}))
 
 export function Combobox({ values }) {
   const [open, setOpen] = useState(false)
@@ -238,6 +70,7 @@ export default function Home() {
   const [step, setStep] = useState(1)
   const [error, setError] = useState("")
   const defaultCurrency = "CAD"
+  const navigate = useNavigate()
 
   const [ledgers, setLedgers] = useState([])
 
@@ -251,12 +84,59 @@ export default function Home() {
     getLedgers()
   }, [])
 
-  const handleSubmit = () => {
+  async function createLedger(name, currency, members) {
+    try {
+      const response = await fetch(`${api.base}/ledgers`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ name, currency, members })
+      })
+
+      if (!response.ok) {
+        let errorData
+        try {
+          errorData = await response.json()
+        } catch (jsonError) {
+          throw new Error("Failed to parse error response from server")
+        }
+        throw new Error(errorData.error || "Failed to create ledger")
+      }
+
+      let responseData
+      try {
+        responseData = await response.json()
+      } catch (jsonError) {
+        throw new Error("Failed to parse response from server")
+      }
+      return responseData
+    } catch (error) {
+      console.error("Error creating ledger:", error)
+      throw error
+    }
+  }
+
+  // Usage in handleSubmit function
+  const handleSubmit = async (event) => {
+    event.preventDefault()
     if (!error && name) {
-      // Here you would typically handle the ledger creation
-      console.log("Creating ledger:", formatLedgerName(name))
-      setIsCreateDrawerOpen(false)
-      setName("")
+      const formattedName = formatLedgerName(name)
+      console.log("Creating ledger:", formattedName, selectedCurrency, newLedgerMembers)
+      try {
+        // Create the new ledger
+        await createLedger(
+          formattedName,
+          selectedCurrency,
+          newLedgerMembers.map((member) => ({ name: member, is_active: true }))
+        )
+
+        // Change location to the new ledger
+        navigate(`/${formattedName}`)
+      } catch (error) {
+        // Handle error (e.g., display error message to the user)
+        console.error("Failed to create ledger:", error)
+      }
     }
   }
 
@@ -269,7 +149,7 @@ export default function Home() {
     }
   }, [name])
 
-  const formatLedgerName = (input: string) => {
+  const formatLedgerName = (input) => {
     // Remove non-alphanumeric characters and replace spaces with dashes
     return input
       .trim()
@@ -289,11 +169,14 @@ export default function Home() {
   }
 
   const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency)
+  const currencyList = Object.keys(currencies).map((currency) => ({
+    value: currency,
+    label: currencies[currency]
+  }))
 
-  // @ts-ignore
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 dark:from-black dark:via-pink-900 dark:to-red-900 flex flex-col items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -330,9 +213,9 @@ export default function Home() {
         </motion.div>
       </div>
       <Drawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen} onClose={handleClose}>
-        <DrawerContent className="h-auto">
+        <DrawerContent>
           <DrawerHeader>
-            <DrawerTitle>
+            <DrawerTitle className="text-primary">
               {step === 1 ? "Create New Ledger" : step === 2 ? "Select a Currency" : "Add Members"}
             </DrawerTitle>
             <DrawerDescription>
@@ -354,7 +237,7 @@ export default function Home() {
                     autoFocus={true}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="flex-grow"
+                    className="flex-grow text-primary"
                   />
                   {error && (
                     <div className="flex items-center text-red-500 text-sm mt-1">
@@ -369,7 +252,7 @@ export default function Home() {
                   id="preview"
                   value={name ? previewUrl : ""}
                   disabled={true}
-                  className="text-black font-mono"
+                  className="text-primary font-mono"
                 />
               </div>
               <DrawerFooter>
@@ -380,22 +263,22 @@ export default function Home() {
             </form>
           )}
 
-          {step == 2 && (
-            <form onSubmit={() => setStep(3)}>
-              <Command className="px-4">
+          {step === 2 && (
+            <form onSubmit={() => setStep(3)} className="overflow-y-auto">
+              <Command className="px-4 bg-background">
                 <div className="border rounded-lg">
                   <div className="relative">
                     <CommandInput placeholder="Search currency..." />
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 font-large px-4 py-2">
-                      {selectedCurrency} {currencyFlags[selectedCurrency]}
+                      {currencies[selectedCurrency]}
                     </div>
                   </div>
 
                   <CommandList>
                     <CommandEmpty>No currency found.</CommandEmpty>
                     <CommandEmpty>No currency found.</CommandEmpty>
-                    <CommandGroup className="max-h-[200px]">
-                      {currencies.map((currency) => (
+                    <CommandGroup className="max-h-[200px] overflow-y-auto">
+                      {currencyList.map((currency) => (
                         <CommandItem
                           key={currency.value}
                           value={currency.value}
@@ -417,7 +300,7 @@ export default function Home() {
                 </div>
               </Command>
 
-              <DrawerFooter className="flex flex-row w-full p-4">
+              <DrawerFooter className="flex flex-row w-full p-4 text-primary">
                 <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
@@ -434,7 +317,7 @@ export default function Home() {
                 <div className="px-4 mt-2">
                   <TagInput tags={newLedgerMembers} setTags={setNewLedgerMembers} placeholder={"Add members..."} />
                 </div>
-                <DrawerFooter className="flex flex-row w-full">
+                <DrawerFooter className="flex flex-row w-full text-primary">
                   <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
                     Back
                   </Button>
