@@ -93,11 +93,8 @@ export function useExpenses(ledger) {
       category,
       date,
       expense_type,
-      members: contributions.map((c) => c.name),
-      paid: contributions.map((c) => c.amount),
-      weights: contributions.map((c) => c.weight)
+      contributions
     }
-    console.log("pushing expense", expense)
 
     await fetch(`${api.base}/transactions`, {
       method: "POST",

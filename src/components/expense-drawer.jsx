@@ -120,10 +120,10 @@ export default function ExpenseDrawer({
     for (const m of members) {
       const member = m.name
       const id = m.id
-      const mergedVal = { id: id, amount: 0, weight: 0, name: member }
+      const mergedVal = { id: id, paid: 0, weight: 0 }
       let isIn = false
       if (paidByMembers.has(member)) {
-        mergedVal.amount = paidBy.find((p) => p.member === member).amount
+        mergedVal.paid = paidBy.find((p) => p.member === member).amount
         isIn = true
       }
       if (splitBetweenMembers.has(member)) {
