@@ -23,7 +23,6 @@ function LedgerLayout() {
   // Expense data and functions
   const {
     expenses,
-    memberNames,
     members,
     isDeleteDrawerOpen,
     closeDeleteDrawer,
