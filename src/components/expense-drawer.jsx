@@ -33,7 +33,9 @@ export default function ExpenseDrawer({
   isEditMode,
   handleCloseDrawer,
   members,
-  onDeleteClick
+  onDeleteClick,
+  pushExpense,
+  editExpense
 }) {
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
@@ -46,6 +48,7 @@ export default function ExpenseDrawer({
   const [currency, setCurrency] = useState(selectedExpense.currency)
   const [isUnequalSplit, setIsUnequalSplit] = useState(false)
   const id = selectedExpense.id
+  const memberNames = members.map((member) => member.name)
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -123,22 +126,37 @@ export default function ExpenseDrawer({
     return edit ? "Edit " + type : "Add New " + type
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
 
-    const newExpense = {
-      name,
-      amount,
-      date,
-      category,
-      paidBy,
-      splitBetween,
-      currency,
-      income,
-      id
+    let contributions = []
+    const paidByMembers = new Set(paidBy.map((p) => p.member))
+    const splitBetweenMembers = new Set(splitBetween.map((s) => s.member))
+
+    for (const m of members) {
+      const member = m.name
+      const id = m.id
+      const mergedVal = { id: id, paid: 0, weight: 0 }
+      let isIn = false
+      if (paidByMembers.has(member)) {
+        mergedVal.paid = paidBy.find((p) => p.member === member).amount
+        isIn = true
+      }
+      if (splitBetweenMembers.has(member)) {
+        mergedVal.weight = splitBetween.find((s) => s.member === member).weight
+        isIn = true
+      }
+      if (isIn) {
+        contributions.push(mergedVal)
+      }
     }
-    // setSelectedExpense(newExpense);
-    handleCloseDrawer(newExpense)
+    handleCloseDrawer()
+
+    if (isEditMode) {
+      await editExpense(id, name, currency, category, date, income ? "income" : "expense", contributions)
+    } else {
+      await pushExpense(name, currency, category, date, income ? "income" : "expense", contributions)
+    }
   }
 
   return (
@@ -163,6 +181,7 @@ export default function ExpenseDrawer({
                   </div>
                 </div>
                 <Input
+                  required={true}
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -180,6 +199,7 @@ export default function ExpenseDrawer({
                 <div className="flex-grow space-y-2">
                   <div className="flex-1 space-y-2">
                     <CalculatorInput
+                      required={true}
                       value={amount}
                       onChange={setAmount}
                       disabled={paidBy.length > 1}
@@ -241,7 +261,7 @@ export default function ExpenseDrawer({
               <div className="space-y-2">
                 <Label>Paid By</Label>
                 <MultiSelect
-                  options={members.map((member) => ({
+                  options={memberNames.map((member) => ({
                     label: member,
                     value: member
                   }))}
@@ -276,7 +296,7 @@ export default function ExpenseDrawer({
                 </div>
 
                 <MultiSelect
-                  options={members.map((member) => ({
+                  options={memberNames.map((member) => ({
                     label: member,
                     value: member
                   }))}

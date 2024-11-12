@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Calculator } from "./calculator"
-import { Banknote, HandCoins, Lock, Calculator as CalculatorIcon } from "lucide-react"
+import { Banknote, Calculator as CalculatorIcon, HandCoins, Lock } from "lucide-react"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
 interface CalculatorInputProps {
@@ -11,6 +11,7 @@ interface CalculatorInputProps {
   onChange: (value: number) => void
   disabled?: boolean
   useLabel?: boolean
+  required?: boolean
   label?: string
   isIncome?: boolean
 }
@@ -20,6 +21,7 @@ export default function CalculatorInput({
   onChange,
   disabled,
   useLabel = false,
+  required = false,
   label = "Amount",
   isIncome = false
 }: CalculatorInputProps) {
@@ -44,6 +46,7 @@ export default function CalculatorInput({
 
         <div className="flex space-x-0">
           <Input
+            required={required}
             id="number-input"
             type="number"
             placeholder={"0.00"}

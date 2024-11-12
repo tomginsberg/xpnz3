@@ -113,7 +113,7 @@ async function membersPutPostHandler(request, reply) {
 
 async function getTransactions(
   filters,
-  options = { format: "array", useExchangeRates: false, moneyFormat: "dollars" },
+  options = { format: "object", useExchangeRates: false, moneyFormat: "dollars" },
   trx = db
 ) {
   if (options.moneyFormat !== "dollars" && options.moneyFormat !== "cents") {
@@ -461,7 +461,6 @@ async function membersDeleteHandler(request, reply) {
 async function updateAddTransaction(transaction, isUpdate) {
   if (transaction.name) transaction.name = transaction.name.trim()
   if (transaction.category) transaction.category = transaction.category.trim()
-  if (transaction.members) transaction.members = transaction.members.map((member) => member.trim())
 
   if (transaction.name === "") transaction = omit(transaction, "name")
   if (transaction.category === "") transaction = omit(transaction, "category")
@@ -587,18 +586,13 @@ async function validateTransaction(transaction) {
     }
   }
 
-  if (transaction.weights.every((weight) => weight === 0)) {
+  if (transaction.contributions.every(({weight}) => weight === 0)) {
     throw { status: 400, message: "All the weights are zero, the transaction is invalid." }
   }
 
-  if (
-    transaction.members.length !== transaction.weights.length ||
-    transaction.members.length !== transaction.paid.length
-  ) {
-    throw { status: 400, message: "The number of members, weights, and paid amounts must be the same." }
-  }
+  const memberIds = transaction.contributions.map((c) => c.id)
 
-  if (uniq(transaction.members).length !== transaction.members.length) {
+  if (uniq(memberIds).length !== memberIds.length) {
     throw { status: 400, message: "Members must be unique." }
   }
 
@@ -618,20 +612,17 @@ async function validateTransaction(transaction) {
   }
 
   // All the transaction amounts should be positive
-  if (transaction.paid.some((amount) => amount < 0)) {
+  if (transaction.contributions.some(({paid}) => paid < 0)) {
     throw {
       status: 400,
       message: `All the ${transaction.expense_type === "income" ? "received" : "paid"} amounts must be non-negative.`
     }
   }
 
-  // Get the members of the ledger
   const members = await db("members")
-    .where("ledger", transaction.ledger)
-    .select("name")
-    .then((members) => members.map((member) => member.name))
+    .whereIn("id", memberIds);
 
-  if (transaction.members.every((member) => members.includes(member)) == false) {
+  if (members.length !== memberIds.length) {
     throw { status: 400, message: "One or more members do not exist in the ledger." }
   }
 }
@@ -717,26 +708,24 @@ async function ledgersPutHandler(request, reply) {
 
 const transactionPostBodySchema = {
   type: "object",
-  required: ["ledger", "currency", "expense_type", "members", "weights", "paid"],
+  required: ["ledger", "currency", "expense_type", "contributions"], 
   anyOf: [{ required: ["name"] }, { required: ["category"] }],
   properties: {
     ledger: { type: "string" },
     currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] },
     expense_type: { type: "string" },
-    members: {
+    contributions: {
       type: "array",
-      items: { type: "string" },
-      minItems: 1
-    },
-    weights: {
-      type: "array",
-      items: { type: "number" },
-      minItems: 1
-    },
-    paid: {
-      type: "array",
-      items: { type: "number" },
-      minItems: 1
+      minItems: 1,
+      items: {
+        type: "object",
+        required: ["id", "weight", "paid"],
+        properties: {
+          id: { type: "string" },
+          weight: { type: "number" },
+          paid: { type: "number" }
+        }
+      }
     },
     name: { type: "string" },
     category: { type: "string" },
