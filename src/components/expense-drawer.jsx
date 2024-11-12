@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react"
-
-// shadcn components
+import { useEffect, useState } from "react" // shadcn components
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { ConfettiButton } from "@/components/ui/confetti"
@@ -12,16 +10,10 @@ import { Label } from "@/components/ui/label"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-
-// icons
+import { Switch } from "@/components/ui/switch" // icons
 import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
-import { CalendarIcon } from "@radix-ui/react-icons"
-
-// external utilities
-import { format } from "date-fns"
-
-// internal components and utilities
+import { CalendarIcon } from "@radix-ui/react-icons" // external utilities
+import { format } from "date-fns" // internal components and utilities
 import { cn } from "@/lib/utils"
 import { categories, currencies } from "@/api/client.js"
 import CalculatorInput from "./calculator-input"
@@ -37,6 +29,9 @@ export default function ExpenseDrawer({
   pushExpense,
   editExpense
 }) {
+  // make the date a Date object
+  selectedExpense["date"] = new Date(selectedExpense["date"])
+
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
   const [amount, setAmount] = useState(selectedExpense.amount)
@@ -75,14 +70,12 @@ export default function ExpenseDrawer({
         values.map((member, index) => {
           if (index === 0) {
             return { member, amount: amount }
-          }
-          else {
+          } else {
             return { member, amount: 0 }
           }
         })
       )
-    }
-    else {
+    } else {
       setPaidBy(
         values.map((member) => {
           const existing = paidBy.find((p) => p.member === member)
@@ -134,33 +127,49 @@ export default function ExpenseDrawer({
     let contributions = []
     const paidByMembers = new Set(paidBy.map((p) => p.member))
     const splitBetweenMembers = new Set(splitBetween.map((s) => s.member))
+    // Some error checking
+    if (paidByMembers.size === 0) {
+      alert("Please select at least one person to pay for this expense.")
+      return
+    }
+    if (splitBetweenMembers.size === 0) {
+      alert("Please select at least one person to split this expense between.")
+      return
+    }
 
-    for (const m of members) {
+    members.map((m) => {
       const member = m.name
       const id = m.id
       const mergedVal = { id: id, paid: 0, weight: 0 }
-      let isIn = false
-      if (paidByMembers.has(member)) {
-        mergedVal.paid = paidBy.find((p) => p.member === member).amount
-        isIn = true
+      const paidByMember = paidBy.find((p) => p.member === member)
+      const splitBetweenMember = splitBetween.find((s) => s.member === member)
+
+      if (paidByMember) {
+        mergedVal.paid = paidByMember.amount
       }
-      if (splitBetweenMembers.has(member)) {
-        mergedVal.weight = splitBetween.find((s) => s.member === member).weight
-        isIn = true
+      if (splitBetweenMember) {
+        mergedVal.weight = splitBetweenMember.weight
       }
-      if (isIn) {
+      if (paidByMember || splitBetweenMember) {
         contributions.push(mergedVal)
       }
+    })
+
+    const dateString = date.toISOString().split("T")[0]
+    if (isEditMode) {
+      await editExpense(id, name, currency, category, dateString, income ? "income" : "expense", contributions)
+    } else {
+      await pushExpense(name, currency, category, dateString, income ? "income" : "expense", contributions)
     }
     handleCloseDrawer()
-
-    if (isEditMode) {
-      await editExpense(id, name, currency, category, date, income ? "income" : "expense", contributions)
-    } else {
-      await pushExpense(name, currency, category, date, income ? "income" : "expense", contributions)
-    }
-    setSplitBetween([])
   }
+
+  // set unequalsplit to false if split members is less than 2
+  useEffect(() => {
+    if (splitBetween.length <= 1) {
+      setIsUnequalSplit(false)
+    }
+  }, [splitBetween])
 
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
@@ -293,8 +302,15 @@ export default function ExpenseDrawer({
                 <div className="flex items-center justify-between">
                   <Label>Split Between</Label>
                   <div className="flex items-center space-x-2">
-                    <Label htmlFor="unequal-split">Unequal Split</Label>
-                    <Switch id="unequal-split" checked={isUnequalSplit} onCheckedChange={setIsUnequalSplit} />
+                    <Label htmlFor="unequal-split" className={splitBetween.length <= 1 && "text-muted"}>
+                      Unequal Split
+                    </Label>
+                    <Switch
+                      disabled={splitBetween.length <= 1}
+                      id="unequal-split"
+                      checked={isUnequalSplit}
+                      onCheckedChange={setIsUnequalSplit}
+                    />
                   </div>
                 </div>
 
