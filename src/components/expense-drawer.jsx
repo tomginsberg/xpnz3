@@ -61,17 +61,32 @@ export default function ExpenseDrawer({
   }, [selectedExpense, isDrawerOpen])
 
   const onPaidByMembersChange = (values) => {
-    console.log(values)
     if (values.length === 1) {
       setPaidBy([{ member: values[0], amount }])
       return
     }
-    setPaidBy(
-      values.map((member) => {
-        const existing = paidBy.find((p) => p.member === member)
-        return existing || { member, amount: 0 }
-      })
-    )
+    console.log(paidBy)
+
+    if (values.length !== 0 && paidBy.length === 0) {
+      setPaidBy(
+        values.map((member, index) => {
+          if (index === 0) {
+            return { member, amount: amount }
+          }
+          else {
+            return { member, amount: 0 }
+          }
+        })
+      )
+    }
+    else {
+      setPaidBy(
+        values.map((member) => {
+          const existing = paidBy.find((p) => p.member === member)
+          return existing || { member, amount: 0 }
+        })
+      )
+    }
   }
 
   function handlePaidByChange(value, index) {
