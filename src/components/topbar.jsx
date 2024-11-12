@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
-import { Moon, Search, Sun } from "lucide-react"
+import { ExpandIcon, Moon, Search, ShrinkIcon, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator"
 import { currencies } from "@/api/client.js"
 import { useTheme } from "@/components/theme-provider"
 import Error from "@/pages/error"
+import { cn } from "@/lib/utils"
 
 function XpnzMenuIcon() {
   return (
@@ -89,9 +90,6 @@ function XpnzDropdown(props) {
     </div>
   )
 }
-
-import { ExpandIcon, ShrinkIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 export default function Topbar({ onSearch, toggleExpansion }) {
   const location = useLocation()
@@ -195,20 +193,22 @@ export default function Topbar({ onSearch, toggleExpansion }) {
           </div>
 
           <div className="flex">
-            <Button className="px-5" variant="ghost" onClick={toggleExpand} aria-label="Toggle Expand">
-              <ExpandIcon
-                className={cn(
-                  "absolute h-5 w-5 rotate-0 scale-100 transition-all text-primary",
-                  expanded && "scale-0 -rotate-90"
-                )}
-              />
-              <ShrinkIcon
-                className={cn(
-                  "absolute h-5 w-5 transition-all rotate-0 scale-100 text-primary",
-                  !expanded && "rotate-90 scale-0"
-                )}
-              />
-            </Button>
+            {pageType === "expenses" && (
+              <Button className="px-5" variant="ghost" onClick={toggleExpand} aria-label="Toggle Expand">
+                <ExpandIcon
+                  className={cn(
+                    "absolute h-5 w-5 rotate-0 scale-100 transition-all text-primary",
+                    expanded && "scale-0 -rotate-90"
+                  )}
+                />
+                <ShrinkIcon
+                  className={cn(
+                    "absolute h-5 w-5 transition-all rotate-0 scale-100 text-primary",
+                    !expanded && "rotate-90 scale-0"
+                  )}
+                />
+              </Button>
+            )}
             <Button className="px-5" variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
               <Sun className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black" />
               <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white" />
