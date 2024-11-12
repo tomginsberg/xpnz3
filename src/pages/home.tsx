@@ -1,7 +1,6 @@
-import { AlertCircle, ChevronsUpDown } from "lucide-react"
+import { AlertCircle, Check, ChevronsUpDown } from "lucide-react"
 
 import { useEffect, useState } from "react"
-import { useTheme } from "@/components/theme-provider"
 import { useNavigate } from "react-router-dom"
 import { motion } from "framer-motion"
 import {
@@ -19,15 +18,178 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { FloatingLabelInput } from "@/components/ui/floating-label"
 
 import { api } from "@/../xpnz.config.js"
-import { TagInput } from "emblor"
+import { TagInput } from "@/components/ui/tag-input"
+import { ScrollArea } from "../components/ui/scroll-area"
+import { cn } from "@/lib/utils"
 
-const sampleLedgers = [
-  { label: "Trap 2", value: "trap2", icon: "Plane" },
-  { label: "Trap", value: "trap", icon: "Home" },
-  { label: "Test", value: "test", icon: "Utensils" },
-  { label: "Lions Head", value: "lionshead", icon: "Users" },
-  { label: "Camping", value: "camping", icon: "Users" }
-]
+const currencyFlags = {
+  AED: "🇦🇪",
+  AFN: "🇦🇫",
+  ALL: "🇦🇱",
+  AMD: "🇦🇲",
+  ANG: "🇳🇱",
+  AOA: "🇦🇴",
+  ARS: "🇦🇷",
+  AUD: "🇦🇺",
+  AWG: "🇦🇼",
+  AZN: "🇦🇿",
+  BAM: "🇧🇦",
+  BBD: "🇧🇧",
+  BDT: "🇧🇩",
+  BGN: "🇧🇬",
+  BHD: "🇧🇭",
+  BIF: "🇧🇮",
+  BMD: "🇧🇲",
+  BND: "🇧🇳",
+  BOB: "🇧🇴",
+  BRL: "🇧🇷",
+  BSD: "🇧🇸",
+  BTN: "🇧🇹",
+  BWP: "🇧🇼",
+  BYN: "🇧🇾",
+  BYR: "🇧🇾",
+  BZD: "🇧🇿",
+  CAD: "🇨🇦",
+  CDF: "🇨🇩",
+  CHF: "🇨🇭",
+  CLF: "🇨🇱",
+  CLP: "🇨🇱",
+  CNY: "🇨🇳",
+  COP: "🇨🇴",
+  CRC: "🇨🇷",
+  CUC: "🇨🇺",
+  CUP: "🇨🇺",
+  CVE: "🇨🇻",
+  CZK: "🇨🇿",
+  DJF: "🇩🇯",
+  DKK: "🇩🇰",
+  DOP: "🇩🇴",
+  DZD: "🇩🇿",
+  EGP: "🇪🇬",
+  ERN: "🇪🇷",
+  ETB: "🇪🇹",
+  EUR: "🇪🇺",
+  FJD: "🇫🇯",
+  FKP: "🇫🇰",
+  GBP: "🇬🇧",
+  GEL: "🇬🇪",
+  GHS: "🇬🇭",
+  GIP: "🇬🇮",
+  GMD: "🇬🇲",
+  GNF: "🇬🇳",
+  GTQ: "🇬🇹",
+  GYD: "🇬🇾",
+  HKD: "🇭🇰",
+  HNL: "🇭🇳",
+  HRK: "🇭🇷",
+  HTG: "🇭🇹",
+  HUF: "🇭🇺",
+  IDR: "🇮🇩",
+  ILS: "🇮🇱",
+  INR: "🇮🇳",
+  IQD: "🇮🇶",
+  IRR: "🇮🇷",
+  ISK: "🇮🇸",
+  JMD: "🇯🇲",
+  JOD: "🇯🇴",
+  JPY: "🇯🇵",
+  KES: "🇰🇪",
+  KGS: "🇰🇬",
+  KHR: "🇰🇭",
+  KMF: "🇰🇲",
+  KPW: "🇰🇵",
+  KRW: "🇰🇷",
+  KWD: "🇰🇼",
+  KYD: "🇰🇾",
+  KZT: "🇰🇿",
+  LAK: "🇱🇦",
+  LBP: "🇱🇧",
+  LKR: "🇱🇰",
+  LRD: "🇱🇷",
+  LSL: "🇱🇸",
+  LTL: "🇱🇹",
+  LVL: "🇱🇻",
+  LYD: "🇱🇾",
+  MAD: "🇲🇦",
+  MDL: "🇲🇩",
+  MGA: "🇲🇬",
+  MKD: "🇲🇰",
+  MMK: "🇲🇲",
+  MNT: "🇲🇳",
+  MOP: "🇲🇴",
+  MRO: "🇲🇷",
+  MUR: "🇲🇺",
+  MVR: "🇲🇻",
+  MWK: "🇲🇼",
+  MXN: "🇲🇽",
+  MYR: "🇲🇾",
+  MZN: "🇲🇿",
+  NAD: "🇳🇦",
+  NGN: "🇳🇬",
+  NIO: "🇳🇮",
+  NOK: "🇳🇴",
+  NPR: "🇳🇵",
+  NZD: "🇳🇿",
+  OMR: "🇴🇲",
+  PAB: "🇵🇦",
+  PEN: "🇵🇪",
+  PGK: "🇵🇬",
+  PHP: "🇵🇭",
+  PKR: "🇵🇰",
+  PLN: "🇵🇱",
+  PYG: "🇵🇾",
+  QAR: "🇶🇦",
+  RON: "🇷🇴",
+  RSD: "🇷🇸",
+  RUB: "🇷🇺",
+  RWF: "🇷🇼",
+  SAR: "🇸🇦",
+  SBD: "🇸🇧",
+  SCR: "🇸🇨",
+  SDG: "🇸🇩",
+  SEK: "🇸🇪",
+  SGD: "🇸🇬",
+  SHP: "🇸🇭",
+  SLE: "🇸🇱",
+  SLL: "🇸🇱",
+  SOS: "🇸🇴",
+  SRD: "🇸🇷",
+  STD: "🇸🇹",
+  SYP: "🇸🇾",
+  SZL: "🇸🇿",
+  THB: "🇹🇭",
+  TJS: "🇹🇯",
+  TMT: "🇹🇲",
+  TND: "🇹🇳",
+  TOP: "🇹🇴",
+  TRY: "🇹🇷",
+  TTD: "🇹🇹",
+  TWD: "🇹🇼",
+  TZS: "🇹🇿",
+  UAH: "🇺🇦",
+  UGX: "🇺🇬",
+  USD: "🇺🇸",
+  UYU: "🇺🇾",
+  UZS: "🇺🇿",
+  VEF: "🇻🇪",
+  VES: "🇻🇪",
+  VND: "🇻🇳",
+  VUV: "🇻🇺",
+  WST: "🇼🇸",
+  XAF: "🇨🇲",
+  XCD: "🇦🇮",
+  XOF: "🇧🇯",
+  XPF: "🇵🇫",
+  YER: "🇾🇪",
+  ZAR: "🇿🇦",
+  ZMW: "🇿🇲",
+  ZWL: "🇿🇼"
+}
+
+const currencies = Object.entries(currencyFlags).map(([code, flag]) => ({
+  value: code,
+  label: `${flag} ${code}`
+}))
 
 export function Combobox({ values }) {
   const [open, setOpen] = useState(false)
@@ -67,15 +229,15 @@ export function Combobox({ values }) {
 }
 
 export default function Home() {
-  const { setTheme } = useTheme()
-  setTheme("light")
+  // const { setTheme } = useTheme()
+  // setTheme("light")
 
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false)
   const [name, setName] = useState("")
   const [newLedgerMembers, setNewLedgerMembers] = useState([])
   const [step, setStep] = useState(1)
   const [error, setError] = useState("")
-  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
+  const defaultCurrency = "CAD"
 
   const [ledgers, setLedgers] = useState([])
 
@@ -115,9 +277,20 @@ export default function Home() {
       .replace(/\s+/g, "-")
       .toLowerCase()
   }
-  const baseURl = "https://xpnz.ca/"
+  const baseURl = "xpnz.ca/"
   const previewUrl = `${baseURl}${formatLedgerName(name)}`
 
+  function handleClose() {
+    setIsCreateDrawerOpen(false)
+    setName("")
+    setNewLedgerMembers([])
+    setStep(1)
+    setSelectedCurrency(defaultCurrency)
+  }
+
+  const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency)
+
+  // @ts-ignore
   return (
     <>
       <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 flex flex-col items-center justify-center p-4">
@@ -156,22 +329,29 @@ export default function Home() {
           </Button>
         </motion.div>
       </div>
-      <Drawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen}>
-        <DrawerContent>
+      <Drawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen} onClose={handleClose}>
+        <DrawerContent className="h-auto">
           <DrawerHeader>
-            <DrawerTitle>{step === 1 ? "Create New Ledger" : "Add Members"}</DrawerTitle>
+            <DrawerTitle>
+              {step === 1 ? "Create New Ledger" : step === 2 ? "Select a Currency" : "Add Members"}
+            </DrawerTitle>
             <DrawerDescription>
-              {step === 1 ? "Enter a name your new ledger." : "Don't worry, you can add more members later!"}
+              {step === 1 && "Enter a name for your new ledger."}
+              {step === 2 && "This is default currency for your expenses."}
+              {step === 3 && "Don't worry, you can add more members later!"}
             </DrawerDescription>
           </DrawerHeader>
-          {step === 1 ? (
-            <>
+
+          {step === 1 && (
+            <form onSubmit={() => setStep(2)}>
               <div className="flex flex-col gap-4 py-4 mx-8">
                 <div className="space-y-2">
                   <FloatingLabelInput
                     label="Enter Ledger Name"
                     id="name"
+                    required={true}
                     placeholder={"My Ledger"}
+                    autoFocus={true}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="flex-grow"
@@ -189,35 +369,81 @@ export default function Home() {
                   id="preview"
                   value={name ? previewUrl : ""}
                   disabled={true}
-                  className="flex-grow text-black font-mono break-all"
+                  className="text-black font-mono"
                 />
               </div>
               <DrawerFooter>
-                <Button type="submit" onClick={() => setStep(2)} disabled={!!error || !name}>
+                <Button type="submit" disabled={!!error || !name}>
                   Next
                 </Button>
               </DrawerFooter>
-            </>
-          ) : (
-            <>
-              <div className="px-4">
-                <TagInput
-                  tags={newLedgerMembers}
-                  setTags={(newMembers) => setNewLedgerMembers(newMembers)}
-                  placeholder={"Add members..."}
-                  activeTagIndex={activeTagIndex}
-                  setActiveTagIndex={setActiveTagIndex}
-                  inlineTags={false}
-                  size="md"
-                />
-              </div>
-              <DrawerFooter>
-                <Button type="button" variant="outline" onClick={() => setStep(1)}>
+            </form>
+          )}
+
+          {step == 2 && (
+            <form onSubmit={() => setStep(3)}>
+              <Command className="px-4">
+                <div className="border rounded-lg">
+                  <div className="relative">
+                    <CommandInput placeholder="Search currency..." />
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 font-large px-4 py-2">
+                      {selectedCurrency} {currencyFlags[selectedCurrency]}
+                    </div>
+                  </div>
+
+                  <CommandList>
+                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandGroup className="max-h-[200px]">
+                      {currencies.map((currency) => (
+                        <CommandItem
+                          key={currency.value}
+                          value={currency.value}
+                          onSelect={(currentValue) => {
+                            setSelectedCurrency(currentValue === selectedCurrency ? "" : currentValue)
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              selectedCurrency === currency.value ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {currency.label}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </div>
+              </Command>
+
+              <DrawerFooter className="flex flex-row w-full p-4">
+                <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
-                <Button type="submit">Create Ledger</Button>
+                <Button className="flex-grow" type="submit">
+                  Next
+                </Button>
               </DrawerFooter>
-            </>
+            </form>
+          )}
+
+          {step === 3 && (
+            <ScrollArea>
+              <form onSubmit={handleSubmit}>
+                <div className="px-4 mt-2">
+                  <TagInput tags={newLedgerMembers} setTags={setNewLedgerMembers} placeholder={"Add members..."} />
+                </div>
+                <DrawerFooter className="flex flex-row w-full">
+                  <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
+                    Back
+                  </Button>
+                  <Button className="flex-grow" type="submit">
+                    Next
+                  </Button>
+                </DrawerFooter>
+              </form>
+            </ScrollArea>
           )}
         </DrawerContent>
       </Drawer>
