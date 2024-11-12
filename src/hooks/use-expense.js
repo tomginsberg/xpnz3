@@ -17,7 +17,7 @@ const useExpense = (ledgerName) => {
   const [isDeleteDrawerOpen, setIsDeleteDrawerOpen] = useState(false)
   const [expenseToDelete, setExpenseToDelete] = useState(null)
 
-  const { expenses, members, deleteExpense, pushExpense } = useExpenses(ledgerName)
+  const { expenses, members, deleteExpense, pushExpense, editExpense } = useExpenses(ledgerName)
   const memberNames = members.map((member) => member.name)
 
   const setExpenses = () => {} // stub
@@ -80,7 +80,8 @@ const useExpense = (ledgerName) => {
     members,
     memberNames,
     expenses,
-    pushExpense
+    pushExpense,
+    editExpense
   }
 }
 

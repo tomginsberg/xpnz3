@@ -34,7 +34,8 @@ export default function ExpenseDrawer({
   handleCloseDrawer,
   members,
   onDeleteClick,
-  pushExpense
+  pushExpense,
+  editExpense
 }) {
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
@@ -135,7 +136,12 @@ export default function ExpenseDrawer({
       }
     }
     handleCloseDrawer()
-    await pushExpense(name, currency, category, date, income ? "income" : "expense", contributions)
+
+    if (isEditMode) {
+      await editExpense(id, name, currency, category, date, income ? "income" : "expense", contributions)
+    } else {
+      await pushExpense(name, currency, category, date, income ? "income" : "expense", contributions)
+    }
   }
 
   return (

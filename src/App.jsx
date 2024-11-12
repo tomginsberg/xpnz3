@@ -36,7 +36,8 @@ function LedgerLayout() {
     isDrawerOpen,
     isEditMode,
     selectedExpense,
-    pushExpense
+    pushExpense,
+    editExpense
   } = useExpense(ledgerName)
 
   const [expandAll, setExpandAll] = useState(false)
@@ -67,6 +68,7 @@ function LedgerLayout() {
         members={members}
         onDeleteClick={onDeleteClick}
         pushExpense={pushExpense}
+        editExpense={editExpense}
       />
       <HoldToDelete onConfirm={handleDelete} isDrawerOpen={isDeleteDrawerOpen} handleCloseDrawer={closeDeleteDrawer} />
     </>
