@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
-import { Check, CircleCheckBig, ClipboardCheck, Share2 } from "lucide-react"
+import { Check, CircleCheckBig, Share2 } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { motion } from "framer-motion"
 
@@ -20,7 +20,7 @@ const DebtsTab = () => {
   const { loaded, settlement: trueSettlement } = useXpnzApi(ledgerName)
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
-    debts: trueSettlement.map(({payer, payee, amount}) => [payer, payee, amount]),
+    debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
     settleDebt: () => {
       console.log("Settling debt")
     }
@@ -125,16 +125,16 @@ const DebtsTab = () => {
       )}
 
       {debts.length === 0 && loaded && (
-        <div className="flex flex-col items-center justify-center">
-          <h2 className="px-8 pt-16 text-center font-mono text-2xl font-bold text-gray-900 dark:text-white">
-            Looking good! <br />
-            No debts to settle.
-          </h2>
+        <div className="absolute top-48 items-center justify-center w-full">
           <img
-            className="my-8 max-w-xs object-contain px-8"
-            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f9a7/512.gif"
-            alt="🦧"
+            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif"
+            alt="🌎"
+            width="32"
+            height="32"
+            className="justify-center w-full px-[40%]"
           />
+          <p className="text-2xl text-muted-foreground text-center">Everyone is Settled Up!</p>
+          <p className="text text-foreground/30 text-center">Add more expensed to see debts</p>
         </div>
       )}
 
