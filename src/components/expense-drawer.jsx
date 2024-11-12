@@ -93,6 +93,7 @@ export default function ExpenseDrawer({
   }
 
   function handlePaidByChange(value, index) {
+    console.log("In HandlePaidByChange")
     setPaidBy((prev) => {
       const paidBy = [...prev]
       paidBy[index] = { ...paidBy[index], amount: value }
@@ -113,6 +114,7 @@ export default function ExpenseDrawer({
   }, [paidBy])
 
   const onSplitBetweenMembersChange = (values) => {
+    console.log("onSplitBetweenMembersChange")
     setSplitBetween(
       values.map((member) => {
         const existing = splitBetween.find((s) => s.member === member)
@@ -157,6 +159,7 @@ export default function ExpenseDrawer({
     } else {
       await pushExpense(name, currency, category, date, income ? "income" : "expense", contributions)
     }
+    setSplitBetween([])
   }
 
   return (
