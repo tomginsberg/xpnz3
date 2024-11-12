@@ -586,7 +586,7 @@ async function validateTransaction(transaction) {
     }
   }
 
-  if (transaction.contributions.every(({weight}) => weight === 0)) {
+  if (transaction.contributions.every(({ weight }) => weight === 0)) {
     throw { status: 400, message: "All the weights are zero, the transaction is invalid." }
   }
 
@@ -612,15 +612,14 @@ async function validateTransaction(transaction) {
   }
 
   // All the transaction amounts should be positive
-  if (transaction.contributions.some(({paid}) => paid < 0)) {
+  if (transaction.contributions.some(({ paid }) => paid < 0)) {
     throw {
       status: 400,
       message: `All the ${transaction.expense_type === "income" ? "received" : "paid"} amounts must be non-negative.`
     }
   }
 
-  const members = await db("members")
-    .whereIn("id", memberIds);
+  const members = await db("members").whereIn("id", memberIds)
 
   if (members.length !== memberIds.length) {
     throw { status: 400, message: "One or more members do not exist in the ledger." }
@@ -690,25 +689,55 @@ async function ledgersGetHandlerWithRoute(request, reply) {
   return payload
 }
 
+// async function ledgersPutHandler(request, reply) {
+//   request.body.name = request.params.ledgerName
+//
+//   const ledger = await db("ledgers").where("name", request.params.ledgerName).first()
+//
+//   if (ledger === undefined) {
+//     await db("ledgers").insert(pick(request.body, ["name", "currency"]))
+//     return reply.code(201).send({ message: "Ledger created successfully." })
+//   }
+//
+//   await db("ledgers")
+//     .where("name", request.params.ledgerName)
+//     .update(pick(request.body, ["currency"]))
+//   return reply.code(200).send({ message: "Ledger updated successfully." })
+// }
+
 async function ledgersPutHandler(request, reply) {
-  request.body.name = request.params.ledgerName
+  const { name, currency, members } = request.body
 
-  const ledger = await db("ledgers").where("name", request.params.ledgerName).first()
+  try {
+    await db.transaction(async (trx) => {
+      const existingLedger = await trx("ledgers").where({ name }).first()
+      if (existingLedger) {
+        throw { status: 409, message: "A ledger with the specified name already exists." }
+      }
 
-  if (ledger === undefined) {
-    await db("ledgers").insert(pick(request.body, ["name", "currency"]))
-    return reply.code(201).send({ message: "Ledger created successfully." })
+      await trx("ledgers").insert({ name, currency })
+
+      const ledgerMembers = members.map((member) => ({
+        id: generateId(),
+        name: member.name,
+        ledger: name,
+        is_active: member.is_active
+      }))
+
+      await trx("members").insert(ledgerMembers)
+    })
+
+    return reply.code(201).send({ message: "Ledger and members created successfully." })
+  } catch (error) {
+    const status = error.status || 500
+    const message = error.message || "Internal server error"
+    return reply.code(status).send({ error: message })
   }
-
-  await db("ledgers")
-    .where("name", request.params.ledgerName)
-    .update(pick(request.body, ["currency"]))
-  return reply.code(200).send({ message: "Ledger updated successfully." })
 }
 
 const transactionPostBodySchema = {
   type: "object",
-  required: ["ledger", "currency", "expense_type", "contributions"], 
+  required: ["ledger", "currency", "expense_type", "contributions"],
   anyOf: [{ required: ["name"] }, { required: ["category"] }],
   properties: {
     ledger: { type: "string" },
@@ -736,12 +765,34 @@ const transactionPostBodySchema = {
 
 const ledgersPutBodySchema = {
   type: "object",
-  required: ["currency"],
+  required: ["name", "currency", "members"],
   properties: {
-    currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] }
+    name: { type: "string" },
+    currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] },
+    members: {
+      type: "array",
+      minItems: 1,
+      items: {
+        type: "object",
+        required: ["name", "is_active"],
+        properties: {
+          name: { type: "string" },
+          is_active: { type: "boolean" }
+        }
+      }
+    }
   },
   additionalProperties: false
 }
+
+// const ledgersPutBodySchema = {
+//   type: "object",
+//   required: ["currency"],
+//   properties: {
+//     currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] }
+//   },
+//   additionalProperties: false
+// }
 
 const transactionsGetQuerySchema = {
   type: "object",
@@ -867,7 +918,9 @@ async function createRecurringTransactions() {
 
 app.get("/ledgers", ledgersGetHandler)
 app.get("/ledgers/:ledgerName", ledgersGetHandlerWithRoute)
-app.put("/ledgers/:ledgerName", { schema: { body: ledgersPutBodySchema } }, ledgersPutHandler)
+// app.put("/ledgers/:ledgerName", { schema: { body: ledgersPutBodySchema } }, ledgersPutHandler)
+app.post("/ledgers", { schema: { body: ledgersPutBodySchema } }, ledgersPutHandler)
+
 // app.delete ('/ledgers/:ledgerName', ledgersDeleteHandler);
 
 app.get("/members", { schema: { response: { 200: membersGetResponseSchema } } }, membersGetHandler)
