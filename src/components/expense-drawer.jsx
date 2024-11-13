@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils"
 import { categories, currencies } from "@/api/client.js"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ExpenseDrawer({
   /* props */ selectedExpense,
@@ -30,7 +31,6 @@ export default function ExpenseDrawer({
   pushExpense,
   editExpense
 }) {
-  // make the date a Date object
   selectedExpense["date"] = new Date(selectedExpense["date"])
 
   const [income, setIncome] = useState(selectedExpense.income)
@@ -122,6 +122,8 @@ export default function ExpenseDrawer({
     return edit ? "Edit " + type : "Add New " + type
   }
 
+  const { toast } = useToast()
+
   async function handleSubmit(e) {
     e.preventDefault()
 
@@ -130,11 +132,14 @@ export default function ExpenseDrawer({
     const splitBetweenMembers = new Set(splitBetween.map((s) => s.member))
     // Some error checking
     if (paidByMembers.size === 0) {
-      alert("Please select at least one person to pay for this expense.")
+      toast({
+        title: "Uh oh!",
+        description: "Please select at least one person to pay for this expense."
+      })
       return
     }
     if (splitBetweenMembers.size === 0) {
-      alert("Please select at least one person to split this expense between.")
+      toast({ title: "Uh oh!", description: "Please select at least one person to split this expense between." })
       return
     }
 
@@ -159,8 +164,18 @@ export default function ExpenseDrawer({
     const dateString = date.toISOString().split("T")[0]
     if (isEditMode) {
       await editExpense(id, name, currency, category, dateString, income ? "income" : "expense", contributions)
+      toast({
+        title: "Success!",
+        description: "Expense edited.",
+        variant: "default"
+      })
     } else {
       await pushExpense(name, currency, category, dateString, income ? "income" : "expense", contributions)
+      toast({
+        title: "Success!",
+        description: "Expense added.",
+        variant: "default"
+      })
     }
     handleCloseDrawer()
   }
