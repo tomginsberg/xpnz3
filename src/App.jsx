@@ -38,6 +38,7 @@ function LedgerLayout() {
     pushExpense,
     editExpense
   } = useExpense(ledgerName)
+  const emptyMode = expenses.length === 0
 
   const [expandAll, setExpandAll] = useState(false)
   const toggleExpansion = useCallback(() => {
@@ -58,7 +59,7 @@ function LedgerLayout() {
     <>
       <Topbar onSearch={setSearchTerm} toggleExpansion={toggleExpansion} />
       <Outlet context={outletContext} />
-      <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} />
+      <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} emptyMode={emptyMode} />
       <ExpenseDrawer
         selectedExpense={selectedExpense}
         isDrawerOpen={isDrawerOpen}
