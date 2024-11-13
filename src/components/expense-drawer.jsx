@@ -254,7 +254,7 @@ export default function ExpenseDrawer({
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="calButton">Date</Label>
-                <DateTimePicker granularity="hour" value={date} onChange={setDate}/>
+                <DateTimePicker granularity="minute" value={date} onChange={setDate}/>
               </div>
 
               <div className="space-y-2">
