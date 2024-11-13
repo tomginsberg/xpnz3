@@ -33,6 +33,7 @@ export default function ExpenseDrawer({
 }) {
   selectedExpense["date"] = new Date(selectedExpense["date"])
 
+
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
   const [amount, setAmount] = useState(selectedExpense.amount)
@@ -64,7 +65,6 @@ export default function ExpenseDrawer({
       setPaidBy([{ member: values[0], amount }])
       return
     }
-    console.log(paidBy)
 
     if (values.length !== 0 && paidBy.length === 0) {
       setPaidBy(
@@ -87,7 +87,6 @@ export default function ExpenseDrawer({
   }
 
   function handlePaidByChange(value, index) {
-    console.log("In HandlePaidByChange")
     setPaidBy((prev) => {
       const paidBy = [...prev]
       paidBy[index] = { ...paidBy[index], amount: value }
@@ -108,7 +107,6 @@ export default function ExpenseDrawer({
   }, [paidBy])
 
   const onSplitBetweenMembersChange = (values) => {
-    console.log("onSplitBetweenMembersChange")
     setSplitBetween(
       values.map((member) => {
         const existing = splitBetween.find((s) => s.member === member)
