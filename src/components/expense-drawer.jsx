@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react" // shadcn components
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import { DateTimePicker, TimePicker } from '@/components/ui/datetime-picker'
 import { ConfettiButton } from "@/components/ui/confetti"
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 
@@ -240,24 +241,7 @@ export default function ExpenseDrawer({
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="calButton">Date</Label>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      id="calButton"
-                      variant="outline"
-                      className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="w-auto rounded-xl text-primary" aria-describedby="Date Select">
-                    <DialogHeader>
-                      <DialogTitle className="text-primary sr-only">Select Date</DialogTitle>
-                    </DialogHeader>
-                    <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-                  </DialogContent>
-                </Dialog>
+                <DateTimePicker granularity="hour" value={date} onChange={setDate}/>
               </div>
 
               <div className="space-y-2">
