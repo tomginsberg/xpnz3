@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react" // shadcn components
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
-import { DateTimePicker, TimePicker } from '@/components/ui/datetime-picker'
+import { DateTimePicker, TimePicker } from "@/components/ui/datetime-picker"
 import { ConfettiButton } from "@/components/ui/confetti"
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 
@@ -31,13 +31,10 @@ export default function ExpenseDrawer({
   pushExpense,
   editExpense
 }) {
-  selectedExpense["date"] = new Date(selectedExpense["date"])
-
-
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
   const [amount, setAmount] = useState(selectedExpense.amount)
-  const [date, setDate] = useState(selectedExpense.date)
+  const [date, setDate] = useState(new Date(selectedExpense.date))
   const [category, setCategory] = useState(selectedExpense.category)
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
 
@@ -52,7 +49,7 @@ export default function ExpenseDrawer({
       setIncome(selectedExpense.income)
       setName(selectedExpense.name)
       setAmount(selectedExpense.amount)
-      setDate(selectedExpense.date)
+      setDate(new Date(selectedExpense.date))
       setCategory(selectedExpense.category)
       setPaidBy(selectedExpense.paidBy)
       setSplitBetween(selectedExpense.splitBetween)
