@@ -22,6 +22,7 @@ import { api } from "@/../xpnz.config.js"
 import { TagInput } from "@/components/ui/tag-input"
 import { ScrollArea } from "../components/ui/scroll-area"
 import { cn } from "@/lib/utils"
+import { ConfettiButton } from "@/components/ui/confetti"
 
 export function Combobox({ values }) {
   const [open, setOpen] = useState(false)
@@ -321,9 +322,13 @@ export default function Home() {
                   <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
                     Back
                   </Button>
-                  <Button className="flex-grow" type="submit">
-                    Next
-                  </Button>
+                  <ConfettiButton
+                    className="flex-grow"
+                    type="submit"
+                    disabled={!name || !selectedCurrency || newLedgerMembers.length === 0}
+                  >
+                    Create!
+                  </ConfettiButton>
                 </DrawerFooter>
               </form>
             </ScrollArea>
