@@ -14,6 +14,7 @@ import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { Check, CircleCheckBig, Share2 } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { motion } from "framer-motion"
+import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
 
 const DebtsTab = () => {
   const { ledgerName } = useParams()
@@ -125,17 +126,12 @@ const DebtsTab = () => {
       )}
 
       {debts.length === 0 && loaded && (
-        <div className="absolute top-48 items-center justify-center w-full">
-          <img
-            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif"
-            alt="🌎"
-            width="32"
-            height="32"
-            className="justify-center w-full px-[40%]"
-          />
-          <p className="text-2xl text-muted-foreground text-center">Everyone is Settled Up!</p>
-          <p className="text text-foreground/30 text-center">Add more expensed to see debts</p>
-        </div>
+        <AnimatedTextImageBlock
+          image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif"
+          imageAlt="🌎"
+          title="Everyone is Settled Up!"
+          subtitle="Add more expensed to see debts"
+        />
       )}
 
       <Drawer open={settleVisible} onOpenChange={setSettleVisible}>
