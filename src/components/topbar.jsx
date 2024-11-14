@@ -124,6 +124,18 @@ export default function Topbar({ onSearch, toggleExpansion }) {
     dash: { emoji: "📊", label: "Dashboard" }
   }
 
+  const copyDebts = async () => {
+    const text = `💸 Track group expenses with XPNZ @ https://xpnz.ca${location.pathname}`
+
+    if (navigator.share) {
+      await navigator.share({ text })
+    } else if (navigator.clipboard) {
+      await navigator.clipboard.writeText(text)
+    } else {
+      alert(text)
+    }
+  }
+
   const headline = headlines[pageType]
 
   if (!headline) return <Error />
@@ -147,9 +159,11 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                 </SheetHeader>
                 <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
                   <XpnzNavigationButton route="/" icon="🏠" label="Home" />
-                  <XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring" />
-                  <XpnzNavigationButton route="/plots" icon="📊" label="Plots" />
-                  <XpnzNavigationButton route="/share" icon="🤝" label="Share" />
+                  {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring" />*/}
+                  {/*<XpnzNavigationButton route="/plots" icon="📊" label="Plots" />*/}
+                  <Button onClick={copyDebts} variant="outline" className="justify-start">
+                    <span className="mr-2">🤝</span> Share
+                  </Button>
 
                   <Separator className="my-2" />
 
