@@ -41,6 +41,7 @@ export default function ExpenseDrawer({
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
   const [currency, setCurrency] = useState(selectedExpense.currency)
   const [isUnequalSplit, setIsUnequalSplit] = useState(false)
+  const [isSplitByMultiple, setIsSplitByMultiple] = useState(false)
   const id = selectedExpense.id
   const memberNames = members.map((member) => member.name)
 
@@ -175,10 +176,13 @@ export default function ExpenseDrawer({
     handleCloseDrawer()
   }
 
-  // set unequalsplit to false if split members is less than 2
   useEffect(() => {
     if (splitBetween.length <= 1) {
+      setIsSplitByMultiple(false)
       setIsUnequalSplit(false)
+    }
+    else {
+      setIsSplitByMultiple(true)
     }
   }, [splitBetween])
 
@@ -296,11 +300,11 @@ export default function ExpenseDrawer({
                 <div className="flex items-center justify-between">
                   <Label>Split Between</Label>
                   <div className="flex items-center space-x-2">
-                    <Label htmlFor="unequal-split" className={splitBetween.length <= 1 && "text-muted"}>
+                    <Label htmlFor="unequal-split" className={!isSplitByMultiple && "text-muted"}>
                       Unequal Split
                     </Label>
                     <Switch
-                      disabled={splitBetween.length <= 1}
+                      disabled={!isSplitByMultiple}
                       id="unequal-split"
                       checked={isUnequalSplit}
                       onCheckedChange={setIsUnequalSplit}
@@ -313,7 +317,7 @@ export default function ExpenseDrawer({
                     label: member,
                     value: member
                   }))}
-                  defaultValue={splitBetween.map((s) => s.member)}
+                  defaultValue={selectedExpense.splitBetween.map((s) => s.member)}
                   onValueChange={onSplitBetweenMembersChange}
                 />
 
