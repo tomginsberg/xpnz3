@@ -3,9 +3,6 @@ import { Plus } from "lucide-react"
 import { motion } from "framer-motion"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import ShinyButton from "./ui/shiny-button"
-import PulsatingButton from "./ui/pulsating-button"
-import { BackgroundGradient } from "./ui/background-gradient"
 
 interface Tab {
   id: string
@@ -20,13 +17,13 @@ interface ToolbarProps {
 
 const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = false }) => {
   const tabs: Tab[] = [
-    { id: "", label: "💸" },
+    { id: "expenses", label: "💸" },
     { id: "members", label: "🧑‍🤝‍🧑" },
     { id: "debts", label: "💳" }
   ]
 
   const location = useLocation()
-  const currentPath = location.pathname.split("/").pop() || ""
+  const currentPath = location.pathname.split("/").pop() || "expenses"
   const navigate = useNavigate()
 
   // Reference to hold tab elements
@@ -38,8 +35,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = fals
   })
 
   const updateBubble = useCallback(() => {
-    const activeTab = currentPath === ledger ? "" : currentPath
-    const el = tabRefs.current[activeTab]
+    const el = tabRefs.current[currentPath]
     if (el) {
       const { offsetLeft, offsetWidth } = el
       setBubbleStyle({ left: offsetLeft, width: offsetWidth })
@@ -51,12 +47,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = fals
   }, [updateBubble])
 
   function handleClickPlus() {
-    // TODO: Decide if we want to navigate to the ledger root
     if (currentPath !== ledger) {
-      navigate(`/${ledger}`)
+      navigate(`/${ledger}/expenses`)
     }
-    // // add confetti
-
     onClickPlus()
   }
 

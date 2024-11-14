@@ -1,6 +1,6 @@
 // App.jsx
 import React, { Suspense, useCallback, useState } from "react"
-import { BrowserRouter as Router, Outlet, Route, Routes, useParams } from "react-router-dom"
+import { BrowserRouter as Router, Navigate, Outlet, Route, Routes, useParams } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -83,7 +83,8 @@ export default function App() {
           <Route path="/" element={<Home />} />
 
           <Route path="/:ledgerName/:tab?" element={<LedgerLayout />}>
-            <Route index element={<ExpensesTab />} />
+            <Route index element={<Navigate to="expenses" replace />} />
+            <Route path="expenses" element={<ExpensesTab />} />
             <Route
               path="members"
               element={

@@ -13,6 +13,7 @@ import {
   Sheet,
   SheetClose,
   SheetContent,
+  SheetDescription,
   SheetFooter,
   SheetHeader,
   SheetTitle,
@@ -131,14 +132,16 @@ export default function Topbar({ onSearch, toggleExpansion }) {
     <div className="fixed top-0 left-0 right-0 z-20">
       <div className="border-b bg-card">
         <div className="flex justify-between items-center p-4">
-          <div className="text-black dark:text-white">
+          <div className="text-primary">
             <Sheet>
               <SheetTrigger asChild>
                 <Button size="icon" variant="ghost" className="group translate-y-[3px] -translate-x-1">
                   <XpnzMenuIcon />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="bg-card">
+
+              <SheetContent side="left" className="bg-card text-primary">
+                <SheetDescription className="sr-only">Sidebar</SheetDescription>
                 <SheetHeader>
                   <SheetTitle className="text-left">Options</SheetTitle>
                 </SheetHeader>
@@ -217,23 +220,17 @@ export default function Topbar({ onSearch, toggleExpansion }) {
         </div>
 
         {pageType === "expenses" && (
-          <motion.div
-            className="px-4 overflow-hidden"
-            // disabled animations for now
-            // initial={{ height: 0, opacity: 1 }} // Initially hidden
-            // animate={{ height: "auto", opacity: 1 }} // Animate to full height and visible
-            // transition={{ duration: 5 }} // Control the duration of the animation
-          >
+          <div className="px-4">
             <div className="relative mb-4 mt-1">
               <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
               <Input
                 type="search"
                 placeholder="Search expenses..."
-                className="pb-2 w-full pl-10 text-black dark:text-white"
+                className="pb-2 w-full pl-10 text-primary"
                 onChange={(e) => onSearch(e.target.value)}
               />
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>
