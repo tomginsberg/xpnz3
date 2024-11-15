@@ -1,5 +1,5 @@
 // App.jsx
-import React, { Suspense, useCallback, useState } from "react"
+import React, { Suspense, useCallback, useEffect, useState } from "react"
 import { BrowserRouter as Router, Navigate, Outlet, Route, Routes, useParams } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
@@ -10,15 +10,39 @@ import useExpense from "@/hooks/use-expense.js"
 import { Toaster } from "@/components/ui/toaster"
 import Home from "@/pages/home"
 import Error from "@/pages/error"
-import { FlatLoading } from "@/components/loading"
-import ExpensesTab from "@/pages/expenses"
+import { FlatLoading, MasonaryLoading } from "@/components/loading"
+import { api } from "../xpnz.config.js"
 
 const MembersTab = React.lazy(() => import("@/pages/members"))
 const DebtsTab = React.lazy(() => import("@/pages/debts"))
+const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
 
 function LedgerLayout() {
   const { ledgerName } = useParams()
   const [searchTerm, setSearchTerm] = React.useState("")
+
+  const [ledgerExists, setLedgerExists] = useState(null) // To track ledger existence
+  const [isLoading, setIsLoading] = useState(true)
+
+  // Check if the ledger exists
+  useEffect(() => {
+    async function checkLedger() {
+      try {
+        // delay for testing
+        const response = await fetch(`${api.base}/ledger-exists/${ledgerName}`)
+        const exists = await response.json()
+        setLedgerExists(exists)
+        console.log("Ledger exists:", exists)
+      } catch (error) {
+        console.error("Error checking ledger existence:", error)
+        setLedgerExists(false)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkLedger()
+  }, [ledgerName])
 
   // Expense data and functions
   const {
@@ -55,6 +79,10 @@ function LedgerLayout() {
     expandAll
   }
 
+  if (isLoading) return <div></div>
+  if (!ledgerExists)
+    return <Error message={`Ledger ${ledgerName} cannot be found! Please make sure it exists or contact support.`} />
+
   return (
     <>
       <Topbar onSearch={setSearchTerm} toggleExpansion={toggleExpansion} />
@@ -84,7 +112,14 @@ export default function App() {
 
           <Route path="/:ledgerName/:tab?" element={<LedgerLayout />}>
             <Route index element={<Navigate to="expenses" replace />} />
-            <Route path="expenses" element={<ExpensesTab />} />
+            <Route
+              path="expenses"
+              element={
+                <Suspense fallback={<MasonaryLoading />}>
+                  <ExpensesTab />
+                </Suspense>
+              }
+            />
             <Route
               path="members"
               element={
