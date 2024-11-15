@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import { motion } from "framer-motion"
 import { ExpandIcon, Moon, Search, ShrinkIcon, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
