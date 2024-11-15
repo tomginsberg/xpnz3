@@ -689,22 +689,6 @@ async function ledgersGetHandlerWithRoute(request, reply) {
   return payload
 }
 
-// async function ledgersPutHandler(request, reply) {
-//   request.body.name = request.params.ledgerName
-//
-//   const ledger = await db("ledgers").where("name", request.params.ledgerName).first()
-//
-//   if (ledger === undefined) {
-//     await db("ledgers").insert(pick(request.body, ["name", "currency"]))
-//     return reply.code(201).send({ message: "Ledger created successfully." })
-//   }
-//
-//   await db("ledgers")
-//     .where("name", request.params.ledgerName)
-//     .update(pick(request.body, ["currency"]))
-//   return reply.code(200).send({ message: "Ledger updated successfully." })
-// }
-
 async function ledgersPutHandler(request, reply) {
   const { name, currency, members } = request.body
 
@@ -784,15 +768,6 @@ const ledgersPutBodySchema = {
   },
   additionalProperties: false
 }
-
-// const ledgersPutBodySchema = {
-//   type: "object",
-//   required: ["currency"],
-//   properties: {
-//     currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] }
-//   },
-//   additionalProperties: false
-// }
 
 const transactionsGetQuerySchema = {
   type: "object",
@@ -938,6 +913,22 @@ app.put("/transactions/:id", { schema: { body: transactionPostBodySchema } }, tr
 app.get("/ledgers/:ledgerName/categories", categoriesGetHandler)
 app.get("/ledgers/:ledgerName/balance", balancesGetHandler)
 app.get("/ledgers/:ledgerName/settlement", settlementsGetHandler)
+
+app.get("/ledger-exists/:ledgerName", async (request, reply) => {
+  const { ledgerName } = request.params
+
+  try {
+    const ledger = await db("ledgers").where({ name: ledgerName }).first()
+
+    if (ledger) {
+      return reply.send(true)
+    } else {
+      return reply.send(false)
+    }
+  } catch (error) {
+    return reply.code(500).send({ error: "Internal server error" })
+  }
+})
 
 // app.get ('/recurrences', recurrencesGetHandler);
 // app.get ('/recurrences/:id', recurrencesGetHandler);
