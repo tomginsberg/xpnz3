@@ -62,9 +62,6 @@ export function Combobox({ values }) {
 }
 
 export default function Home() {
-  // const { setTheme } = useTheme()
-  // setTheme("light")
-
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false)
   const [name, setName] = useState("")
   const [newLedgerMembers, setNewLedgerMembers] = useState([])
