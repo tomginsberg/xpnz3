@@ -1,5 +1,5 @@
 // components/animated-card.jsx
-import { memo, useState } from "react"
+import { memo, useEffect, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Copy, Pencil, Trash2 } from "lucide-react"
@@ -9,8 +9,11 @@ import { useOutletContext } from "react-router-dom"
 
 const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, className }) => {
   const { expandAll } = useOutletContext()
-
   const [showDetails, setShowDetails] = useState(expandAll)
+
+  useEffect(() => {
+    setShowDetails(expandAll)
+  }, [expandAll])
 
   const toggleDetails = () => {
     setShowDetails((prev) => !prev)
@@ -50,10 +53,10 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
 
   const ensureString = (value) => {
     // Check if the value is not already a string
-    if (typeof value !== 'string') {
+    if (typeof value !== "string") {
       // If it's a Date object, convert it to a string
       if (value instanceof Date) {
-        return value.toLocaleString()  // You can customize the format here
+        return value.toLocaleString() // You can customize the format here
       }
       // For any other non-string type, you can convert it to a string
       return String(value)
@@ -66,13 +69,12 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
     <ContextMenu>
       <ContextMenuTrigger>
         <motion.div
-          initial={{ opacity: 1, y: 30, scale: 0.8 }}
+          initial={{ opacity: 0, y: 20, scale: 0.9 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3 }}
-          // exit={{ opacity: 1, scale: 0.8, y: 30 }}
           onClick={toggleDetails}
           className={cn("break-inside-avoid select-none z-0", className)}
-          viewport={{ once: false, amount: 0.25 }} // Optional: customize viewport behavior
+          viewport={{ once: false, amount: 0 }}
         >
           <motion.div
             className={
@@ -101,7 +103,15 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
               </div>
               {/* Date */}
               <div className="px-4 pb-4 pt-0 text-gray-700 dark:text-gray-300">
-                <p className="text-md">{ensureString(expense.date)}</p>
+                <p className="text-md">
+                  {new Date(expense.date)
+                    .toLocaleString("default", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric"
+                    })
+                    .replace(",", "")}
+                </p>
               </div>
             </div>
 
