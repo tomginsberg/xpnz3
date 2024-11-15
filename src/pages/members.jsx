@@ -87,7 +87,7 @@ function MembersRow(props) {
                 {`${paidString} all time`}
               </p>
             </div>
-            <Button variant="ghost" size="icon" className="mx-1" onClick={handleSubmit} type="button">
+            <Button variant="ghost" className="h-10 w-10 scale-110" onClick={handleSubmit} type="button">
               <AnimatePresence mode="wait" initial={false}>
                 {isEditing ? (
                   <motion.div
@@ -157,28 +157,27 @@ function MembersAdd(props) {
   }
 
   return (
-    <form onSubmit={handleAdd}>
-      <motion.div
-        initial={{ opacity: 0, y: 30, scale: 0.8 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className={`flex flex-row ${className} justify-between rounded-lg bg-card px-4 py-2 relative
+    <form onSubmit={handleAdd} className="sticky top-[73px] bg-background py-3 border-b px-3">
+      <div className="border rounded-lg">
+        <div
+          className={`flex flex-row ${className} justify-between rounded-lg bg-background ps-4 relative
           ${isDuplicate ? "ring-1 ring-red-500" : ""}`}
-      >
-        <div className="relative flex-1">
-          <Input
-            className="bg-card shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-2xl font-bold w-full"
-            placeholder={placeholder}
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-          />
+        >
+          <div className="relative flex-1">
+            <Input
+              className="shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-md w-full"
+              placeholder={placeholder}
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+            />
+          </div>
+          <div className="flex items-center">
+            <Button variant="ghost" size="icon" disabled={!name.trim() || isDuplicate} type="submit">
+              <UserRoundPlus className="text-gray-700 dark:text-gray-200 h-5" />
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center">
-          <Button variant="ghost" size="icon" className="mx-1" disabled={!name.trim() || isDuplicate} type="submit">
-            <UserRoundPlus className="text-gray-700 dark:text-gray-200" />
-          </Button>
-        </div>
-      </motion.div>
+      </div>
     </form>
   )
 }
@@ -211,10 +210,6 @@ export default function MembersPage() {
     await editMember(member.id, newName)
   }
 
-  async function onAdd(name) {
-    await pushMember(name)
-  }
-
   const MembersRows = () => {
     if (balance === undefined) return <></>
 
@@ -224,13 +219,15 @@ export default function MembersPage() {
   }
 
   return (
-    <div className="mt-[73px] p-3">
+    <div className="mt-[73px] mb-[120%]">
       <MembersAdd
         placeholder="Add member"
         onAdd={pushMember}
         existingMembers={balance ? balance.map((m) => m.name) : []}
       />
-      <MembersRows />
+      <div className="px-3">
+        <MembersRows />
+      </div>
     </div>
   )
 }
