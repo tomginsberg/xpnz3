@@ -4,6 +4,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { DateTimePicker, TimePicker } from "@/components/ui/datetime-picker"
 import { ConfettiButton } from "@/components/ui/confetti"
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { SplitBetweenForm } from "@/components/ui/expense-split-between"
+import { PaidByForm } from "@/components/ui/expense-paid-by"
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -37,11 +39,9 @@ export default function ExpenseDrawer({
   const [date, setDate] = useState(new Date(selectedExpense.date))
   const [category, setCategory] = useState(selectedExpense.category)
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
-
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
   const [currency, setCurrency] = useState(selectedExpense.currency)
-  const [isUnequalSplit, setIsUnequalSplit] = useState(false)
-  const [isSplitByMultiple, setIsSplitByMultiple] = useState(false)
+
   const id = selectedExpense.id
   const memberNames = members.map((member) => member.name)
 
@@ -57,61 +57,6 @@ export default function ExpenseDrawer({
       setCurrency(selectedExpense.currency)
     }
   }, [selectedExpense, isDrawerOpen])
-
-  const onPaidByMembersChange = (values) => {
-    if (values.length === 1) {
-      setPaidBy([{ member: values[0], amount }])
-      return
-    }
-
-    if (values.length !== 0 && paidBy.length === 0) {
-      setPaidBy(
-        values.map((member, index) => {
-          if (index === 0) {
-            return { member, amount: amount }
-          } else {
-            return { member, amount: 0 }
-          }
-        })
-      )
-    } else {
-      setPaidBy(
-        values.map((member) => {
-          const existing = paidBy.find((p) => p.member === member)
-          return existing || { member, amount: 0 }
-        })
-      )
-    }
-  }
-
-  function handlePaidByChange(value, index) {
-    setPaidBy((prev) => {
-      const paidBy = [...prev]
-      paidBy[index] = { ...paidBy[index], amount: value }
-      return paidBy
-    })
-  }
-
-  const sumContributions = (contributions) => {
-    return contributions.reduce((acc, curr) => acc + Number(curr.amount), 0)
-  }
-
-  useEffect(() => {
-    if (paidBy.length === 1) {
-      setAmount(amount)
-    } else if (paidBy.length > 1) {
-      setAmount(sumContributions(paidBy))
-    }
-  }, [paidBy])
-
-  const onSplitBetweenMembersChange = (values) => {
-    setSplitBetween(
-      values.map((member) => {
-        const existing = splitBetween.find((s) => s.member === member)
-        return existing || { member, weight: 1 }
-      })
-    )
-  }
 
   function getDrawerTitle(edit) {
     let type = income ? "Income" : "Expense"
@@ -176,15 +121,6 @@ export default function ExpenseDrawer({
     handleCloseDrawer()
   }
 
-  useEffect(() => {
-    if (splitBetween.length <= 1) {
-      setIsSplitByMultiple(false)
-      setIsUnequalSplit(false)
-    }
-    else {
-      setIsSplitByMultiple(true)
-    }
-  }, [splitBetween])
 
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
@@ -268,85 +204,23 @@ export default function ExpenseDrawer({
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Paid By</Label>
-                <MultiSelect
-                  options={memberNames.map((member) => ({
-                    label: member,
-                    value: member
-                  }))}
-                  defaultValue={selectedExpense.paidBy.map((p) => p.member)}
-                  onValueChange={onPaidByMembersChange}
+              <div>
+                <PaidByForm
+                  memberNames={memberNames}
+                  selectedExpense={selectedExpense}
+                  paidBy={paidBy}
+                  setPaidBy={setPaidBy}
+                  amount={amount}
+                  setAmount={setAmount}
                 />
-
-                {paidBy.length > 1 && (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                    {paidBy.map((payer, index) => (
-                      <div key={payer.member} className="flex items-center space-x-2 space-y-2">
-                        <div className="flex-grow">
-                          <CalculatorInput
-                            value={payer.amount}
-                            useLabel={true}
-                            label={payer.member}
-                            onChange={(value) => handlePaidByChange(value, index)}
-                          />
-                        </div>
-                      </div>
-                    ))}{" "}
-                  </div>
-                )}
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Split Between</Label>
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="unequal-split" className={!isSplitByMultiple && "text-muted"}>
-                      Unequal Split
-                    </Label>
-                    <Switch
-                      disabled={!isSplitByMultiple}
-                      id="unequal-split"
-                      checked={isUnequalSplit}
-                      onCheckedChange={setIsUnequalSplit}
-                    />
-                  </div>
-                </div>
-
-                <MultiSelect
-                  options={memberNames.map((member) => ({
-                    label: member,
-                    value: member
-                  }))}
-                  defaultValue={selectedExpense.splitBetween.map((s) => s.member)}
-                  onValueChange={onSplitBetweenMembersChange}
+              <div>
+                <SplitBetweenForm
+                  memberNames={memberNames}
+                  selectedExpense={selectedExpense}
+                  splitBetween={splitBetween}
+                  setSplitBetween={setSplitBetween}
                 />
-
-                {isUnequalSplit && (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                    {splitBetween.map((splitter, index) => (
-                      <div key={splitter.member} className="flex items-center space-x-2">
-                        <div className="flex-grow">
-                          <CalculatorInput
-                            value={splitter.weight}
-                            onChange={(value) => {
-                              setSplitBetween((prev) => {
-                                const splitBetween = [...prev]
-                                splitBetween[index] = {
-                                  ...splitBetween[index],
-                                  weight: value
-                                }
-                                return splitBetween
-                              })
-                            }}
-                            disabled={!isUnequalSplit}
-                            useLabel={true}
-                            label={splitter.member}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 
