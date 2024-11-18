@@ -69,16 +69,19 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
   return (
     <motion.div
       key={monthYear}
-      initial={{ opacity: 0, scale: 1, x: -1000 }}
-      animate={{ opacity: 1, scale: 1, x: 0 }}
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div
-          className={cn("sticky top-[132px] z-10 w-full py-1 px-1", isOpen ? "bg-background" : "bg-linear-foreground")}
-        >
+        <div className={cn("sticky top-[125px] z-10 w-full py-2 px-2")}>
           <CollapsibleTrigger asChild>
-            <button className="flex items-center justify-between w-full z-10 p-3 rounded-lg">
+            <button
+              className={cn(
+                "flex items-center justify-between w-full z-10 p-3 rounded-lg",
+                isOpen ? "bg-background" : "bg-card"
+              )}
+            >
               <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
               <div className="flex items-center gap-3">
                 <span className="text-black dark:text-zinc-400">${totalAmount}</span>
@@ -97,13 +100,12 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
               >
                 <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5 }} spacing={0} sequential className="px-1">
                   {items.map((item) => (
-                    <div className="p-2">
+                    <div className="p-2" key={item.id}>
                       <AnimatedCard
-                        key={item.id}
                         expense={item.expense}
                         onEditClick={openEditExpenseDrawer}
                         onCopyClick={copyExpense}
