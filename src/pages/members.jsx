@@ -66,7 +66,7 @@ function MembersRow(props) {
     <ContextMenu>
       <ContextMenuTrigger>
         <motion.div
-          className={`flex ${className} items-center rounded-lg bg-card px-4 py-3`}
+          className={`flex ${className} items-center rounded-lg bg-card ps-4 pe-2 py-3`}
           initial={{ opacity: 0, y: 30, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -157,25 +157,25 @@ function MembersAdd(props) {
   }
 
   return (
-    <form onSubmit={handleAdd} className="sticky top-[73px] bg-background py-3 border-b px-3">
-      <div className="border rounded-lg">
+    <form onSubmit={handleAdd} className="sticky top-[72px] bg-background py-3 px-3 z-10">
+      <div className="rounded-lg">
         <div
-          className={`flex flex-row ${className} justify-between rounded-lg bg-background ps-4 relative
+          className={`flex flex-row ${className} justify-between rounded-lg bg-background ps-3 relative
           ${isDuplicate ? "ring-1 ring-red-500" : ""}`}
         >
-          <div className="relative flex-1">
-            <Input
-              className="shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-md w-full"
-              placeholder={placeholder}
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-            />
-          </div>
-          <div className="flex items-center">
-            <Button variant="ghost" size="icon" disabled={!name.trim() || isDuplicate} type="submit">
-              <UserRoundPlus className="text-gray-700 dark:text-gray-200 h-5" />
-            </Button>
-          </div>
+          {/*<div className="relative">*/}
+          <Input
+            className="shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-xl md:text-2xl w-full"
+            placeholder={placeholder}
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+          />
+          {/*</div>*/}
+          {/*<div className="flex items-center">*/}
+          <Button variant="ghost" size="icon" disabled={!name.trim() || isDuplicate} type="submit" className="me-2">
+            <UserRoundPlus className="text-gray-700 dark:text-gray-200 h-5" />
+          </Button>
+          {/*</div>*/}
         </div>
       </div>
     </form>
@@ -219,13 +219,13 @@ export default function MembersPage() {
   }
 
   return (
-    <div className="mt-[73px] mb-[120%]">
+    <div className="mt-[72px] mb-[120%]">
       <MembersAdd
         placeholder="Add member"
         onAdd={pushMember}
         existingMembers={balance ? balance.map((m) => m.name) : []}
       />
-      <div className="px-3">
+      <div className="px-3 -translate-y-3">
         <MembersRows />
       </div>
     </div>
