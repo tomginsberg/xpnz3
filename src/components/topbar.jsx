@@ -141,7 +141,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-20">
-      <div className="border-b bg-card">
+      <div className="bg-background pb-1">
         <div className="flex justify-between items-center p-4">
           <div className="text-primary">
             <Sheet>
@@ -239,7 +239,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
               <Input
                 type="search"
                 placeholder="Search expenses..."
-                className="pb-2 w-full pl-10 text-primary"
+                className="pb-2 w-full pl-10 text-primary border-none"
                 onChange={(e) => onSearch(e.target.value)}
               />
             </div>
