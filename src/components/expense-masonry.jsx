@@ -34,7 +34,7 @@ export default function ExpenseMasonryGrouped() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="w-full mt-[132px] mb-96">
+      <main className="mt-[132px] mb-96">
         {filteredGroups.map((group) => (
           <MonthGroup
             key={group.monthYear}
@@ -69,13 +69,13 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
   return (
     <motion.div
       key={monthYear}
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
+      initial={{ opacity: 0, scale: 1, x: -1000 }}
+      animate={{ opacity: 1, scale: 1, x: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <div
-          className={cn("sticky top-[132px] z-10 w-full py-1 px-4", isOpen ? "bg-background" : "bg-linear-foreground")}
+          className={cn("sticky top-[132px] z-10 w-full py-1 px-1", isOpen ? "bg-background" : "bg-linear-foreground")}
         >
           <CollapsibleTrigger asChild>
             <button className="flex items-center justify-between w-full z-10 p-3 rounded-lg">
@@ -92,23 +92,24 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
 
         <AnimatePresence>
           {isOpen && (
-            <CollapsibleContent forceMount>
+            <CollapsibleContent forceMount className="">
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.5, ease: "easeInOut" }}
-                className="pt-2 w-full justify-center items-center ms-2 px-4"
               >
-                <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5 }} spacing={2} sequential>
+                <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5 }} spacing={0} sequential className="px-1">
                   {items.map((item) => (
-                    <AnimatedCard
-                      key={item.id}
-                      expense={item.expense}
-                      onEditClick={openEditExpenseDrawer}
-                      onCopyClick={copyExpense}
-                      onDeleteClick={onDeleteClick}
-                    />
+                    <div className="p-2">
+                      <AnimatedCard
+                        key={item.id}
+                        expense={item.expense}
+                        onEditClick={openEditExpenseDrawer}
+                        onCopyClick={copyExpense}
+                        onDeleteClick={onDeleteClick}
+                      />
+                    </div>
                   ))}
                 </Masonry>
               </motion.div>
