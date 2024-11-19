@@ -50,6 +50,7 @@ export default function CalculatorInput({
             id="number-input"
             type="number"
             placeholder={"0.00"}
+            min={0}
             value={value}
             onChange={(e) => onChange(parseFloat(e.target.value))}
             className="pl-10 rounded-r-none z-10"
