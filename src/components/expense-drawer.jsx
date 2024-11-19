@@ -56,7 +56,7 @@ export default function ExpenseDrawer({
       setSplitBetween(selectedExpense.splitBetween)
       setCurrency(selectedExpense.currency)
     }
-  }, [selectedExpense, isDrawerOpen])
+  }, [isDrawerOpen])
 
   function getDrawerTitle(edit) {
     let type = income ? "Income" : "Expense"

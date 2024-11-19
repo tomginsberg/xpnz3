@@ -13,6 +13,7 @@ interface PaidByFormProps {
   memberNames: string[];
   selectedExpense: {
     paidBy: PaidBy[];  // Define the type of `paidBy` in selectedExpense
+    amount: number;
   };
   paidBy: PaidBy[];
   setPaidBy: React.Dispatch<React.SetStateAction<PaidBy[]>>;
@@ -74,6 +75,13 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
       setAmount(sumContributions(paidBy))
     }
   }, [paidBy])
+
+  // This function has to come after the above useEffect
+  // On a change in selectedExpense, the amount should be set to the selectedExpense
+  // Some weird state issue is occurring and this seems to fix it
+  useEffect(() => {
+    setAmount(selectedExpense.amount);
+  }, [selectedExpense])
 
   return (
     <div className="space-y-2">
