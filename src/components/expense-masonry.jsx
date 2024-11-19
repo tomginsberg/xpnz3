@@ -78,8 +78,8 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
           <CollapsibleTrigger asChild>
             <button
               className={cn(
-                "flex items-center justify-between w-full z-10 p-3 rounded-lg",
-                isOpen ? "bg-background" : "bg-card"
+                "flex items-center justify-between w-full z-10 p-3",
+                isOpen ? "bg-background" : "bg-card rounded-lg"
               )}
             >
               <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
