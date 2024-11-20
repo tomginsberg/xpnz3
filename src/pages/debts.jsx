@@ -17,16 +17,31 @@ import { motion } from "framer-motion"
 import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
 import { ConfettiButton } from "@/components/ui/confetti"
 import { useToast } from "@/hooks/use-toast"
+import { emptyExpense } from "@/api/client.js"
+
+const mapMemberToMemberId = (memberName, members) => {
+  const m = members.find((member) => member.name == memberName)
+}
 
 const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
-  const { loaded, settlement: trueSettlement } = useXpnzApi(ledgerName)
+  const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense, } = useXpnzApi(ledgerName)
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
-    settleDebt: () => {
-      console.log("Settling debt")
+    settleDebt: ({from: memberFrom, to: memberTo, amount: amount}) => {
+      const expenseName = `Transfer: ${memberFrom} → ${memberTo}`
+      const currency = emptyExpense.currency
+      const category = undefined
+      const dateString = (new Date()).toISOString().split("T")[0]
+      const expense_type = 'transfer'
+      const contributions = [
+        {id: mapMemberToMemberId(memberFrom, members), paid: amount, weight: 0},
+        {id: mapMemberToMemberId(memberTo, members), paid: 0, weight: 1}
+      ]
+
+      pushExpense(expenseName, currency, category, dateString, expense_type, contributions)
     }
   }
   const [debts, setDebts] = useState(xpnzApi.debts)
