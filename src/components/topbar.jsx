@@ -129,6 +129,19 @@ export default function Topbar({ onSearch, toggleExpansion }) {
 
   if (!headline) return <Error />
 
+  const ColorBullet = ({ color }) => (
+    <span className="mr-2">
+      <svg
+        className="w-4 h-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <circle cx="12" cy="12" r="10" fill={color} />
+      </svg>
+    </span>
+  )
+
   return (
     <div className="fixed top-0 left-0 right-0 z-20">
       <div className="border-b bg-card">
@@ -149,6 +162,23 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                   <XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring" />
                   <XpnzNavigationButton route="/plots" icon="📊" label="Plots" />
                   <XpnzNavigationButton route="/share" icon="🤝" label="Share" />
+
+                  <Separator className="my-2" />
+
+                  <h2 className="text-lg font-bold">Users</h2>
+
+                  <Button variant="outline" className="justify-start">
+                    <ColorBullet color="#FFC107" />
+                    Mark
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    <ColorBullet color="#FF5722" />
+                    John
+                  </Button>
+                  <Button variant="outline" className="justify-start">
+                    <ColorBullet color="#3F51B5" />
+                    Jane
+                  </Button>
 
                   <Separator className="my-2" />
 
