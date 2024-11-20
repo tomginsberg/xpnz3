@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import {
   Drawer,
   DrawerClose,
@@ -11,16 +11,20 @@ import {
 import { Button } from "@/components/ui/button"
 
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
-import { Check, CircleCheckBig, ClipboardCheck, Share2 } from "lucide-react"
+import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
 import { useParams } from "react-router-dom"
 import { motion } from "framer-motion"
+import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
+import { ConfettiButton } from "@/components/ui/confetti"
+import { useToast } from "@/hooks/use-toast"
 
 const DebtsTab = () => {
   const { ledgerName } = useParams()
+  const { toast } = useToast()
   const { loaded, settlement: trueSettlement } = useXpnzApi(ledgerName)
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
-    debts: trueSettlement.map(({payer, payee, amount}) => [payer, payee, amount]),
+    debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
     settleDebt: () => {
       console.log("Settling debt")
     }
@@ -46,14 +50,27 @@ const DebtsTab = () => {
     setSettleVisible(true)
   }
 
-  const settleDebt = (memberFrom, memberTo, amount) => {
-    setSettleVisible(false)
-    console.log(`Settling $${amount} from ${memberFrom} to ${memberTo}`)
-    setDebts(debts.filter((debt) => debt[0] !== memberFrom || debt[1] !== memberTo || debt[2] !== amount))
-    xpnzApi.settleDebt({
-      from: memberFrom,
-      to: memberTo,
-      amount: amount
+  const settleDebt = useCallback(
+    (memberFrom, memberTo, amount) => {
+      setSettleVisible(false)
+      console.log(`Settling $${amount} from ${memberFrom} to ${memberTo}`)
+      setDebts(debts.filter((debt) => debt[0] !== memberFrom || debt[1] !== memberTo || debt[2] !== amount))
+      xpnzApi.settleDebt({
+        from: memberFrom,
+        to: memberTo,
+        amount: amount
+      })
+    },
+    [debts, xpnzApi]
+  )
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    settleDebt(settleMemberFrom, settleMemberTo, settleAmount)
+    toast({
+      title: "Debt settled",
+      description: `Settled $${settleAmount} from ${settleMemberFrom} to ${settleMemberTo}`,
+      variant: "default"
     })
   }
 
@@ -61,7 +78,7 @@ const DebtsTab = () => {
     let text = debts.map((debt) => `${debt[0]} → ${debt[1]}: $${debt[2]}`).join("\n")
     console.log(text)
 
-    text = `📈 Debts\n\n${text}\n\nsee expenses @ https://www.xpnz.ca/${ledgerName}`
+    text = `📈 Debts\n\n${text}\n\nsee expenses @ https://xpnz.ca/${ledgerName}`
 
     if (navigator.share) {
       await navigator.share({ text })
@@ -102,8 +119,7 @@ const DebtsTab = () => {
           </div>
           <Button
             variant="ghost"
-            size="icon"
-            className="mx-1 transition-none"
+            className="transition-none h-10 w-10 scale-125"
             onClick={() => openSettleDialog(member[0], member[1], member[2])}
           >
             <CircleCheckBig className="text-gray-700 dark:text-gray-200" />
@@ -118,46 +134,53 @@ const DebtsTab = () => {
           transition={{ duration: 0.3 }}
           className=""
         >
-          <Button onClick={copyDebts} variant={"outline"} className={`rounded-lg p-3 text-primary ${buttonClass}`}>
+          <Button
+            onClick={copyDebts}
+            variant={"outline"}
+            className={`transition-none rounded-lg p-3 text-primary ${buttonClass}`}
+          >
             {!animationComplete ? <Share2 className="w-5 h-6" /> : <Check className="w-5 h-6" />}
           </Button>
         </motion.div>
       )}
 
       {debts.length === 0 && loaded && (
-        <div className="flex flex-col items-center justify-center">
-          <h2 className="px-8 pt-16 text-center font-mono text-2xl font-bold text-gray-900 dark:text-white">
-            Looking good! <br />
-            No debts to settle.
-          </h2>
-          <img
-            className="my-8 max-w-xs object-contain px-8"
-            src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f9a7/512.gif"
-            alt="🦧"
-          />
-        </div>
+        <AnimatedTextImageBlock
+          image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif"
+          imageAlt="🌎"
+          title="Everyone is Settled Up!"
+          subtitle="Add more expensed to see debts"
+        />
       )}
 
       <Drawer open={settleVisible} onOpenChange={setSettleVisible}>
         <DrawerContent>
           <div className="mx-auto w-full max-w-lg text-primary">
             <DrawerHeader>
-              <DrawerTitle>Settle Debt</DrawerTitle>
-              <DrawerDescription>Confirm settling the debt amount.</DrawerDescription>
+              <DrawerTitle className="text-5xl">💸 💸 💸</DrawerTitle>
+              <DrawerDescription className="sr-only">Settle up drawer</DrawerDescription>
             </DrawerHeader>
-            <div className="p-4 text-center">
-              {/*<h2 className="pb-3 text-2xl font-bold text-gray-900 dark:text-white">💸 💸 💸</h2>*/}
-              <h3 className="mb-5 hyphens-auto text-wrap text-lg font-normal text-gray-500 dark:text-gray-400">
-                Settle ${settleAmount} from <span className="font-bold">{settleMemberFrom}</span> →{" "}
-                <span className="font-bold">{settleMemberTo}</span>
-              </h3>
+            <div className="p-4 text-center text-xl mb-5 hyphens-auto text-wrap font-normal text-primary flex flex-col gap-1 justify-center">
+              <div>Settle ${settleAmount} from</div>
+              <div className="font-bold">
+                {settleMemberFrom} → {settleMemberTo}
+              </div>
             </div>
-            <DrawerFooter>
-              <Button onClick={() => settleDebt(settleMemberFrom, settleMemberTo, settleAmount)}>Submit</Button>
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-            </DrawerFooter>
+            <form onSubmit={handleSubmit}>
+              <DrawerFooter className="flex flex-row w-full justify-center">
+                <DrawerClose asChild>
+                  <Button variant="outline">
+                    <span className="mr-2">
+                      <SquareArrowUpLeft className="size-4" />
+                    </span>{" "}
+                    Cancel
+                  </Button>
+                </DrawerClose>
+                <ConfettiButton className="flex-grow" type="submit">
+                  Settle Up!
+                </ConfettiButton>
+              </DrawerFooter>
+            </form>
           </div>
         </DrawerContent>
       </Drawer>

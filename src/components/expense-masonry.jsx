@@ -1,193 +1,122 @@
-import AnimatedCard from "@/components/animated-card"
-import { Masonry } from "masonic"
-import React, { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
+import { Masonry } from "@mui/lab"
 import { useOutletContext } from "react-router-dom"
-import Fuse from "fuse.js"
-import { ChevronDown } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
+import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-export function ExpenseMasonry() {
-  const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense } = useOutletContext()
-
-  const [filteredExpenses, setFilteredExpenses] = useState([])
-
-  const fuse = useMemo(
-    () =>
-      new Fuse(expenses, {
-        keys: ["name", "category"],
-        threshold: 0.1
-      }),
-    [expenses]
-  )
-
-  useEffect(() => {
-    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date))
-    if (searchTerm) {
-      const results = fuse.search(searchTerm)
-      setFilteredExpenses(results.map((result) => result.item).sort((a, b) => new Date(b.date) - new Date(a.date)))
-    } else {
-      setFilteredExpenses(sortedExpenses)
-    }
-  }, [searchTerm, expenses, fuse])
-
-  const renderCard = ({ data }) => (
-    <AnimatedCard
-      key={data.id}
-      expense={data}
-      onEditClick={openEditExpenseDrawer}
-      onCopyClick={copyExpense}
-      onDeleteClick={onDeleteClick}
-    />
-  )
-
-  return (
-    <div className="mt-[150px] mx-4">
-      <Masonry
-        key={filteredExpenses.length}
-        items={filteredExpenses}
-        columnGutter={14}
-        rowGutter={14}
-        columnWidth={180}
-        maxColumnCount={6}
-        render={renderCard}
-      />
-    </div>
-  )
-}
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import AnimatedCard from "@/components/animated-card"
 
 export default function ExpenseMasonryGrouped() {
   const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense } = useOutletContext()
 
-  const [filteredExpenses, setFilteredExpenses] = useState([])
+  const filteredGroups = useMemo(() => {
+    const filtered = searchTerm
+      ? expenses.filter(
+          (expense) =>
+            expense.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            expense.category.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : expenses
 
-  const fuse = useMemo(
+    const groups = filtered.reduce((acc, expense) => {
+      const monthYear = new Date(expense.date).toLocaleString("default", { month: "long", year: "numeric" })
+      acc[monthYear] = acc[monthYear] || []
+      acc[monthYear].push(expense)
+      return acc
+    }, {})
+
+    return Object.entries(groups).map(([monthYear, expenses]) => ({
+      monthYear,
+      expenses
+    }))
+  }, [searchTerm, expenses])
+
+  return (
+    <div className="min-h-screen bg-background">
+      <main className="mt-[132px] mb-96">
+        {filteredGroups.map((group) => (
+          <MonthGroup
+            key={group.monthYear}
+            monthYear={group.monthYear}
+            expenses={group.expenses}
+            openEditExpenseDrawer={openEditExpenseDrawer}
+            copyExpense={copyExpense}
+            onDeleteClick={onDeleteClick}
+          />
+        ))}
+      </main>
+    </div>
+  )
+}
+
+function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, onDeleteClick }) {
+  const [isOpen, setIsOpen] = useState(true)
+  console.log("isOpen", isOpen)
+
+  const items = useMemo(
     () =>
-      new Fuse(expenses, {
-        keys: ["name", "category"],
-        threshold: 0.1
-      }),
+      expenses.map((expense, index) => ({
+        id: expense.id,
+        expense,
+        index
+      })),
     [expenses]
   )
 
-  useEffect(() => {
-    const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date))
-    if (searchTerm) {
-      const results = fuse.search(searchTerm)
-      setFilteredExpenses(results.map((result) => result.item).sort((a, b) => new Date(b.date) - new Date(a.date)))
-    } else {
-      setFilteredExpenses(sortedExpenses)
-    }
-  }, [searchTerm, expenses, fuse])
-
-  // Group expenses by month and year
-  const groupedExpenses = useMemo(() => {
-    const groups = {}
-    filteredExpenses.forEach((expense) => {
-      const date = new Date(expense.date)
-      const monthYear = date.toLocaleString("default", {
-        month: "long",
-        year: "numeric"
-      })
-      if (!groups[monthYear]) {
-        groups[monthYear] = []
-      }
-      groups[monthYear].push(expense)
-    })
-    // Convert to array and sort by date descending
-    return Object.entries(groups)
-      .map(([monthYear, expenses]) => ({ monthYear, expenses }))
-      .sort((a, b) => new Date(b.expenses[0].date).getTime() - new Date(a.expenses[0].date).getTime())
-  }, [filteredExpenses])
-
-  const renderCard = ({ data }) => (
-    <AnimatedCard
-      key={data.id}
-      expense={data}
-      onEditClick={openEditExpenseDrawer}
-      onCopyClick={copyExpense}
-      onDeleteClick={onDeleteClick}
-    />
-  )
+  const totalAmount = useMemo(() => expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2), [expenses])
 
   return (
-    <div className="mt-[133px] mb-[20vh]">
-      {groupedExpenses.map(({ monthYear, expenses }) => (
-        <MasonryMonth key={monthYear} expenses={expenses} monthYear={monthYear} renderCard={renderCard} />
-      ))}
-    </div>
-  )
-}
-
-const detailsVariants = {
-  open: {
-    opacity: 1,
-    height: "auto",
-    transition: { duration: 0.3, ease: "easeInOut" }
-  },
-  closed: {
-    opacity: 0,
-    height: 0,
-    transition: { duration: 0.3, ease: "easeInOut" }
-  }
-}
-
-function MasonryMonth({ monthYear, expenses, renderCard }) {
-  const [visible, setVisible] = useState(true)
-
-  return (
-    <div key={monthYear}>
-      <div
-        className={cn(
-          "sticky top-[132px] bg-background z-10 w-full py-1"
-          // visible && "border-none"
-        )}
-        onClick={() => setVisible(!visible)}
-      >
-        <motion.div
-          className={cn(
-            "rounded-lg mx-4 my-2 pe-3 text-primary z-10 flex flex-row justify-between"
-            // visible ? "bg-background" : "bg-card"
-          )}
-          animate={{
-            // paddingLeft: visible ? "0.5rem" : "1.5rem",
-            paddingTop: visible ? "0.25rem" : "0.625rem",
-            paddingBottom: visible ? "0.25rem" : "0.625rem",
-            backgroundColor: visible ? "var(--background)" : "var(--card)"
-          }}
-          transition={{
-            paddingLeft: { duration: 0.2, ease: "linear" },
-            paddingTop: { duration: 0.2, ease: "linear" },
-            paddingBottom: { duration: 0.2, ease: "linear" },
-            backgroundColor: { duration: 0.2, ease: "linear" }
-          }}
+    <motion.div
+      key={monthYear}
+      initial={{ opacity: 0, scale: 1, x: -1000 }}
+      animate={{ opacity: 1, scale: 1, x: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    >
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <div
+          className={cn("sticky top-[132px] z-10 w-full py-1 px-1", isOpen ? "bg-background" : "bg-linear-foreground")}
         >
-          <h2 className="ps-2 text-xl font-bold">{monthYear}</h2>
-          <div className="flex flex-row mt-1 gap-3">
-            <span className="text-black dark:text-zinc-400">
-              ${expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2)}
-            </span>
-            <div className="text-black dark:text-zinc-400">
-              <ChevronDown className={cn("transition-all", !visible && "-rotate-180 text-primary")} />
-            </div>
-          </div>
-        </motion.div>
-      </div>
-      <AnimatePresence initial={false}>
-        {visible && (
-          <motion.div initial="closed" animate="open" exit="closed" className="mx-4 mt-2" variants={detailsVariants}>
-            <Masonry
-              key={expenses.length}
-              items={expenses}
-              columnGutter={14}
-              rowGutter={14}
-              columnWidth={180}
-              maxColumnCount={6}
-              render={renderCard}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          <CollapsibleTrigger asChild>
+            <button className="flex items-center justify-between w-full z-10 p-3 rounded-lg">
+              <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
+              <div className="flex items-center gap-3">
+                <span className="text-black dark:text-zinc-400">${totalAmount}</span>
+                <ChevronDown
+                  className={cn("text-primary h-5 w-5 transition-transform duration-200", isOpen && "rotate-180")}
+                />
+              </div>
+            </button>
+          </CollapsibleTrigger>
+        </div>
+
+        <AnimatePresence>
+          {isOpen && (
+            <CollapsibleContent forceMount className="">
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5 }} spacing={0} sequential className="px-1">
+                  {items.map((item) => (
+                    <div className="p-2">
+                      <AnimatedCard
+                        key={item.id}
+                        expense={item.expense}
+                        onEditClick={openEditExpenseDrawer}
+                        onCopyClick={copyExpense}
+                        onDeleteClick={onDeleteClick}
+                      />
+                    </div>
+                  ))}
+                </Masonry>
+              </motion.div>
+            </CollapsibleContent>
+          )}
+        </AnimatePresence>
+      </Collapsible>
+    </motion.div>
   )
 }

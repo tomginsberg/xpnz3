@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react'
-import { Plus } from 'lucide-react'
-import { motion } from 'framer-motion'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
-import { cn } from '@/lib/utils'
+import React, { useRef, useEffect, useState, useCallback } from "react"
+import { Plus } from "lucide-react"
+import { motion } from "framer-motion"
+import { NavLink, useLocation, useNavigate } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
 interface Tab {
   id: string
@@ -12,17 +12,18 @@ interface Tab {
 interface ToolbarProps {
   ledger: string
   onClickPlus: () => void
+  emptyMode?: boolean
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = false }) => {
   const tabs: Tab[] = [
-    { id: '', label: '💸' },
-    { id: 'members', label: '🧑‍🤝‍🧑' },
-    { id: 'debts', label: '💳' }
+    { id: "expenses", label: "💸" },
+    { id: "members", label: "🧑‍🤝‍🧑" },
+    { id: "debts", label: "💳" }
   ]
 
   const location = useLocation()
-  const currentPath = location.pathname.split('/').pop() || ''
+  const currentPath = location.pathname.split("/").pop() || "expenses"
   const navigate = useNavigate()
 
   // Reference to hold tab elements
@@ -34,8 +35,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
   })
 
   const updateBubble = useCallback(() => {
-    const activeTab = currentPath === ledger ? '' : currentPath
-    const el = tabRefs.current[activeTab]
+    const el = tabRefs.current[currentPath]
     if (el) {
       const { offsetLeft, offsetWidth } = el
       setBubbleStyle({ left: offsetLeft, width: offsetWidth })
@@ -47,12 +47,9 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
   }, [updateBubble])
 
   function handleClickPlus() {
-    // TODO: Decide if we want to navigate to the ledger root
     if (currentPath !== ledger) {
-      navigate(`/${ledger}`)
+      navigate(`/${ledger}/expenses`)
     }
-    // // add confetti
-
     onClickPlus()
   }
 
@@ -61,11 +58,14 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
       <div className="flex flex-row gap-2">
         {/* + Button */}
         <button
-          className="h-14 w-14 p-2 rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center"
+          className="relative h-14 w-14 p-2 rounded-full bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 flex items-center justify-center"
           onClick={handleClickPlus}
           aria-label="Add Transaction"
         >
           <Plus className="h-8 w-8 text-white" />
+          {emptyMode && (
+            <span className="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 group-hover:opacity-100 animate-pulse-border"></span>
+          )}
         </button>
 
         {/* Tabs */}
@@ -78,7 +78,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
                 tabRefs.current[tab.id] = el
               }}
               className={({ isActive }) =>
-                cn('relative', !isActive ? 'hover:scale-125 transition ease-in-out duration-300' : '')
+                cn("relative", !isActive ? "hover:scale-125 transition ease-in-out duration-300" : "")
               }
             >
               <span className="relative z-20 text-4xl px-[10px]">{tab.label}</span>
@@ -94,7 +94,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus }) => {
               left: bubbleStyle.left,
               width: bubbleStyle.width
             }}
-            transition={{ type: 'spring', bounce: 0.4, duration: 0.6 }}
+            transition={{ type: "spring", bounce: 0.4, duration: 0.6 }}
             style={{
               top: 0,
               bottom: 0

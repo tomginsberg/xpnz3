@@ -3,7 +3,8 @@ import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/comp
 import { AlertCircle, Home } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
-export default function Error() {
+export default function Error({ message }: { message?: string }) {
+  const defaultMsg = "We apologize, but there was an error while fetching your expense data."
   const navigate = useNavigate()
 
   return (
@@ -14,11 +15,8 @@ export default function Error() {
             <AlertCircle className="h-6 w-6 text-destructive" />
             <CardTitle>Something went wrong!</CardTitle>
           </div>
-          <CardDescription>We apologize, but there was an error while fetching your expense data.</CardDescription>
+          <CardDescription>{message || defaultMsg}</CardDescription>
         </CardHeader>
-        {/*<CardContent>*/}
-        {/*  <p className="text-sm text-muted-foreground">Error details: {error.message || "Unknown error occurred"}</p>*/}
-        {/*</CardContent>*/}
         <CardFooter>
           <Button onClick={() => navigate("/")} className="w-full">
             <Home className="size-5 me-1" /> Return Home

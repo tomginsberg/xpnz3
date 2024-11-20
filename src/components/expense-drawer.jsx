@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react"
-
-// shadcn components
+import { useEffect, useState } from "react" // shadcn components
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
+import { DateTimePicker, TimePicker } from "@/components/ui/datetime-picker"
 import { ConfettiButton } from "@/components/ui/confetti"
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import { SplitBetweenForm } from "@/components/ui/expense-split-between"
+import { PaidByForm } from "@/components/ui/expense-paid-by"
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -12,20 +13,15 @@ import { Label } from "@/components/ui/label"
 import { MultiSelect } from "@/components/ui/multi-select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-
-// icons
+import { Switch } from "@/components/ui/switch" // icons
 import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
-import { CalendarIcon } from "@radix-ui/react-icons"
-
-// external utilities
-import { format } from "date-fns"
-
-// internal components and utilities
+import { CalendarIcon } from "@radix-ui/react-icons" // external utilities
+import { format } from "date-fns" // internal components and utilities
 import { cn } from "@/lib/utils"
 import { categories, currencies } from "@/api/client.js"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ExpenseDrawer({
   /* props */ selectedExpense,
@@ -40,13 +36,12 @@ export default function ExpenseDrawer({
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
   const [amount, setAmount] = useState(selectedExpense.amount)
-  const [date, setDate] = useState(selectedExpense.date)
+  const [date, setDate] = useState(new Date(selectedExpense.date))
   const [category, setCategory] = useState(selectedExpense.category)
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
-
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
   const [currency, setCurrency] = useState(selectedExpense.currency)
-  const [isUnequalSplit, setIsUnequalSplit] = useState(false)
+
   const id = selectedExpense.id
   const memberNames = members.map((member) => member.name)
 
@@ -55,78 +50,20 @@ export default function ExpenseDrawer({
       setIncome(selectedExpense.income)
       setName(selectedExpense.name)
       setAmount(selectedExpense.amount)
-      setDate(selectedExpense.date)
+      setDate(new Date(selectedExpense.date))
       setCategory(selectedExpense.category)
       setPaidBy(selectedExpense.paidBy)
       setSplitBetween(selectedExpense.splitBetween)
       setCurrency(selectedExpense.currency)
     }
-  }, [selectedExpense, isDrawerOpen])
-
-  const onPaidByMembersChange = (values) => {
-    if (values.length === 1) {
-      setPaidBy([{ member: values[0], amount }])
-      return
-    }
-    console.log(paidBy)
-
-    if (values.length !== 0 && paidBy.length === 0) {
-      setPaidBy(
-        values.map((member, index) => {
-          if (index === 0) {
-            return { member, amount: amount }
-          }
-          else {
-            return { member, amount: 0 }
-          }
-        })
-      )
-    }
-    else {
-      setPaidBy(
-        values.map((member) => {
-          const existing = paidBy.find((p) => p.member === member)
-          return existing || { member, amount: 0 }
-        })
-      )
-    }
-  }
-
-  function handlePaidByChange(value, index) {
-    console.log("In HandlePaidByChange")
-    setPaidBy((prev) => {
-      const paidBy = [...prev]
-      paidBy[index] = { ...paidBy[index], amount: value }
-      return paidBy
-    })
-  }
-
-  const sumContributions = (contributions) => {
-    return contributions.reduce((acc, curr) => acc + Number(curr.amount), 0)
-  }
-
-  useEffect(() => {
-    if (paidBy.length === 1) {
-      setAmount(amount)
-    } else if (paidBy.length > 1) {
-      setAmount(sumContributions(paidBy))
-    }
-  }, [paidBy])
-
-  const onSplitBetweenMembersChange = (values) => {
-    console.log("onSplitBetweenMembersChange")
-    setSplitBetween(
-      values.map((member) => {
-        const existing = splitBetween.find((s) => s.member === member)
-        return existing || { member, weight: 1 }
-      })
-    )
-  }
+  }, [isDrawerOpen])
 
   function getDrawerTitle(edit) {
     let type = income ? "Income" : "Expense"
     return edit ? "Edit " + type : "Add New " + type
   }
+
+  const { toast } = useToast()
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -134,33 +71,56 @@ export default function ExpenseDrawer({
     let contributions = []
     const paidByMembers = new Set(paidBy.map((p) => p.member))
     const splitBetweenMembers = new Set(splitBetween.map((s) => s.member))
+    // Some error checking
+    if (paidByMembers.size === 0) {
+      toast({
+        title: "Uh oh!",
+        description: "Please select at least one person to pay for this expense."
+      })
+      return
+    }
+    if (splitBetweenMembers.size === 0) {
+      toast({ title: "Uh oh!", description: "Please select at least one person to split this expense between." })
+      return
+    }
 
-    for (const m of members) {
+    members.map((m) => {
       const member = m.name
       const id = m.id
       const mergedVal = { id: id, paid: 0, weight: 0 }
-      let isIn = false
-      if (paidByMembers.has(member)) {
-        mergedVal.paid = paidBy.find((p) => p.member === member).amount
-        isIn = true
+      const paidByMember = paidBy.find((p) => p.member === member)
+      const splitBetweenMember = splitBetween.find((s) => s.member === member)
+
+      if (paidByMember) {
+        mergedVal.paid = paidByMember.amount
       }
-      if (splitBetweenMembers.has(member)) {
-        mergedVal.weight = splitBetween.find((s) => s.member === member).weight
-        isIn = true
+      if (splitBetweenMember) {
+        mergedVal.weight = splitBetweenMember.weight
       }
-      if (isIn) {
+      if (paidByMember || splitBetweenMember) {
         contributions.push(mergedVal)
       }
+    })
+
+    const dateString = date.toISOString().split("T")[0]
+    if (isEditMode) {
+      await editExpense(id, name, currency, category, dateString, income ? "income" : "expense", contributions)
+      toast({
+        title: "Success!",
+        description: "Expense edited.",
+        variant: "default"
+      })
+    } else {
+      await pushExpense(name, currency, category, dateString, income ? "income" : "expense", contributions)
+      toast({
+        title: "Success!",
+        description: "Expense added.",
+        variant: "default"
+      })
     }
     handleCloseDrawer()
-
-    if (isEditMode) {
-      await editExpense(id, name, currency, category, date, income ? "income" : "expense", contributions)
-    } else {
-      await pushExpense(name, currency, category, date, income ? "income" : "expense", contributions)
-    }
-    setSplitBetween([])
   }
+
 
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
@@ -231,24 +191,7 @@ export default function ExpenseDrawer({
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="calButton">Date</Label>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      id="calButton"
-                      variant="outline"
-                      className={cn("w-full justify-start text-left font-normal", !date && "text-muted-foreground")}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {date ? format(date, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="w-auto rounded-xl text-primary" aria-describedby="Date Select">
-                    <DialogHeader>
-                      <DialogTitle className="text-primary sr-only">Select Date</DialogTitle>
-                    </DialogHeader>
-                    <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
-                  </DialogContent>
-                </Dialog>
+                <DateTimePicker granularity="minute" value={date} onChange={setDate}/>
               </div>
 
               <div className="space-y-2">
@@ -261,78 +204,23 @@ export default function ExpenseDrawer({
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Paid By</Label>
-                <MultiSelect
-                  options={memberNames.map((member) => ({
-                    label: member,
-                    value: member
-                  }))}
-                  defaultValue={selectedExpense.paidBy.map((p) => p.member)}
-                  onValueChange={onPaidByMembersChange}
+              <div>
+                <PaidByForm
+                  memberNames={memberNames}
+                  selectedExpense={selectedExpense}
+                  paidBy={paidBy}
+                  setPaidBy={setPaidBy}
+                  amount={amount}
+                  setAmount={setAmount}
                 />
-
-                {paidBy.length > 1 && (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                    {paidBy.map((payer, index) => (
-                      <div key={payer.member} className="flex items-center space-x-2 space-y-2">
-                        <div className="flex-grow">
-                          <CalculatorInput
-                            value={payer.amount}
-                            useLabel={true}
-                            label={payer.member}
-                            onChange={(value) => handlePaidByChange(value, index)}
-                          />
-                        </div>
-                      </div>
-                    ))}{" "}
-                  </div>
-                )}
               </div>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Split Between</Label>
-                  <div className="flex items-center space-x-2">
-                    <Label htmlFor="unequal-split">Unequal Split</Label>
-                    <Switch id="unequal-split" checked={isUnequalSplit} onCheckedChange={setIsUnequalSplit} />
-                  </div>
-                </div>
-
-                <MultiSelect
-                  options={memberNames.map((member) => ({
-                    label: member,
-                    value: member
-                  }))}
-                  defaultValue={splitBetween.map((s) => s.member)}
-                  onValueChange={onSplitBetweenMembersChange}
+              <div>
+                <SplitBetweenForm
+                  memberNames={memberNames}
+                  selectedExpense={selectedExpense}
+                  splitBetween={splitBetween}
+                  setSplitBetween={setSplitBetween}
                 />
-
-                {isUnequalSplit && (
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                    {splitBetween.map((splitter, index) => (
-                      <div key={splitter.member} className="flex items-center space-x-2">
-                        <div className="flex-grow">
-                          <CalculatorInput
-                            value={splitter.weight}
-                            onChange={(value) => {
-                              setSplitBetween((prev) => {
-                                const splitBetween = [...prev]
-                                splitBetween[index] = {
-                                  ...splitBetween[index],
-                                  weight: value
-                                }
-                                return splitBetween
-                              })
-                            }}
-                            disabled={!isUnequalSplit}
-                            useLabel={true}
-                            label={splitter.member}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
 
