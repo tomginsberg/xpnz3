@@ -105,10 +105,11 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
               <div className="px-4 pb-4 pt-0 text-gray-700 dark:text-gray-300">
                 <p className="text-md">
                   {new Date(expense.date)
-                    .toLocaleString("default", {
+                    .toLocaleDateString("default", {
                       month: "short",
                       day: "numeric",
-                      year: "numeric"
+                      year: "numeric",
+                      timeZone: "UTC"
                     })
                     .replace(",", "")}
                 </p>
