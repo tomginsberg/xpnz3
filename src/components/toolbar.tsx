@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react"
-import { Plus } from "lucide-react"
+import { PlusIcon } from "@radix-ui/react-icons"
 import { motion } from "framer-motion"
 import { NavLink, useLocation, useNavigate } from "react-router-dom"
 import { cn } from "@/lib/utils"
@@ -54,7 +54,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = fals
   }
 
   return (
-    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 shadow-xl border bg-card">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 rounded-full p-2 bg-background shadow-lg shadow-muted">
       <div className="flex flex-row gap-2">
         {/* + Button */}
         <button
@@ -62,7 +62,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = fals
           onClick={handleClickPlus}
           aria-label="Add Transaction"
         >
-          <Plus className="h-8 w-8 text-white" />
+          <PlusIcon className="h-8 w-8 text-white" />
           {emptyMode && (
             <span className="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 group-hover:opacity-100 animate-pulse-border"></span>
           )}
