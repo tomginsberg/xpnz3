@@ -123,7 +123,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
     dash: { emoji: "📊", label: "Dashboard" }
   }
 
-  const copyDebts = async () => {
+  const share = async () => {
     const text = `💸 Track group expenses with XPNZ @ https://xpnz.ca${location.pathname}`
 
     if (navigator.share) {
@@ -158,9 +158,10 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                 </SheetHeader>
                 <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
                   <XpnzNavigationButton route="/" icon="🏠" label="Home" />
-                  {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring" />*/}
-                  {/*<XpnzNavigationButton route="/plots" icon="📊" label="Plots" />*/}
-                  <Button onClick={copyDebts} variant="outline" className="justify-start">
+                  {/*<XpnzNavigationButton route="/receipt" icon="🧾" label="Add Itemized Receipt" />*/}
+                  {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring Expenses" />*/}
+                  {/*<XpnzNavigationButton route="/plots" icon="📊" label="Ledger Metrics" />*/}
+                  <Button onClick={share} variant="outline" className="justify-start">
                     <span className="mr-2">🤝</span> Share
                   </Button>
 
