@@ -1,6 +1,6 @@
 // datetime utilities
 
-const pad = (n) => n.toString().padStart(2, '0')
+const pad = (n) => n.toString().padStart(2, "0")
 
 export function getDateString(date = new Date()) {
   const year = date.getFullYear()
@@ -23,20 +23,21 @@ export function getDateTimeString(date = new Date()) {
 
 // id generation utilities
 
-import { customAlphabet } from 'nanoid'
+import { customAlphabet } from "nanoid"
 
-import Lodash from 'lodash'
+import Lodash from "lodash"
+
 const { sum } = Lodash
 
-const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 const nanoid = customAlphabet(alphabet, 10)
 
 export const generateId = () => nanoid()
 
 // integer ledger utilities
 
-import Decimal from 'decimal.js'
-import seedrandom from 'seedrandom'
+import Decimal from "decimal.js"
+import seedrandom from "seedrandom"
 
 Decimal.set({ rounding: Decimal.ROUND_HALF_EVEN })
 
@@ -80,13 +81,13 @@ export function integerSplitByWeights(totalAmount, weights, seed) {
   // Otherwise, distribute the remainder only to the non-zero shares
   else {
     for (let i = 0; remainder > 0; i = (i + 1) % indices.length) {
-      if (result[indices[i]] != 0) {
+      if (result[indices[i]] !== 0) {
         result[indices[i]]++
         remainder--
       }
 
       if (result.every((share) => share === 0)) {
-        throw new Error('Assertion failed: all shares are zero.')
+        throw new Error("Assertion failed: all shares are zero.")
       }
     }
   }
