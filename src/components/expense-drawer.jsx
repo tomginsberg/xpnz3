@@ -212,6 +212,7 @@ export default function ExpenseDrawer({
                   setPaidBy={setPaidBy}
                   amount={amount}
                   setAmount={setAmount}
+                  isIncome={income}
                 />
               </div>
               <div>
@@ -220,6 +221,7 @@ export default function ExpenseDrawer({
                   selectedExpense={selectedExpense}
                   splitBetween={splitBetween}
                   setSplitBetween={setSplitBetween}
+                  isIncome={income}
                 />
               </div>
             </div>
