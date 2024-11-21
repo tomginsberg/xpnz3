@@ -21,6 +21,7 @@ import { emptyExpense } from "@/api/client.js"
 
 const mapMemberToMemberId = (memberName, members) => {
   const m = members.find((member) => member.name == memberName)
+  return m.id
 }
 
 const DebtsTab = () => {
