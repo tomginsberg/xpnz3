@@ -76,6 +76,9 @@ export default function Home() {
     const getLedgers = async () => {
       const response = await fetch(`${api.base}/ledgers`, { cache: "no-store" })
       const ledgers = await response.json()
+      // [{name: ..., currency: ...}, {...}]
+      // sort ledgers by name
+      ledgers.sort((a, b) => a.name.localeCompare(b.name))
       setLedgers(ledgers)
     }
 
