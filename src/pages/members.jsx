@@ -165,7 +165,7 @@ function MembersAdd(props) {
         >
           {/*<div className="relative">*/}
           <Input
-            className="shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-xl md:text-2xl w-full"
+            className="shadow-none focus-visible:ring-0 peer text-gray-900 dark:text-white focus-visible:ring-transparent border-none px-0 py-0 focus-visible:ring-offset-0 ring-0 text-xl w-full"
             placeholder={placeholder}
             onChange={(e) => setName(e.target.value)}
             value={name}
