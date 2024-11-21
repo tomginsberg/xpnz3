@@ -27,19 +27,19 @@ const mapMemberToMemberId = (memberName, members) => {
 const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
-  const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense, } = useXpnzApi(ledgerName)
+  const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useXpnzApi(ledgerName)
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
-    settleDebt: ({from: memberFrom, to: memberTo, amount: amount}) => {
+    settleDebt: ({ from: memberFrom, to: memberTo, amount: amount }) => {
       const expenseName = `Transfer: ${memberFrom} → ${memberTo}`
       const currency = emptyExpense.currency
       const category = undefined
-      const dateString = (new Date()).toISOString().split("T")[0]
-      const expense_type = 'transfer'
+      const dateString = new Date().toISOString().split("T")[0]
+      const expense_type = "transfer"
       const contributions = [
-        {id: mapMemberToMemberId(memberFrom, members), paid: amount, weight: 0},
-        {id: mapMemberToMemberId(memberTo, members), paid: 0, weight: 1}
+        { id: mapMemberToMemberId(memberFrom, members), paid: amount, weight: 0 },
+        { id: mapMemberToMemberId(memberTo, members), paid: 0, weight: 1 }
       ]
 
       pushExpense(expenseName, currency, category, dateString, expense_type, contributions)
@@ -173,7 +173,7 @@ const DebtsTab = () => {
         <DrawerContent>
           <div className="mx-auto w-full max-w-lg text-primary">
             <DrawerHeader>
-              <DrawerTitle className="text-5xl">💸 💸 💸</DrawerTitle>
+              <DrawerTitle className="text-5xl text-center">💸 💸 💸</DrawerTitle>
               <DrawerDescription className="sr-only">Settle up drawer</DrawerDescription>
             </DrawerHeader>
             <div className="p-4 text-center text-xl mb-5 hyphens-auto text-wrap font-normal text-primary flex flex-col gap-1 justify-center">

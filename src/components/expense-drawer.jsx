@@ -121,7 +121,6 @@ export default function ExpenseDrawer({
     handleCloseDrawer()
   }
 
-
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
       <DrawerContent
@@ -191,7 +190,13 @@ export default function ExpenseDrawer({
 
               <div className="flex flex-col space-y-2">
                 <Label htmlFor="calButton">Date</Label>
-                <DateTimePicker granularity="minute" value={date} onChange={setDate}/>
+
+                <DateTimePicker
+                  granularity="day"
+                  value={date}
+                  onChange={setDate}
+                  displayFormat={{ hour24: "PPP", hour12: "PP" }}
+                />
               </div>
 
               <div className="space-y-2">
