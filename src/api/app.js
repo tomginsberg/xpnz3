@@ -10,7 +10,8 @@ import {
   getDateTimeString,
   integerCentsToDollars,
   integerMultiplyByFloat,
-  integerSplitByWeights
+  integerSplitByWeights,
+  supportedCurrencies
 } from "./utilities.js"
 
 const db = Knex({ client: "sqlite3", connection: { filename: "data.db" }, useNullAsDefault: true })
@@ -578,7 +579,6 @@ async function transactionsPutPostHandler(request, reply) {
 
 async function validateTransaction(transaction) {
   // Validate and clean transaction data
-  const supportedCurrencies = ["CAD", "USD", "EUR", "PLN"]
   if (!supportedCurrencies.includes(transaction.currency)) {
     throw {
       status: 400,
@@ -725,7 +725,7 @@ const transactionPostBodySchema = {
   anyOf: [{ required: ["name"] }, { required: ["category"] }],
   properties: {
     ledger: { type: "string" },
-    currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] },
+    currency: { type: "string", enum: supportedCurrencies },
     expense_type: { type: "string" },
     contributions: {
       type: "array",
@@ -752,7 +752,7 @@ const ledgersPutBodySchema = {
   required: ["name", "currency", "members"],
   properties: {
     name: { type: "string" },
-    currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] },
+    currency: { type: "string", enum: supportedCurrencies },
     members: {
       type: "array",
       minItems: 1,
@@ -776,7 +776,7 @@ const transactionsGetQuerySchema = {
     ledger: { type: "string" },
     name: { type: "string" },
     category: { type: "string" },
-    currency: { type: "string", enum: ["CAD", "USD", "EUR", "PLN"] },
+    currency: { type: "string", enum: supportedCurrencies },
     date: { type: "string", format: "date" },
     expensetype: { type: "string" },
     dateafter: { type: "string", format: "date" },
