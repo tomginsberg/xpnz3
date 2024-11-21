@@ -1,4 +1,4 @@
-import { AlertCircle, Check, ChevronsUpDown } from "lucide-react"
+import { AlertCircle, ArrowUpRightFromCircle, Check, ChevronsUpDown, Save } from "lucide-react"
 
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -9,7 +9,8 @@ import {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerTitle
+  DrawerTitle,
+  DrawerTrigger
 } from "@/components/ui/drawer"
 import { currencies } from "@/api/client.js"
 
@@ -29,16 +30,20 @@ export function Combobox({ values }) {
   const navigate = useNavigate()
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
         <Button variant="secondary" role="combobox" aria-expanded={open} className="w-full justify-between">
           Find a ledger...
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      </DrawerTrigger>
+      <DrawerContent className="p-1">
+        <DrawerTitle>
+          <h2 className="text-primary text-center pt-3">Find Your Ledger</h2>
+        </DrawerTitle>
+        <DrawerDescription className="sr-only">Search for a ledger by name.</DrawerDescription>
         <Command>
-          <CommandInput placeholder="Find a ledger..." className="text-primary" />
+          <CommandInput placeholder="Search" className="text-primary" autoFocus={true} />
           <CommandList>
             <CommandEmpty>No ledger found.</CommandEmpty>
             <CommandGroup>
@@ -49,15 +54,19 @@ export function Combobox({ values }) {
                   onSelect={() => {
                     navigate(`/${link}`)
                   }}
+                  className="bg-card text-pretty text-primary rounded-lg my-2 text-lg font-semibold justify-between transition-all ease-in-out duration-200"
                 >
-                  {value}
+                  <span>{value}</span>
+                  <span className="text-primary">
+                    <ArrowUpRightFromCircle className="size-4" />
+                  </span>
                 </CommandItem>
               ))}
             </CommandGroup>
           </CommandList>
         </Command>
-      </PopoverContent>
-    </Popover>
+      </DrawerContent>
+    </Drawer>
   )
 }
 
