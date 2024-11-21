@@ -52,7 +52,7 @@ export default function ExpenseMasonryGrouped() {
 
 function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, onDeleteClick }) {
   const [isOpen, setIsOpen] = useState(true)
-  console.log("isOpen", isOpen)
+  // console.log("isOpen", isOpen)
 
   const items = useMemo(
     () =>
