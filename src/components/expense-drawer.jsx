@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react" // shadcn components
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
-import { DateTimePicker, TimePicker } from "@/components/ui/datetime-picker"
-import { ConfettiButton } from "@/components/ui/confetti"
+import { DateTimePicker } from "@/components/ui/datetime-picker"
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 import { SplitBetweenForm } from "@/components/ui/expense-split-between"
 import { PaidByForm } from "@/components/ui/expense-paid-by"
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { MultiSelect } from "@/components/ui/multi-select"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch" // icons
 import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
-import { CalendarIcon } from "@radix-ui/react-icons" // external utilities
-import { format } from "date-fns" // internal components and utilities
-import { cn } from "@/lib/utils"
+// external utilities
+// internal components and utilities
 import { categories, currencies } from "@/api/client.js"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
@@ -246,12 +241,12 @@ export default function ExpenseDrawer({
                       Delete
                     </Button>
                   )}
-                  <ConfettiButton type="submit" variant="outline">
+                  <Button type="submit" variant="outline">
                     <span className="mr-2">
                       <Save className="size-4" />
                     </span>{" "}
                     Save
-                  </ConfettiButton>
+                  </Button>
                 </div>
               </div>
             </DrawerFooter>
