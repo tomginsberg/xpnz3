@@ -169,14 +169,14 @@ export default function Topbar({ onSearch, toggleExpansion }) {
 
                   <h2 className="text-lg font-bold">Settings</h2>
 
-                  <XpnzDropdown
-                    descriptor="currency"
-                    label="Default Currency"
-                    placeholder="Select a currency"
-                    value={currency}
-                    onChange={setCurrency}
-                    options={Object.entries(currencies).map(([value, text]) => ({ value, text }))}
-                  />
+                  {/*<XpnzDropdown*/}
+                  {/*  descriptor="currency"*/}
+                  {/*  label="Default Currency"*/}
+                  {/*  placeholder="Select a currency"*/}
+                  {/*  value={currency}*/}
+                  {/*  onChange={setCurrency}*/}
+                  {/*  options={Object.entries(currencies).map(([value, text]) => ({ value, text }))}*/}
+                  {/*/>*/}
 
                   <XpnzDropdown
                     descriptor="theme"

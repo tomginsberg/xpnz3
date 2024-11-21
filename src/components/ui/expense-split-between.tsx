@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react" // shadcn components
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Switch } from "@/components/ui/switch" // icons
@@ -6,32 +5,32 @@ import { Label } from "@/components/ui/label"
 import CalculatorInput from "./../calculator-input"
 
 interface SplitBetweenFormProps {
-  isSplitByMultiple: boolean;
-  isUnequalSplit: boolean;
-  setIsUnequalSplit: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsSplitByMultiple: React.Dispatch<React.SetStateAction<boolean>>; // Add setter for isSplitByMultiple
-  memberNames: string[];
+  isSplitByMultiple: boolean
+  isUnequalSplit: boolean
+  setIsUnequalSplit: React.Dispatch<React.SetStateAction<boolean>>
+  setIsSplitByMultiple: React.Dispatch<React.SetStateAction<boolean>> // Add setter for isSplitByMultiple
+  memberNames: string[]
   selectedExpense: {
-    splitBetween: { member: string }[];
-  };
-  onSplitBetweenMembersChange: (newMembers: string[]) => void;
-  splitBetween: { member: string; weight: number }[];
-  setSplitBetween: React.Dispatch<React.SetStateAction<{ member: string; weight: number }[]>>;
+    splitBetween: { member: string }[]
+  }
+  onSplitBetweenMembersChange: (newMembers: string[]) => void
+  splitBetween: { member: string; weight: number }[]
+  setSplitBetween: React.Dispatch<React.SetStateAction<{ member: string; weight: number }[]>>
+  isIncome: boolean
 }
 
 interface Split {
-  member: string;
-  weight: number;
+  member: string
+  weight: number
 }
-
 
 const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
   memberNames,
   selectedExpense,
   splitBetween,
   setSplitBetween,
+  isIncome
 }) => {
-
   const [isUnequalSplit, setIsUnequalSplit] = useState(false)
   const [isSplitByMultiple, setIsSplitByMultiple] = useState(false)
 
@@ -39,7 +38,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
     values: string[], // Array of selected member names
     setSplitBetween: React.Dispatch<React.SetStateAction<Split[]>>, // Setter for splitBetween state
     splitBetween: Split[] // Current splitBetween state
-  )  {
+  ) {
     setSplitBetween(
       values.map((member) => {
         const existing = splitBetween.find((s) => s.member === member)
@@ -52,8 +51,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
     if (splitBetween.length <= 1) {
       setIsSplitByMultiple(false)
       setIsUnequalSplit(false)
-    }
-    else {
+    } else {
       setIsSplitByMultiple(true)
     }
   }, [splitBetween])
@@ -78,7 +76,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
       <MultiSelect
         options={memberNames.map((member) => ({
           label: member,
-          value: member,
+          value: member
         }))}
         defaultValue={selectedExpense.splitBetween.map((s) => s.member)}
         onValueChange={(values) => onSplitBetweenMembersChange(values, setSplitBetween, splitBetween)}
@@ -93,17 +91,18 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
                   value={splitter.weight}
                   onChange={(value) => {
                     setSplitBetween((prev) => {
-                      const newSplitBetween = [...prev];
+                      const newSplitBetween = [...prev]
                       newSplitBetween[index] = {
                         ...newSplitBetween[index],
-                        weight: value,
-                      };
-                      return newSplitBetween;
-                    });
+                        weight: value
+                      }
+                      return newSplitBetween
+                    })
                   }}
                   disabled={!isUnequalSplit}
                   useLabel={true}
                   label={splitter.member}
+                  isIncome={isIncome}
                 />
               </div>
             </div>
@@ -111,7 +110,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export {SplitBetweenForm}
+export { SplitBetweenForm }
