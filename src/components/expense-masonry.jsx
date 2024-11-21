@@ -6,6 +6,7 @@ import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import AnimatedCard from "@/components/animated-card"
+import { useInView } from "react-intersection-observer"
 
 export default function ExpenseMasonryGrouped() {
   const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense } = useOutletContext()
@@ -32,10 +33,19 @@ export default function ExpenseMasonryGrouped() {
     }))
   }, [searchTerm, expenses])
 
+
+  const [monthCount, setMonthCount] = useState(2);
+
+  const { ref, inView, entry } = useInView(
+    {
+      onChange: (inView) => inView && setMonthCount((prev) => prev + 2)
+    }
+  );
+
   return (
     <div className="min-h-screen bg-background">
       <main className="mt-[132px] mb-96">
-        {filteredGroups.map((group) => (
+        {filteredGroups.slice(0, monthCount).map((group) => (
           <MonthGroup
             key={group.monthYear}
             monthYear={group.monthYear}
@@ -46,6 +56,7 @@ export default function ExpenseMasonryGrouped() {
           />
         ))}
       </main>
+      <div ref={ref} className="flex justify-center items-center h-16" />
     </div>
   )
 }
