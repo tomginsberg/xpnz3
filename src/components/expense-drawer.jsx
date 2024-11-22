@@ -256,16 +256,15 @@ export default function ExpenseDrawer({
                 <Button type="button" variant="outline" onClick={handleCloseDrawer}>
                   <span className="mr-2">
                     <SquareArrowUpLeft className="size-4" />
-                  </span>{" "}
+                  </span>
                   Cancel
                 </Button>
                 <Button type="submit" variant="outline">
                   <span className="mr-2">
                     <Save className="size-4" />
-                  </span>{" "}
+                  </span>
                   Save
                 </Button>
-                ={" "}
               </div>
             </DrawerFooter>
           </form>
