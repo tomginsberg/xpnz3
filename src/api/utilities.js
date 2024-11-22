@@ -98,6 +98,11 @@ export function integerSplitByWeights(totalAmount, weights, seed) {
 export const integerCentsToDollars = (cents) => new Decimal(cents).dividedBy(100).toNumber()
 export const integerMultiplyByFloat = (i, m) => new Decimal(i).times(m).round().toNumber()
 
+export function formatDigit(x) {
+  // Round to a maximum of 2 decimal places and remove trailing zeroes
+  return parseFloat(x.toFixed(2))
+}
+
 // currency utilities
 
 export const supportedCurrencies = [
@@ -263,4 +268,3 @@ export const supportedCurrencies = [
   "ZMW",
   "ZWL"
 ]
-

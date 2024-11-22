@@ -34,7 +34,8 @@ export default function ExpenseDrawer({
   handleCloseDrawer,
   members,
   pushExpense,
-  editExpense
+  editExpense,
+  defaultCurrency
 }) {
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
@@ -43,7 +44,7 @@ export default function ExpenseDrawer({
   const [category, setCategory] = useState(selectedExpense.category)
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
-  const [currency, setCurrency] = useState(selectedExpense.currency)
+  const [currency, setCurrency] = useState(selectedExpense.currency || defaultCurrency)
 
   const id = selectedExpense.id
   const memberNames = members.map((member) => member.name)
@@ -57,7 +58,7 @@ export default function ExpenseDrawer({
       setCategory(selectedExpense.category)
       setPaidBy(selectedExpense.paidBy)
       setSplitBetween(selectedExpense.splitBetween)
-      setCurrency(selectedExpense.currency)
+      setCurrency(selectedExpense.currency || defaultCurrency)
     }
   }, [isDrawerOpen])
 
@@ -191,20 +192,26 @@ export default function ExpenseDrawer({
                   </div>
                 </div>
 
-                <div className="flex-shrink space-y-2">
+                <div className="flex-1 space-y-2">
                   <Label htmlFor="currency">Currency</Label>
-                  <Select>
-                    <SelectTrigger id="currency" className="min-w-[95px]">
-                      <SelectValue placeholder={currencies["CAD"]} />
-                    </SelectTrigger>
-                    <SelectContent aria-describedby="currency select">
-                      {Object.entries(currencies).map(([code, flag]) => (
-                        <SelectItem key={code} value={code}>
-                          {flag}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  {isEditMode ? (
+                    <Button disabled={true} variant="outline">
+                      {currencies[currency]}
+                    </Button>
+                  ) : (
+                    <Select onValueChange={setCurrency} defaultValue={currency} value={currency}>
+                      <SelectTrigger id="currency" className="min-w-[95px]">
+                        <SelectValue placeholder={currencies[currency]} />
+                      </SelectTrigger>
+                      <SelectContent aria-describedby="currency select">
+                        {Object.entries(currencies).map(([code, flag]) => (
+                          <SelectItem key={code} value={code}>
+                            {flag}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
                 </div>
               </div>
 
