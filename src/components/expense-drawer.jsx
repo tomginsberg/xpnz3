@@ -194,24 +194,18 @@ export default function ExpenseDrawer({
 
                 <div className="flex-1 space-y-2">
                   <Label htmlFor="currency">Currency</Label>
-                  {isEditMode ? (
-                    <Button disabled={true} variant="outline">
-                      {currencies[currency]}
-                    </Button>
-                  ) : (
-                    <Select onValueChange={setCurrency} defaultValue={currency} value={currency}>
-                      <SelectTrigger id="currency" className="min-w-[95px]">
-                        <SelectValue placeholder={currencies[currency]} />
-                      </SelectTrigger>
-                      <SelectContent aria-describedby="currency select">
-                        {Object.entries(currencies).map(([code, flag]) => (
-                          <SelectItem key={code} value={code}>
-                            {flag}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select onValueChange={setCurrency} defaultValue={currency} value={currency}>
+                    <SelectTrigger id="currency" className="min-w-[95px]">
+                      <SelectValue placeholder={currencies[currency]} />
+                    </SelectTrigger>
+                    <SelectContent aria-describedby="currency select">
+                      {Object.entries(currencies).map(([code, flag]) => (
+                        <SelectItem key={code} value={code}>
+                          {flag}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
