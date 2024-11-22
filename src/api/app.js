@@ -487,32 +487,36 @@ async function updateAddTransaction(transaction, isUpdate) {
     "is_deleted"
   ])
 
-  if (!isUpdate) {
+  async function getExchangeRate (currency) {
+    if (currency === "CAD") return 1
+
     try {
-      if (transaction.currency === "CAD") {
-        newTransaction.exchange_rate = 1
-      } else {
-        const exchangeRates = await fetch("https://open.er-api.com/v6/latest/CAD").then((response) => response.json())
-        newTransaction.exchange_rate = 1 / exchangeRates.rates[transaction.currency]
-      }
+      const exchangeRates = await fetch("https://open.er-api.com/v6/latest/CAD").then((response) => response.json())
+      return 1 / exchangeRates.rates[currency]
     } catch (error) {
       throw new Error("Internal server error: Unable to get exchange rates.")
     }
+  }
 
+  if (!isUpdate) {
     newTransaction.created_at = getDateTimeString()
   }
 
   try {
     await db.transaction(async (trx) => {
       if (isUpdate) {
-        const is_deleted = await trx("transactions").where({ id: transaction.id }).select("is_deleted").first()
+        const { is_deleted = undefined, currency = undefined } = await trx("transactions").where({ id: transaction.id }).select(["is_deleted", "currency"]).first() || {}
 
         if (is_deleted === undefined) {
           throw new Error("The specified transaction does not exist.")
         }
 
-        if (is_deleted.is_deleted === true) {
+        if (is_deleted === true) {
           throw new Error("The specified transaction has been deleted.")
+        }
+
+        if (currency !== transaction.currency) {
+          newTransaction.exchange_rate = await getExchangeRate(transaction.currency)
         }
 
         await trx("transactions").where("id", transaction.id).update(newTransaction)
@@ -520,6 +524,7 @@ async function updateAddTransaction(transaction, isUpdate) {
       } else {
         transaction.id = generateId()
         newTransaction.id = transaction.id
+        newTransaction.exchange_rate = await getExchangeRate(transaction.currency)
 
         await trx("transactions").insert(newTransaction)
       }
