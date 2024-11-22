@@ -42,7 +42,7 @@ export function Combobox({ values }) {
           <h2 className="text-primary text-center pt-3">Find Your Ledger</h2>
         </DrawerTitle>
         <DrawerDescription className="sr-only">Search for a ledger by name.</DrawerDescription>
-        <Command>
+        <Command className="bg-background">
           <CommandInput placeholder="Search" className="text-primary" autoFocus={true} />
           <CommandList>
             <CommandEmpty>No ledger found.</CommandEmpty>
