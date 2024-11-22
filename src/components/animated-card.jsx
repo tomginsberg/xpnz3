@@ -28,17 +28,17 @@ const AnimatedCard = memo(({ expense, showDetails, onCardClick, onEditClick, onD
     }
   }
 
-  const handleEditClick = () => {
+  const handleEditClick = useCallback(() => {
     onEditClick(expense)
-  }
+  }, [expense, onEditClick])
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = useCallback(() => {
     onDeleteClick(expense)
-  }
+  }, [expense, onDeleteClick])
 
-  const handleCopyClick = () => {
+  const handleCopyClick = useCallback(() => {
     onCopyClick(expense)
-  }
+  }, [expense, onCopyClick])
 
   const ensureString = (value) => {
     // Check if the value is not already a string
