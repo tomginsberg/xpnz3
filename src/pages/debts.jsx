@@ -32,9 +32,9 @@ const DebtsTab = () => {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
     settleDebt: ({ from: memberFrom, to: memberTo, amount: amount }) => {
-      const expenseName = `Transfer: ${memberFrom} → ${memberTo}`
+      const expenseName = `${memberFrom} → ${memberTo}`
       const currency = emptyExpense.currency
-      const category = undefined
+      const category = "💸 Transfer"
       const dateString = new Date().toISOString().split("T")[0]
       const expense_type = "transfer"
       const contributions = [
