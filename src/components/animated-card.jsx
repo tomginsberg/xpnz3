@@ -40,20 +40,6 @@ const AnimatedCard = memo(({ expense, showDetails, onCardClick, onEditClick, onD
     onCopyClick(expense)
   }, [expense, onCopyClick])
 
-  const ensureString = (value) => {
-    // Check if the value is not already a string
-    if (typeof value !== "string") {
-      // If it's a Date object, convert it to a string
-      if (value instanceof Date) {
-        return value.toLocaleString() // You can customize the format here
-      }
-      // For any other non-string type, you can convert it to a string
-      return String(value)
-    }
-    // If it's already a string, return it as is
-    return value
-  }
-
   return (
     <ContextMenu>
       <ContextMenuTrigger>
