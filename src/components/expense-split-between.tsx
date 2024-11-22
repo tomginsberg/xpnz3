@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react" // shadcn components
+import React, { useEffect, useState } from "react" // shadcn components
 import { MultiSelect } from "@/components/ui/multi-select.tsx"
 import { Switch } from "@/components/ui/switch.tsx" // icons
 import { Label } from "@/components/ui/label.tsx"
@@ -75,7 +75,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
   }, [splitBetween])
 
   useEffect(() => {
-    if (isUnequalSplit === false) {
+    if (!isUnequalSplit) {
       setSplitBetween((prev) => prev.map((s) => ({ member: s.member, weight: 1 })))
     }
   }, [isUnequalSplit])

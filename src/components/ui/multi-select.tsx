@@ -239,7 +239,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                     }}
                   />
                   <Separator orientation="vertical" className="flex min-h-6 h-full" />
-                  <ChevronDown className="h-4 ms-3 cursor-pointer text-muted-foreground" />
+                  <ChevronDown className="h-4 ms-3 me-2 cursor-pointer text-muted-foreground" />
                 </div>
               </div>
             ) : (

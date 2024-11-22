@@ -10,7 +10,6 @@ export function useExpenses(ledger) {
   const [expenses, setExpenses] = useState([])
 
   const apiGetExpenses = async () => {
-    console.log("fetching expenses")
     const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
     const expenses = await response.json()
     const expensesPlus = expenses.map((expense) => {

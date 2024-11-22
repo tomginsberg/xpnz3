@@ -1,4 +1,4 @@
-import { useEffect } from "react" // shadcn components
+import React, { useEffect } from "react" // shadcn components
 import { MultiSelect } from "@/components/ui/multi-select.tsx"
 import { Label } from "@/components/ui/label.tsx"
 import CalculatorInput from "./calculator-input.tsx"
@@ -65,9 +65,7 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
 
   useEffect(() => {
     if (paidBy.length == 1) {
-      setPaidBy((prev) => {
-        return [{ member: prev[0].member, amount: amount }]
-      })
+      setPaidBy([{ member: paidBy[0].member, amount: amount }])
     }
     return
   }, [amount])

@@ -25,6 +25,7 @@ import { categories, currencies } from "@/api/client.js"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
 import { useToast } from "@/hooks/use-toast"
+import confetti from "canvas-confetti"
 
 export default function ExpenseDrawer({
   /* props */ selectedExpense,
@@ -32,7 +33,6 @@ export default function ExpenseDrawer({
   isEditMode,
   handleCloseDrawer,
   members,
-  onDeleteClick,
   pushExpense,
   editExpense
 }) {
@@ -60,6 +60,31 @@ export default function ExpenseDrawer({
       setCurrency(selectedExpense.currency)
     }
   }, [isDrawerOpen])
+
+  const confettiExplosion = () => {
+    const shoot = () => {
+      confetti({
+        particleCount: 20,
+        angle: 60,
+        ticks: 100,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 0, y: 1 }
+      })
+      confetti({
+        particleCount: 20,
+        ticks: 100,
+        angle: 120,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 1, y: 1 }
+      })
+    }
+
+    setTimeout(shoot, 0)
+    setTimeout(shoot, 100)
+    setTimeout(shoot, 200)
+  }
 
   function getDrawerTitle(edit) {
     let type = income ? "Income" : "Expense"
@@ -108,20 +133,11 @@ export default function ExpenseDrawer({
     const dateString = date.toISOString().split("T")[0]
     if (isEditMode) {
       await editExpense(id, name, currency, category, dateString, income ? "income" : "expense", contributions)
-      toast({
-        title: "Success!",
-        description: "Expense edited.",
-        variant: "default"
-      })
     } else {
       await pushExpense(name, currency, category, dateString, income ? "income" : "expense", contributions)
-      toast({
-        title: "Success!",
-        description: "Expense added.",
-        variant: "default"
-      })
     }
     handleCloseDrawer()
+    confettiExplosion()
   }
 
   return (
@@ -178,7 +194,7 @@ export default function ExpenseDrawer({
                 <div className="flex-shrink space-y-2">
                   <Label htmlFor="currency">Currency</Label>
                   <Select>
-                    <SelectTrigger id="currency">
+                    <SelectTrigger id="currency" className="min-w-[95px]">
                       <SelectValue placeholder={currencies["CAD"]} />
                     </SelectTrigger>
                     <SelectContent aria-describedby="currency select">
@@ -240,25 +256,15 @@ export default function ExpenseDrawer({
                 <Button type="button" variant="outline" onClick={handleCloseDrawer}>
                   <span className="mr-2">
                     <SquareArrowUpLeft className="size-4" />
-                  </span>{" "}
+                  </span>
                   Cancel
                 </Button>
-                <div className="space-x-2">
-                  {isEditMode && (
-                    <Button onClick={onDeleteClick} variant="outline">
-                      <span className="mr-2">
-                        <Trash2 className="size-4" />
-                      </span>{" "}
-                      Delete
-                    </Button>
-                  )}
-                  <Button type="submit" variant="outline">
-                    <span className="mr-2">
-                      <Save className="size-4" />
-                    </span>{" "}
-                    Save
-                  </Button>
-                </div>
+                <Button type="submit" variant="outline">
+                  <span className="mr-2">
+                    <Save className="size-4" />
+                  </span>
+                  Save
+                </Button>
               </div>
             </DrawerFooter>
           </form>

@@ -32,7 +32,6 @@ function LedgerLayout() {
         const response = await fetch(`${api.base}/ledger-exists/${ledgerName}`)
         const exists = await response.json()
         setLedgerExists(exists)
-        console.log("Ledger exists:", exists)
       } catch (error) {
         console.error("Error checking ledger existence:", error)
         setLedgerExists(false)
@@ -94,7 +93,6 @@ function LedgerLayout() {
         isEditMode={isEditMode}
         handleCloseDrawer={closeExpenseDrawer}
         members={members}
-        onDeleteClick={onDeleteClick}
         pushExpense={pushExpense}
         editExpense={editExpense}
       />
