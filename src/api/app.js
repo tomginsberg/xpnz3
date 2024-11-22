@@ -487,12 +487,12 @@ async function updateAddTransaction(transaction, isUpdate) {
     "is_deleted"
   ])
 
-  async function getExchangeRate (currency) {
-    if (currency === "CAD") return 1
+  async function getExchangeRate (baseCurrency, newCurrency) {
+    if (baseCurrency === newCurrency) return 1
 
     try {
-      const exchangeRates = await fetch("https://open.er-api.com/v6/latest/CAD").then((response) => response.json())
-      return 1 / exchangeRates.rates[currency]
+      const exchangeRates = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`).then((response) => response.json())
+      return 1 / exchangeRates.rates[newCurrency]
     } catch (error) {
       throw new Error("Internal server error: Unable to get exchange rates.")
     }
@@ -516,7 +516,9 @@ async function updateAddTransaction(transaction, isUpdate) {
         }
 
         if (currency !== transaction.currency) {
-          newTransaction.exchange_rate = await getExchangeRate(transaction.currency)
+          const { currency: ledgerCurrency } = await trx("ledgers").where({ name: transaction.ledger }).select("currency").first()
+
+          newTransaction.exchange_rate = await getExchangeRate(ledgerCurrency, transaction.currency)
         }
 
         await trx("transactions").where("id", transaction.id).update(newTransaction)
@@ -524,7 +526,9 @@ async function updateAddTransaction(transaction, isUpdate) {
       } else {
         transaction.id = generateId()
         newTransaction.id = transaction.id
-        newTransaction.exchange_rate = await getExchangeRate(transaction.currency)
+
+        const { currency: ledgerCurrency } = await trx("ledgers").where({ name: transaction.ledger }).select("currency").first()
+        newTransaction.exchange_rate = await getExchangeRate(ledgerCurrency, transaction.currency)
 
         await trx("transactions").insert(newTransaction)
       }
