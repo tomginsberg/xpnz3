@@ -248,7 +248,7 @@ function Calendar({
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
       classNames={{
-        months: "flex flex-col sm:flex-row space-y-4  sm:space-y-0 justify-center",
+        months: "flex flex-col sm:flex-row space-y-0 justify-center",
         month: "flex flex-col items-center space-y-4",
         month_caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-medium",
@@ -537,7 +537,7 @@ const TimePicker = React.forwardRef<TimePickerRef, TimePickerProps>(
     )
 
     return (
-      <div className="flex items-center justify-center gap-2">
+      <div className="flex items-center justify-center">
         <label htmlFor="datetime-picker-hour-input" className="cursor-pointer">
           <Clock className="mr-2 h-4 w-4" />
         </label>
@@ -701,7 +701,11 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
         <DialogTrigger asChild disabled={disabled}>
           <Button
             variant="outline"
-            className={cn("w-full justify-start text-left font-normal", !value && "text-muted-foreground", className)}
+            className={cn(
+              "w-full justify-start text-left font-normal gap-0",
+              !value && "text-muted-foreground",
+              className
+            )}
             ref={buttonRef}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -714,7 +718,7 @@ const DateTimePicker = React.forwardRef<Partial<DateTimePickerRef>, DateTimePick
             )}
           </Button>
         </DialogTrigger>
-        <DialogContent className="w-auto text-primary/80 rounded-lg">
+        <DialogContent className="w-auto p-0 rounded-lg text-primary m-0">
           <Calendar
             mode="single"
             selected={value}

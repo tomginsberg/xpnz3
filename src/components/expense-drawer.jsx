@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react" // shadcn components
 import { Button } from "@/components/ui/button"
 import { DateTimePicker } from "@/components/ui/datetime-picker"
-import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle
+} from "@/components/ui/drawer"
 import { SplitBetweenForm } from "@/components/ui/expense-split-between"
 import { PaidByForm } from "@/components/ui/expense-paid-by"
 
@@ -124,6 +132,7 @@ export default function ExpenseDrawer({
       >
         <DrawerHeader className="text-black dark:text-white">
           <DrawerTitle>{getDrawerTitle(isEditMode)}</DrawerTitle>
+          <DrawerDescription className="sr-only">Enter Expense Details</DrawerDescription>
           <DrawerClose />
         </DrawerHeader>
         <ScrollArea className="flex-grow overflow-y-auto">
