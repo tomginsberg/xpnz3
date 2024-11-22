@@ -10,8 +10,8 @@ import {
   DrawerHeader,
   DrawerTitle
 } from "@/components/ui/drawer"
-import { SplitBetweenForm } from "@/components/ui/expense-split-between"
-import { PaidByForm } from "@/components/ui/expense-paid-by"
+import { SplitBetweenForm } from "@/components/expense-split-between"
+import { PaidByForm } from "@/components/expense-paid-by"
 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
