@@ -38,68 +38,70 @@ const AnimatedCard = memo(
       }
     }
 
-  const handleEditClick = useCallback(() => {
-    onEditClick(expense)
-  }, [expense, onEditClick])
+    const handleEditClick = useCallback(() => {
+      onEditClick(expense)
+    }, [expense, onEditClick])
 
-  const handleDeleteClick = useCallback(() => {
-    onDeleteClick(expense)
-  }, [expense, onDeleteClick])
+    const handleDeleteClick = useCallback(() => {
+      onDeleteClick(expense)
+    }, [expense, onDeleteClick])
 
-  const handleCopyClick = useCallback(() => {
-    onCopyClick(expense)
-  }, [expense, onCopyClick])
+    const handleCopyClick = useCallback(() => {
+      onCopyClick(expense)
+    }, [expense, onCopyClick])
 
-  return (
-    <ContextMenu>
-      <ContextMenuTrigger>
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.75 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.2 }}
-          onClick={() => onCardClick(expense.id)}
-          className={cn("break-inside-avoid select-none z-0", className)}
-          viewport={{ once: false, amount: 0 }}
-        >
+    return (
+      <ContextMenu>
+        <ContextMenuTrigger>
           <motion.div
-            className={
-              "flex flex-col overflow-hidden rounded-lg text-card-foreground h-full" +
-              (showDetails ? " bg-linear-foreground" : " bg-card")
-            }
-            layout
-            variants={cardVariants}
-            animate={showDetails ? "expanded" : "initial"}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: 20, scale: 0.75 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => onCardClick(expense.id)}
+            className={cn("break-inside-avoid select-none z-0", className)}
+            viewport={{ once: false, amount: 0 }}
           >
-            {/* Main Content */}
-            <div className="flex-1">
-              {/* Name and Amount */}
-              <div className="px-4 pt-4">
-                <div className="flex-auto">
-                  <div className="flex flex-wrap justify-between max-w-auto">
-                    <div className="break-normal pr-3 text-ellipsis overflow-hidden text-balance text-lg font-extrabold tracking-tight">
-                      {expense.name ? expense.name : expense.category}
-                    </div>
-                    <div className="mt-[0.1rem] truncate font-normal tracking-tight text-gray-700 dark:text-gray-400">
-                      {expense.amount >= 0 ? "$" + expense.amount : "+$" + -1 * expense.amount}
+            <motion.div
+              className={
+                "flex flex-col overflow-hidden rounded-lg text-card-foreground h-full" +
+                (showDetails ? " bg-linear-foreground" : " bg-card")
+              }
+              layout
+              variants={cardVariants}
+              animate={showDetails ? "expanded" : "initial"}
+              transition={{ duration: 0.3 }}
+            >
+              {/* Main Content */}
+              <div className="flex-1">
+                {/* Name and Amount */}
+                <div className="px-4 pt-4">
+                  <div className="flex-auto">
+                    <div className="flex flex-wrap justify-between max-w-auto">
+                      <div className="break-normal pr-3 text-ellipsis overflow-hidden text-balance text-lg font-extrabold tracking-tight">
+                        {expense.name ? expense.name : expense.category}
+                      </div>
+                      <div className="mt-[0.1rem] truncate font-normal tracking-tight text-gray-700 dark:text-gray-400">
+                        {expense.amount >= 0
+                          ? defaultSymbolCurrency + formatDigit(expense.amount * expense.exchange_rate)
+                          : `+{$defaultSymbolCurrency}` + -1 * formatDigit(expense.amount * expense.exchange_rate)}
+                      </div>
                     </div>
                   </div>
                 </div>
+                {/* Date */}
+                <div className="px-4 pb-4 pt-0 text-gray-700 dark:text-gray-300">
+                  <p className="text-md">
+                    {new Date(expense.date)
+                      .toLocaleDateString("default", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        timeZone: "UTC"
+                      })
+                      .replace(",", "")}
+                  </p>
+                </div>
               </div>
-              {/* Date */}
-              <div className="px-4 pb-4 pt-0 text-gray-700 dark:text-gray-300">
-                <p className="text-md">
-                  {new Date(expense.date)
-                    .toLocaleDateString("default", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                      timeZone: "UTC"
-                    })
-                    .replace(",", "")}
-                </p>
-              </div>
-            </div>
 
               {/* Category at the Bottom */}
               {expense.category && expense.name && (
