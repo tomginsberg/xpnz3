@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react"
-import Masonry from 'react-masonry-css'
+import Masonry from "react-masonry-css"
 import { useOutletContext } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
@@ -34,14 +34,11 @@ export default function ExpenseMasonryGrouped() {
     }))
   }, [searchTerm, expenses])
 
+  const [monthCount, setMonthCount] = useState(2)
 
-  const [monthCount, setMonthCount] = useState(2);
-
-  const { ref, inView, entry } = useInView(
-    {
-      onChange: (inView) => inView && setMonthCount((prev) => prev + 2)
-    }
-  );
+  const { ref, inView, entry } = useInView({
+    onChange: (inView) => inView && setMonthCount((prev) => prev + 2)
+  })
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,66 +60,60 @@ export default function ExpenseMasonryGrouped() {
 }
 
 function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, onDeleteClick }) {
-  const { expandAll } = useOutletContext();
+  const { expandAll } = useOutletContext()
 
-  const [isOpen, setIsOpen] = useState(true);
-  const [toggledCards, setToggledCards] = useState(new Set());
+  const [isOpen, setIsOpen] = useState(true)
+  const [toggledCards, setToggledCards] = useState(new Set())
 
   // Reset toggledCards whenever expandAll changes
   useEffect(() => {
-    setToggledCards(new Set());
-  }, [expandAll]);
+    setToggledCards(new Set())
+  }, [expandAll])
 
   const toggleCardState = (id) => {
     setToggledCards((prev) => {
-      const newSet = new Set(prev);
+      const newSet = new Set(prev)
       if (newSet.has(id)) {
-        newSet.delete(id);
+        newSet.delete(id)
       } else {
-        newSet.add(id);
+        newSet.add(id)
       }
-      return newSet;
-    });
-  };
+      return newSet
+    })
+  }
 
   const isCardOpen = (id) => {
     // If the card ID is in toggledCards, it means its state is toggled relative to expandAll
     if (toggledCards.has(id)) {
-      return !expandAll;
+      return !expandAll
     }
     // Otherwise, it follows the base state
-    return expandAll;
-  };
+    return expandAll
+  }
 
-  const totalAmount = useMemo(
-    () => expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2),
-    [expenses]
-  );
+  const totalAmount = useMemo(() => expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2), [expenses])
 
   return (
     <motion.div
       key={monthYear}
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4, ease: 'easeInOut' }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
     >
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className={cn('sticky top-[125px] z-10 w-full py-2 px-2')}>
+        <div className={cn("sticky top-[125px] z-10 w-full py-2 px-2")}>
           <CollapsibleTrigger asChild>
             <button
               className={cn(
-                'flex items-center justify-between w-full z-10 p-3',
-                isOpen ? 'bg-background' : 'bg-card rounded-lg'
+                "flex items-center justify-between w-full z-10 p-3",
+                isOpen ? "bg-background" : "bg-card rounded-lg"
               )}
             >
               <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
               <div className="flex items-center gap-3">
                 <span className="text-black dark:text-zinc-400">${totalAmount}</span>
                 <ChevronDown
-                  className={cn(
-                    'text-primary h-5 w-5 transition-transform duration-200',
-                    isOpen && 'rotate-180'
-                  )}
+                  className={cn("text-primary h-5 w-5 transition-transform duration-200", isOpen && "rotate-180")}
                 />
               </div>
             </button>
@@ -134,12 +125,12 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
             <CollapsibleContent forceMount>
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
+                animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                transition={{ duration: 0.2, ease: "easeInOut" }}
               >
                 <Masonry
-                  breakpointCols={{ default: 5, 1024: 4, 768: 3, 640: 2, 480: 1 }}
+                  breakpointCols={{ default: 5, 1024: 4, 768: 3, 640: 2, 480: 2 }}
                   className="w-auto flex"
                   columnClassName="bg-clip-padding"
                 >
@@ -162,5 +153,5 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
         </AnimatePresence>
       </Collapsible>
     </motion.div>
-  );
+  )
 }
