@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Masonry } from "@mui/lab"
+import Masonry from 'react-masonry-css'
 import { useOutletContext } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
@@ -113,9 +113,13 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2, ease: "easeInOut" }}
               >
-                <Masonry columns={{ xs: 2, sm: 3, md: 4, lg: 5 }} spacing={0} sequential className="px-1">
+                <Masonry
+                  breakpointCols={{ default: 5, 1024: 4, 768: 3, 640: 2, 480: 1 }}
+                  className="w-auto flex"
+                  columnClassName="bg-clip-padding"
+                >
                   {items.map((item) => (
-                    <div className="p-2" key={item.id}>
+                    <div className="p-2 w-full" key={item.id}>
                       <AnimatedCard
                         expense={item.expense}
                         onEditClick={openEditExpenseDrawer}
