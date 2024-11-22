@@ -1,4 +1,15 @@
-import { useEffect, useState } from "react" // shadcn components
+// React hooks
+import { useEffect, useState } from "react"
+
+// External utilities and libraries
+import confetti from "canvas-confetti"
+import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
+
+// Internal utilities
+import { categories, currencies } from "@/api/client.js"
+import { useToast } from "@/hooks/use-toast"
+
+// UI components
 import { Button } from "@/components/ui/button"
 import { DateTimePicker } from "@/components/ui/datetime-picker"
 import {
@@ -10,22 +21,17 @@ import {
   DrawerHeader,
   DrawerTitle
 } from "@/components/ui/drawer"
-import { SplitBetweenForm } from "@/components/expense-split-between"
-import { PaidByForm } from "@/components/expense-paid-by"
-
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch" // icons
-import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
-// external utilities
-// internal components and utilities
-import { categories, currencies } from "@/api/client.js"
+import { Switch } from "@/components/ui/switch"
+
+// Internal components
+import { SplitBetweenForm } from "@/components/expense-split-between"
+import { PaidByForm } from "@/components/expense-paid-by"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
-import { useToast } from "@/hooks/use-toast"
-import confetti from "canvas-confetti"
 
 export default function ExpenseDrawer({
   /* props */ selectedExpense,

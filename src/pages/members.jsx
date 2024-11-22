@@ -1,15 +1,21 @@
 // app/[ledger]/members/page.jsx
 
+// React and libraries
 import { useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
+import { useParams } from "react-router-dom"
+
+// External icons
+import { Edit, Trash2, UserRoundCheck, UserRoundPlus } from "lucide-react"
+
+// Internal hooks
+import { useToast } from "@/hooks/use-toast.ts"
+import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
+
+// Internal components
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-import { Edit, Trash2, UserRoundCheck, UserRoundPlus } from "lucide-react"
-import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
-import { useToast } from "@/hooks/use-toast.ts"
-import { useParams } from "react-router-dom"
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props
