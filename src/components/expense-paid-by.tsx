@@ -65,9 +65,7 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
 
   useEffect(() => {
     if (paidBy.length == 1) {
-      setPaidBy((prev) => {
-        return [{ member: prev[0].member, amount: amount }]
-      })
+      setPaidBy([{ member: paidBy[0].member, amount: amount }])
     }
     return
   }, [amount])
