@@ -50,6 +50,30 @@ const AnimatedCard = memo(
       onCopyClick(expense)
     }, [expense, onCopyClick])
 
+    const getMemberInvolvement = (paidBy, splitBetween) => {
+      const involvementMap = {}
+
+      // Process members who paid
+      paidBy.forEach(({ member }) => {
+        involvementMap[member] = involvementMap[member] === "split" ? "both" : "by"
+      })
+
+      // Process members who split
+      splitBetween.forEach(({ member }) => {
+        involvementMap[member] = involvementMap[member] === "by" ? "both" : "split"
+      })
+
+      return Object.entries(involvementMap)
+    }
+
+    const involvementList = getMemberInvolvement(expense.paidBy, expense.splitBetween)
+
+    const involvementClass = {
+      by: "bg-green-200 dark:bg-green-900",
+      both: "bg-background",
+      split: "bg-red-200 dark:bg-red-900"
+    }
+
     return (
       <ContextMenu>
         <ContextMenuTrigger>
@@ -104,11 +128,30 @@ const AnimatedCard = memo(
               </div>
 
               {/* Category at the Bottom */}
-              {expense.category && expense.name && (
-                <div className="px-4 pb-4 text-gray-700 dark:text-gray-300 mt-auto">
-                  <p className="text-lg">{expense.category}</p>
+
+              <div className="flex flex-wrap justify-between items-end px-4 pb-4 mt-auto gap-y-2">
+                {/* Category */}
+                {expense.category && expense.name && (
+                  <div className="text-gray-700 dark:text-gray-300">
+                    <p className="text-lg">{expense.category}</p>
+                  </div>
+                )}
+
+                {/* Member Avatars */}
+                <div className="flex -space-x-2 overflow-hidden">
+                  {involvementList.map(([memberName, involvementType], index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        "flex items-center justify-center w-6 h-6 text-primary text-xs font-bold border border-card rounded-full",
+                        involvementClass[involvementType]
+                      )}
+                    >
+                      {memberName[0].toUpperCase()}
+                    </div>
+                  ))}
                 </div>
-              )}
+              </div>
 
               {/* Toggled Visibility Section */}
               <AnimatePresence initial={false}>
