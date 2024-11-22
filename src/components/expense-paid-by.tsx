@@ -1,4 +1,4 @@
-import { useEffect } from "react" // shadcn components
+import React, { useEffect } from "react" // shadcn components
 import { MultiSelect } from "@/components/ui/multi-select.tsx"
 import { Label } from "@/components/ui/label.tsx"
 import CalculatorInput from "./calculator-input.tsx"
