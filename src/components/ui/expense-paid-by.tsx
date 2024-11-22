@@ -1,29 +1,29 @@
-
 import { useEffect } from "react" // shadcn components
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Label } from "@/components/ui/label"
 import CalculatorInput from "./../calculator-input"
 
 interface PaidBy {
-  member: string;
-  amount: number;
+  member: string
+  amount: number
 }
 
 interface PaidByFormProps {
-  memberNames: string[];
+  memberNames: string[]
   selectedExpense: {
-    paidBy: PaidBy[];  // Define the type of `paidBy` in selectedExpense
-    amount: number;
-  };
-  paidBy: PaidBy[];
-  setPaidBy: React.Dispatch<React.SetStateAction<PaidBy[]>>;
-  amount: number;
-  setAmount: React.Dispatch<React.SetStateAction<number>>;
+    paidBy: PaidBy[] // Define the type of `paidBy` in selectedExpense
+    amount: number
+  }
+  paidBy: PaidBy[]
+  setPaidBy: React.Dispatch<React.SetStateAction<PaidBy[]>>
+  amount: number
+  setAmount: React.Dispatch<React.SetStateAction<number>>
+  isIncome: boolean
 }
 
 const sumContributions = (contributions: PaidBy[]) => {
-  return contributions.reduce((acc, curr) => acc + Number(curr.amount), 0);
-};
+  return contributions.reduce((acc, curr) => acc + Number(curr.amount), 0)
+}
 
 const PaidByForm: React.FC<PaidByFormProps> = ({
   memberNames,
@@ -31,10 +31,10 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   paidBy,
   setPaidBy,
   amount,
-  setAmount
+  setAmount,
+  isIncome
 }) => {
-
-  const onPaidByMembersChange = (values:string[]) => {
+  const onPaidByMembersChange = (values: string[]) => {
     if (values.length === 1) {
       setPaidBy([{ member: values[0], amount }])
     } else {
@@ -76,12 +76,12 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   // On a change in selectedExpense, the amount should be set to the selectedExpense
   // Some weird state issue is occurring and this seems to fix it
   useEffect(() => {
-    setAmount(selectedExpense.amount);
+    setAmount(selectedExpense.amount)
   }, [selectedExpense])
 
   return (
     <div className="space-y-2">
-      <Label>Paid By</Label>
+      <Label>{isIncome ? "Paid To" : "Paid By"}</Label>
       <MultiSelect
         options={memberNames.map((member) => ({
           label: member,
@@ -101,6 +101,7 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
                   useLabel={true}
                   label={payer.member}
                   onChange={(value) => handlePaidByChange(value, index)}
+                  isIncome={isIncome}
                 />
               </div>
             </div>
@@ -111,4 +112,4 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   )
 }
 
-export {PaidByForm}
+export { PaidByForm }

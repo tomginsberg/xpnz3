@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react" // shadcn components
 import { MultiSelect } from "@/components/ui/multi-select"
 import { Switch } from "@/components/ui/switch" // icons
@@ -20,6 +19,7 @@ interface SplitBetweenFormProps {
   onSplitBetweenMembersChange: (newMembers: string[]) => void;
   splitBetween: Split[];
   setSplitBetween: React.Dispatch<React.SetStateAction<{ member: string; weight: number }[]>>;
+  isIncome: boolean;
 }
 
 function areWeightsDifferent(arr:Split[]) {
@@ -31,12 +31,12 @@ function areMultipleSplitters(arr:Split[]) {
   return arr.length > 1;
 }
 
-
 const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
   memberNames,
   selectedExpense,
   splitBetween,
   setSplitBetween,
+  isIncome
 }) => {
 
   const [isUnequalSplit, setIsUnequalSplit] = useState(areWeightsDifferent(selectedExpense.splitBetween))
@@ -46,7 +46,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
     values: string[], // Array of selected member names
     setSplitBetween: React.Dispatch<React.SetStateAction<Split[]>>, // Setter for splitBetween state
     splitBetween: Split[] // Current splitBetween state
-  )  {
+  ) {
     setSplitBetween(
       values.map((member) => {
         const existing = splitBetween.find((s) => s.member === member)
@@ -70,8 +70,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
     if (splitBetween.length <= 1) {
       setIsSplitByMultiple(false)
       setIsUnequalSplit(false)
-    }
-    else {
+    } else {
       setIsSplitByMultiple(true)
     }
   }, [splitBetween])
@@ -102,7 +101,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
       <MultiSelect
         options={memberNames.map((member) => ({
           label: member,
-          value: member,
+          value: member
         }))}
         defaultValue={selectedExpense.splitBetween.map((s) => s.member)}
         onValueChange={(values) => onSplitBetweenMembersChange(values, setSplitBetween, splitBetween)}
@@ -119,6 +118,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
                   disabled={!isUnequalSplit}
                   useLabel={true}
                   label={splitter.member}
+                  isIncome={isIncome}
                 />
               </div>
             </div>
@@ -126,7 +126,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export {SplitBetweenForm}
+export { SplitBetweenForm }

@@ -8,7 +8,7 @@ export default function Error({ message }: { message?: string }) {
   const navigate = useNavigate()
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <div className="flex items-center justify-center min-h-screen bg-background p-4">
       <Card className="w-[420px]">
         <CardHeader>
           <div className="flex items-center gap-2">

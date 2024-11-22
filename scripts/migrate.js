@@ -7,18 +7,18 @@ const parse = JSON.parse;
 
 const db = Knex ({ client: 'sqlite3', connection: { filename: 'data.db' }, useNullAsDefault: true });
 
-import { getDateString, getDateTimeString, generateId } from '../src/api/utilities.js';
+import { getDateString, getDateTimeString, generateId, supportedCurrencies } from '../src/api/utilities.js';
 
 async function makeLedgersTable () {
   await db.schema.raw ("CREATE TABLE `ledgers` (`name` varchar(255) collate nocase, primary key (`name`))")
-  await db.schema.table ('ledgers', table => { table.enu('currency', ['USD', 'EUR', 'CAD', 'PLN']); });
+  await db.schema.table ('ledgers', table => { table.enu('currency', supportedCurrencies); });
 }
 
 async function makeTransactionsTable () {
   await db.schema.createTable ('transactions', table => {
     table.string ('id').primary ();
     table.string ('name');
-    table.enu ('currency', ['USD', 'EUR', 'CAD', 'PLN']);
+    table.enu ('currency', supportedCurrencies);
     table.string ('category');
     table.string ('expense_type');
     table.string ('ledger').references ('name').inTable ('ledgers');
@@ -82,7 +82,9 @@ async function importTransactionsFromJsonFile (filename, ledgername) {
   await db ('ledgers').insert ({ name: ledgername, currency: 'CAD' });
 
   var json = await fs.readFile (filename);
-  var txs = parse (json).value;
+  var txs = parse (json);
+
+  console.log (txs)
 
   // return if txs is empty
   if (!txs) return;
@@ -177,6 +179,7 @@ await createTables ();
 const filenames = process.argv.slice (2).map (filename => path.parse (filename));
 
 for (var filename of filenames) {
+  console.log (`Importing ${filename.base} into ledger ${filename.name}`);
   const fullpath = path.join (filename.dir, filename.base);
   await importTransactionsFromJsonFile (fullpath, filename.name);
 }

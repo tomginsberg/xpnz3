@@ -1,6 +1,6 @@
 // datetime utilities
 
-const pad = (n) => n.toString().padStart(2, '0')
+const pad = (n) => n.toString().padStart(2, "0")
 
 export function getDateString(date = new Date()) {
   const year = date.getFullYear()
@@ -23,20 +23,21 @@ export function getDateTimeString(date = new Date()) {
 
 // id generation utilities
 
-import { customAlphabet } from 'nanoid'
+import { customAlphabet } from "nanoid"
 
-import Lodash from 'lodash'
+import Lodash from "lodash"
+
 const { sum } = Lodash
 
-const alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+const alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 const nanoid = customAlphabet(alphabet, 10)
 
 export const generateId = () => nanoid()
 
 // integer ledger utilities
 
-import Decimal from 'decimal.js'
-import seedrandom from 'seedrandom'
+import Decimal from "decimal.js"
+import seedrandom from "seedrandom"
 
 Decimal.set({ rounding: Decimal.ROUND_HALF_EVEN })
 
@@ -80,13 +81,13 @@ export function integerSplitByWeights(totalAmount, weights, seed) {
   // Otherwise, distribute the remainder only to the non-zero shares
   else {
     for (let i = 0; remainder > 0; i = (i + 1) % indices.length) {
-      if (result[indices[i]] != 0) {
+      if (result[indices[i]] !== 0) {
         result[indices[i]]++
         remainder--
       }
 
       if (result.every((share) => share === 0)) {
-        throw new Error('Assertion failed: all shares are zero.')
+        throw new Error("Assertion failed: all shares are zero.")
       }
     }
   }
@@ -96,3 +97,170 @@ export function integerSplitByWeights(totalAmount, weights, seed) {
 
 export const integerCentsToDollars = (cents) => new Decimal(cents).dividedBy(100).toNumber()
 export const integerMultiplyByFloat = (i, m) => new Decimal(i).times(m).round().toNumber()
+
+// currency utilities
+
+export const supportedCurrencies = [
+  "AED",
+  "AFN",
+  "ALL",
+  "AMD",
+  "ANG",
+  "AOA",
+  "ARS",
+  "AUD",
+  "AWG",
+  "AZN",
+  "BAM",
+  "BBD",
+  "BDT",
+  "BGN",
+  "BHD",
+  "BIF",
+  "BMD",
+  "BND",
+  "BOB",
+  "BRL",
+  "BSD",
+  "BTN",
+  "BWP",
+  "BYN",
+  "BZD",
+  "CAD",
+  "CDF",
+  "CHF",
+  "CLP",
+  "CNY",
+  "COP",
+  "CRC",
+  "CUP",
+  "CVE",
+  "CZK",
+  "DJF",
+  "DKK",
+  "DOP",
+  "DZD",
+  "EGP",
+  "ERN",
+  "ETB",
+  "EUR",
+  "FJD",
+  "FKP",
+  "FOK",
+  "GBP",
+  "GEL",
+  "GGP",
+  "GHS",
+  "GIP",
+  "GMD",
+  "GNF",
+  "GTQ",
+  "GYD",
+  "HKD",
+  "HNL",
+  "HRK",
+  "HTG",
+  "HUF",
+  "IDR",
+  "ILS",
+  "IMP",
+  "INR",
+  "IQD",
+  "IRR",
+  "ISK",
+  "JEP",
+  "JMD",
+  "JOD",
+  "JPY",
+  "KES",
+  "KGS",
+  "KHR",
+  "KID",
+  "KMF",
+  "KRW",
+  "KWD",
+  "KYD",
+  "KZT",
+  "LAK",
+  "LBP",
+  "LKR",
+  "LRD",
+  "LSL",
+  "LYD",
+  "MAD",
+  "MDL",
+  "MGA",
+  "MKD",
+  "MMK",
+  "MNT",
+  "MOP",
+  "MRU",
+  "MUR",
+  "MVR",
+  "MWK",
+  "MXN",
+  "MYR",
+  "MZN",
+  "NAD",
+  "NGN",
+  "NIO",
+  "NOK",
+  "NPR",
+  "NZD",
+  "OMR",
+  "PAB",
+  "PEN",
+  "PGK",
+  "PHP",
+  "PKR",
+  "PLN",
+  "PYG",
+  "QAR",
+  "RON",
+  "RSD",
+  "RUB",
+  "RWF",
+  "SAR",
+  "SBD",
+  "SCR",
+  "SDG",
+  "SEK",
+  "SGD",
+  "SHP",
+  "SLE",
+  "SOS",
+  "SRD",
+  "SSP",
+  "STN",
+  "SYP",
+  "SZL",
+  "THB",
+  "TJS",
+  "TMT",
+  "TND",
+  "TOP",
+  "TRY",
+  "TTD",
+  "TVD",
+  "TWD",
+  "TZS",
+  "UAH",
+  "UGX",
+  "USD",
+  "UYU",
+  "UZS",
+  "VES",
+  "VND",
+  "VUV",
+  "WST",
+  "XAF",
+  "XCD",
+  "XDR",
+  "XOF",
+  "XPF",
+  "YER",
+  "ZAR",
+  "ZMW",
+  "ZWL"
+]
+
