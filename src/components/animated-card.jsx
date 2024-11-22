@@ -7,18 +7,7 @@ import { Copy, Pencil, Trash2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useOutletContext } from "react-router-dom"
 
-const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, className }) => {
-  const { expandAll } = useOutletContext()
-  const [showDetails, setShowDetails] = useState(expandAll)
-
-  useEffect(() => {
-    setShowDetails(expandAll)
-  }, [expandAll])
-
-  const toggleDetails = () => {
-    setShowDetails((prev) => !prev)
-  }
-
+const AnimatedCard = memo(({ expense, showDetails, onCardClick, onEditClick, onDeleteClick, onCopyClick, className }) => {
   // Define animation variants for the card
   const cardVariants = {
     initial: { scale: 1 },
@@ -72,7 +61,7 @@ const AnimatedCard = memo(({ expense, onEditClick, onDeleteClick, onCopyClick, c
           initial={{ opacity: 0, y: 20, scale: 0.75 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.2 }}
-          onClick={toggleDetails}
+          onClick={() => onCardClick(expense.id)}
           className={cn("break-inside-avoid select-none z-0", className)}
           viewport={{ once: false, amount: 0 }}
         >
