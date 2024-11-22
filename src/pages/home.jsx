@@ -16,12 +16,11 @@ import { currencies } from "@/api/client.js"
 
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { FloatingLabelInput } from "@/components/ui/floating-label"
 
 import { api } from "@/../xpnz.config.js"
 import { TagInput } from "@/components/ui/tag-input"
-import { ScrollArea } from "../components/ui/scroll-area"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { ConfettiButton } from "@/components/ui/confetti"
 
