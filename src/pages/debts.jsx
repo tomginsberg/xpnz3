@@ -1,7 +1,7 @@
 // React and libraries
 import React, { useCallback, useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { useParams } from "react-router-dom"
+import { useOutletContext, useParams } from "react-router-dom"
 
 // External icons
 import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
@@ -37,13 +37,13 @@ const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
   const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useXpnzApi(ledgerName)
+  const { currency } = useOutletContext()
 
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
     settleDebt: ({ from: memberFrom, to: memberTo, amount: amount }) => {
       const expenseName = `${memberFrom} → ${memberTo}`
-      const currency = emptyExpense.currency
       const category = "💸 Transfer"
       const dateString = getDateString()
       const expense_type = "transfer"
