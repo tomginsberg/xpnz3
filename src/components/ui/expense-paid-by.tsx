@@ -37,19 +37,6 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   const onPaidByMembersChange = (values: string[]) => {
     if (values.length === 1) {
       setPaidBy([{ member: values[0], amount }])
-      return
-    }
-
-    if (values.length !== 0 && paidBy.length === 0) {
-      setPaidBy(
-        values.map((member, index) => {
-          if (index === 0) {
-            return { member, amount: amount }
-          } else {
-            return { member, amount: 0 }
-          }
-        })
-      )
     } else {
       setPaidBy(
         values.map((member) => {
@@ -76,7 +63,16 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
     }
   }, [paidBy])
 
-  // This function has to come after the above useEffect
+  useEffect(() => {
+    if (paidBy.length == 1) {
+      setPaidBy((prev) => {
+        return [{member:prev[0].member, amount:amount}]
+      })
+    }
+    return
+  }, [amount])
+
+  // This function has to come after the above useEffects
   // On a change in selectedExpense, the amount should be set to the selectedExpense
   // Some weird state issue is occurring and this seems to fix it
   useEffect(() => {

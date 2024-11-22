@@ -4,24 +4,31 @@ import { Switch } from "@/components/ui/switch" // icons
 import { Label } from "@/components/ui/label"
 import CalculatorInput from "./../calculator-input"
 
-interface SplitBetweenFormProps {
-  isSplitByMultiple: boolean
-  isUnequalSplit: boolean
-  setIsUnequalSplit: React.Dispatch<React.SetStateAction<boolean>>
-  setIsSplitByMultiple: React.Dispatch<React.SetStateAction<boolean>> // Add setter for isSplitByMultiple
-  memberNames: string[]
-  selectedExpense: {
-    splitBetween: { member: string }[]
-  }
-  onSplitBetweenMembersChange: (newMembers: string[]) => void
-  splitBetween: { member: string; weight: number }[]
-  setSplitBetween: React.Dispatch<React.SetStateAction<{ member: string; weight: number }[]>>
-  isIncome: boolean
+interface Split {
+  member: string;
+  weight: number;
 }
 
-interface Split {
-  member: string
-  weight: number
+interface SplitBetweenFormProps {
+  isSplitByMultiple: boolean;
+  isUnequalSplit: boolean;
+  setIsUnequalSplit: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsSplitByMultiple: React.Dispatch<React.SetStateAction<boolean>>; // Add setter for isSplitByMultiple
+  memberNames: string[];
+  selectedExpense: { splitBetween: Split[] };
+  onSplitBetweenMembersChange: (newMembers: string[]) => void;
+  splitBetween: Split[];
+  setSplitBetween: React.Dispatch<React.SetStateAction<{ member: string; weight: number }[]>>;
+  isIncome: boolean;
+}
+
+function areWeightsDifferent(arr:Split[]) {
+  const weights = arr.map(item => item.weight);
+  return new Set(weights).size !== 1;
+}
+
+function areMultipleSplitters(arr:Split[]) {
+  return arr.length > 1;
 }
 
 const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
@@ -31,8 +38,9 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
   setSplitBetween,
   isIncome
 }) => {
-  const [isUnequalSplit, setIsUnequalSplit] = useState(false)
-  const [isSplitByMultiple, setIsSplitByMultiple] = useState(false)
+
+  const [isUnequalSplit, setIsUnequalSplit] = useState(areWeightsDifferent(selectedExpense.splitBetween))
+  const [isSplitByMultiple, setIsSplitByMultiple] = useState(areMultipleSplitters(selectedExpense.splitBetween))
 
   function onSplitBetweenMembersChange(
     values: string[], // Array of selected member names
@@ -47,6 +55,17 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
     )
   }
 
+  function onUnequalSplitWeightChange(value:number, index:number) {
+    setSplitBetween((prev) => {
+      const newSplitBetween = [...prev];
+      newSplitBetween[index] = {
+        ...newSplitBetween[index],
+        weight: value,
+      };
+      return newSplitBetween;
+    });
+  }
+
   useEffect(() => {
     if (splitBetween.length <= 1) {
       setIsSplitByMultiple(false)
@@ -55,6 +74,12 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
       setIsSplitByMultiple(true)
     }
   }, [splitBetween])
+
+  useEffect(() => {
+    if (isUnequalSplit === false) {
+      setSplitBetween((prev) => prev.map((s) => ({member: s.member, weight: 1})));
+    }
+  }, [isUnequalSplit])
 
   return (
     <div className="space-y-2">
@@ -89,16 +114,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
               <div className="flex-grow">
                 <CalculatorInput
                   value={splitter.weight}
-                  onChange={(value) => {
-                    setSplitBetween((prev) => {
-                      const newSplitBetween = [...prev]
-                      newSplitBetween[index] = {
-                        ...newSplitBetween[index],
-                        weight: value
-                      }
-                      return newSplitBetween
-                    })
-                  }}
+                  onChange={(value) => onUnequalSplitWeightChange(value, index)}
                   disabled={!isUnequalSplit}
                   useLabel={true}
                   label={splitter.member}
