@@ -50,8 +50,8 @@ export default function CalculatorInput({
             id="number-input"
             type="number"
             placeholder={"0.00"}
-            min={0.00}
-            step={'any'}
+            min={0.0}
+            step={"any"}
             value={value}
             onChange={(e) => onChange(parseFloat(e.target.value))}
             className="pl-10 rounded-r-none z-10"
@@ -65,7 +65,7 @@ export default function CalculatorInput({
             </DrawerTrigger>
             <DrawerContent aria-describedby="Calulator Input">
               <DrawerTitle className="sr-only">Calculator</DrawerTitle>
-              <Calculator initialValue={value.toString()} onEnter={handleCalculatorEnter} />
+              <Calculator initialValue={(value || 0) === 0 ? "" : value.toString()} onEnter={handleCalculatorEnter} />
             </DrawerContent>
           </Drawer>
         </div>
