@@ -93,7 +93,6 @@ function LedgerLayout() {
         isEditMode={isEditMode}
         handleCloseDrawer={closeExpenseDrawer}
         members={members}
-        onDeleteClick={onDeleteClick}
         pushExpense={pushExpense}
         editExpense={editExpense}
       />

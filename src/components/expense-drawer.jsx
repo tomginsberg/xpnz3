@@ -33,7 +33,6 @@ export default function ExpenseDrawer({
   isEditMode,
   handleCloseDrawer,
   members,
-  onDeleteClick,
   pushExpense,
   editExpense
 }) {
@@ -260,22 +259,13 @@ export default function ExpenseDrawer({
                   </span>{" "}
                   Cancel
                 </Button>
-                <div className="space-x-2">
-                  {isEditMode && (
-                    <Button onClick={onDeleteClick} variant="outline">
-                      <span className="mr-2">
-                        <Trash2 className="size-4" />
-                      </span>{" "}
-                      Delete
-                    </Button>
-                  )}
-                  <Button type="submit" variant="outline">
-                    <span className="mr-2">
-                      <Save className="size-4" />
-                    </span>{" "}
-                    Save
-                  </Button>
-                </div>
+                <Button type="submit" variant="outline">
+                  <span className="mr-2">
+                    <Save className="size-4" />
+                  </span>{" "}
+                  Save
+                </Button>
+                ={" "}
               </div>
             </DrawerFooter>
           </form>
