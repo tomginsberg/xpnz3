@@ -1,5 +1,5 @@
 // components/animated-card.jsx
-import { memo, useEffect, useState } from "react"
+import { memo, useEffect, useState, useCallback } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Copy, Pencil, Trash2 } from "lucide-react"
