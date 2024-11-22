@@ -18,6 +18,7 @@ import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
 import { ConfettiButton } from "@/components/ui/confetti"
 import { useToast } from "@/hooks/use-toast"
 import { emptyExpense } from "@/api/client.js"
+import { getDateString } from "../api/utilities.js"
 
 const mapMemberToMemberId = (memberName, members) => {
   const m = members.find((member) => member.name == memberName)
@@ -28,6 +29,7 @@ const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
   const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useXpnzApi(ledgerName)
+
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
@@ -35,7 +37,7 @@ const DebtsTab = () => {
       const expenseName = `${memberFrom} → ${memberTo}`
       const currency = emptyExpense.currency
       const category = "💸 Transfer"
-      const dateString = new Date().toISOString().split("T")[0]
+      const dateString = getDateString()
       const expense_type = "transfer"
       const contributions = [
         { id: mapMemberToMemberId(memberFrom, members), paid: amount, weight: 0 },
