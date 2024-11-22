@@ -73,6 +73,7 @@
     "sqlite3": "^5.1.7",
     "tailwindcss-animate": "^1.0.6",
     "vaul": "^1.0.0",
+    "vite-plugin-pwa": "^0.21.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
