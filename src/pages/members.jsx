@@ -9,7 +9,7 @@ import { Edit, Trash2, UserRoundCheck, UserRoundPlus } from "lucide-react"
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { useToast } from "@/hooks/use-toast.ts"
-import { useParams } from "react-router-dom"
+import { useParams, useOutletContext } from "react-router-dom"
 
 function MembersRow(props) {
   const { member, onSubmit, onDelete, className } = props
@@ -184,7 +184,7 @@ function MembersAdd(props) {
 
 export default function MembersPage() {
   const { ledgerName } = useParams()
-  const { balance: trueBalance, pushMember, deleteMember, editMember } = useXpnzApi(ledgerName)
+  const { balance: trueBalance, pushMember, deleteMember, editMember } = useOutletContext()
 
   const [balance, setBalance] = useState(trueBalance)
 

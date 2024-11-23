@@ -44,22 +44,35 @@ function LedgerLayout() {
   }, [ledgerName])
 
   // Expense data and functions
+  // Load all of the expenseAPI functions and variables
+  // But only push a few to the outletContext.
+  // If needed, we can add the rest for future implementations.
   const {
-    expenses,
+    loaded,
+    balance,
+    settlement,
+    categories,
+    ledgerInfo,
     members,
-    isDeleteDrawerOpen,
-    closeDeleteDrawer,
-    onDeleteClick,
-    handleDelete,
+    memberNames,
+    pushMember,
+    editMember,
+    deleteMember,
+    expenses,
+    selectedExpense,
+    pushExpense,
     copyExpense,
+    editExpense,
+    deleteExpense,
+    isDrawerOpen,
+    isEditMode,
     openAddExpenseDrawer,
     openEditExpenseDrawer,
     closeExpenseDrawer,
-    isDrawerOpen,
-    isEditMode,
-    selectedExpense,
-    pushExpense,
-    editExpense
+    isDeleteDrawerOpen,
+    closeDeleteDrawer,
+    onDeleteClick,
+    handleDelete
   } = useExpense(ledgerName)
   const emptyMode = expenses.length === 0
 
@@ -75,7 +88,15 @@ function LedgerLayout() {
     openEditExpenseDrawer,
     onDeleteClick,
     copyExpense,
-    expandAll
+    expandAll,
+    loaded,
+    balance,
+    settlement,
+    members,
+    pushMember,
+    editMember,
+    deleteMember,
+    pushExpense,
   }
 
   if (isLoading) return <div></div>

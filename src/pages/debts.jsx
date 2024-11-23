@@ -12,12 +12,13 @@ import { Button } from "@/components/ui/button"
 
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
-import { useParams } from "react-router-dom"
+import { useParams, useOutletContext } from "react-router-dom"
 import { motion } from "framer-motion"
 import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
 import { ConfettiButton } from "@/components/ui/confetti"
 import { useToast } from "@/hooks/use-toast"
 import { emptyExpense } from "@/api/client.js"
+
 
 const mapMemberToMemberId = (memberName, members) => {
   const m = members.find((member) => member.name == memberName)
@@ -27,7 +28,7 @@ const mapMemberToMemberId = (memberName, members) => {
 const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
-  const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useXpnzApi(ledgerName)
+  const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useOutletContext()
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
