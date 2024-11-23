@@ -60,7 +60,7 @@ export default function ExpenseMasonryGrouped() {
 }
 
 function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, onDeleteClick }) {
-  const { expandAll } = useOutletContext()
+  const { expandAll, currencySymbol } = useOutletContext()
 
   const [isOpen, setIsOpen] = useState(true)
   const [toggledCards, setToggledCards] = useState(new Set())
@@ -91,7 +91,17 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
     return expandAll
   }
 
-  const totalAmount = useMemo(() => expenses.reduce((acc, curr) => acc + Number(curr.amount), 0).toFixed(2), [expenses])
+  const totalAmount = useMemo(
+    () =>
+      expenses
+        .filter(
+          (expense) =>
+            expense.expense_type !== "transfer" && !(expense.category || "").toLowerCase().includes("transfer")
+        )
+        .reduce((acc, curr) => acc + curr.amount * curr.exchange_rate, 0)
+        .toFixed(2),
+    [expenses]
+  )
 
   return (
     <motion.div
@@ -111,7 +121,10 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
             >
               <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
               <div className="flex items-center gap-3">
-                <span className="text-black dark:text-zinc-400">${totalAmount}</span>
+                <span className="text-black dark:text-zinc-400">
+                  {currencySymbol}
+                  {totalAmount}
+                </span>
                 <ChevronDown
                   className={cn("text-primary h-5 w-5 transition-transform duration-200", isOpen && "rotate-180")}
                 />

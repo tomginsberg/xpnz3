@@ -1,4 +1,23 @@
+// React and libraries
 import React, { useCallback, useEffect, useState } from "react"
+import { motion } from "framer-motion"
+import { useOutletContext, useParams } from "react-router-dom"
+
+// External icons
+import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
+
+// Internal hooks
+import { useToast } from "@/hooks/use-toast"
+import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
+
+// Internal utilities
+import { emptyExpense } from "@/api/client.js"
+import { getDateString } from "@/api/utilities.js"
+
+// Internal components
+import { Button } from "@/components/ui/button"
+import { ConfettiButton } from "@/components/ui/confetti"
+import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
 import {
   Drawer,
   DrawerClose,
@@ -29,14 +48,15 @@ const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
   const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useOutletContext()
+  const { currency } = useOutletContext()
+
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
     settleDebt: ({ from: memberFrom, to: memberTo, amount: amount }) => {
-      const expenseName = `Transfer: ${memberFrom} → ${memberTo}`
-      const currency = emptyExpense.currency
-      const category = undefined
-      const dateString = new Date().toISOString().split("T")[0]
+      const expenseName = `${memberFrom} → ${memberTo}`
+      const category = "💸 Transfer"
+      const dateString = getDateString()
       const expense_type = "transfer"
       const contributions = [
         { id: mapMemberToMemberId(memberFrom, members), paid: amount, weight: 0 },

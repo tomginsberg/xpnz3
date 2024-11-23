@@ -64,6 +64,7 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   }, [paidBy])
 
   useEffect(() => {
+    setAmount(Math.round(amount * 100) / 100)
     if (paidBy.length == 1) {
       setPaidBy([{ member: paidBy[0].member, amount: amount }])
     }

@@ -12,6 +12,7 @@ import Home from "@/pages/home"
 import Error from "@/pages/error"
 import { FlatLoading, MasonaryLoading } from "@/components/loading"
 import { api } from "../xpnz.config.js"
+import { currencySymbols } from "./api/client.js"
 
 const MembersTab = React.lazy(() => import("@/pages/members"))
 const DebtsTab = React.lazy(() => import("@/pages/debts"))
@@ -21,7 +22,9 @@ function LedgerLayout() {
   const { ledgerName } = useParams()
   const [searchTerm, setSearchTerm] = React.useState("")
 
-  const [ledgerExists, setLedgerExists] = useState(null) // To track ledger existence
+  const [ledgerExists, setLedgerExists] = useState(null)
+  const [currency, setCurrency] = useState("")
+  const [currencySymbol, setCurrencySymbol] = useState("")
   const [isLoading, setIsLoading] = useState(true)
 
   // Check if the ledger exists
@@ -29,9 +32,15 @@ function LedgerLayout() {
     async function checkLedger() {
       try {
         // delay for testing
-        const response = await fetch(`${api.base}/ledger-exists/${ledgerName}`)
-        const exists = await response.json()
-        setLedgerExists(exists)
+        const response = await fetch(`${api.base}/ledgers/${ledgerName}`)
+        const ledgerData = await response.json()
+        if (ledgerData?.name === ledgerName) {
+          setLedgerExists(true)
+          setCurrency(ledgerData?.currency)
+          setCurrencySymbol(currencySymbols[ledgerData?.currency])
+        } else {
+          setLedgerExists(false)
+        }
       } catch (error) {
         console.error("Error checking ledger existence:", error)
         setLedgerExists(false)
@@ -97,6 +106,8 @@ function LedgerLayout() {
     editMember,
     deleteMember,
     pushExpense,
+    currency,
+    currencySymbol
   }
 
   if (isLoading) return <div></div>
@@ -116,6 +127,7 @@ function LedgerLayout() {
         members={members}
         pushExpense={pushExpense}
         editExpense={editExpense}
+        defaultCurrency={currency}
       />
       <HoldToDelete onConfirm={handleDelete} isDrawerOpen={isDeleteDrawerOpen} handleCloseDrawer={closeDeleteDrawer} />
     </>
