@@ -1,17 +1,13 @@
 // React and libraries
 import React, { useCallback, useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { useOutletContext, useParams } from "react-router-dom"
 
 // External icons
 import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
 
 // Internal hooks
-import { useToast } from "@/hooks/use-toast"
-import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 
 // Internal utilities
-import { emptyExpense } from "@/api/client.js"
 import { getDateString } from "@/api/utilities.js"
 
 // Internal components
@@ -27,17 +23,9 @@ import {
   DrawerHeader,
   DrawerTitle
 } from "@/components/ui/drawer"
-import { Button } from "@/components/ui/button"
 
-import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
-import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
 import { useParams, useOutletContext } from "react-router-dom"
-import { motion } from "framer-motion"
-import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
-import { ConfettiButton } from "@/components/ui/confetti"
 import { useToast } from "@/hooks/use-toast"
-import { emptyExpense } from "@/api/client.js"
-
 
 const mapMemberToMemberId = (memberName, members) => {
   const m = members.find((member) => member.name == memberName)
