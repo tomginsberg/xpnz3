@@ -138,7 +138,7 @@ const AnimatedCard = memo(
                 )}
 
                 {/* Member Avatars */}
-                <div className="flex -space-x-2 overflow-hidden">
+                <div className="flex -space-x-2 overflow-hidden py-[2px]">
                   {involvementList.map(([memberName, involvementType], index) => (
                     <div
                       key={index}
