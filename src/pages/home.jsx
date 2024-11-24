@@ -20,7 +20,6 @@ import { FloatingLabelInput } from "@/components/ui/floating-label"
 
 import { api } from "@/../xpnz.config.js"
 import { TagInput } from "@/components/ui/tag-input"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { ConfettiButton } from "@/components/ui/confetti"
 
@@ -80,11 +79,15 @@ export default function Home() {
 
   const [ledgers, setLedgers] = useState([])
 
+  const currencyList = Object.keys(currencies).map((currency) => ({
+    value: currency,
+    label: currencies[currency]
+  }))
+
   useEffect(() => {
     const getLedgers = async () => {
       const response = await fetch(`${api.base}/ledgers`, { cache: "no-store" })
       const ledgers = await response.json()
-      // [{name: ..., currency: ...}, {...}]
       // sort ledgers by name
       ledgers.sort((a, b) => a.name.localeCompare(b.name))
       setLedgers(ledgers)
@@ -178,10 +181,6 @@ export default function Home() {
   }
 
   const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency)
-  const currencyList = Object.keys(currencies).map((currency) => ({
-    value: currency,
-    label: currencies[currency]
-  }))
 
   return (
     <>
@@ -222,21 +221,31 @@ export default function Home() {
         </motion.div>
       </div>
       <Drawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen} onClose={handleClose}>
-        <DrawerContent>
+        <DrawerContent className="h-[80%] flex flex-col justify-start">
           <DrawerHeader>
             <DrawerTitle className="text-primary">
-              {step === 1 ? "Create New Ledger" : step === 2 ? "Select a Currency" : "Add Members"}
+              {step === 1 ? (
+                <div>Create New Ledger</div>
+              ) : step === 2 ? (
+                <div>
+                  Select a Currency for <span className="text-green-500">{name}</span>
+                </div>
+              ) : (
+                <div>
+                  Add Members for <span className="text-blue-500">{name}</span>{" "}
+                  {currencies[selectedCurrency].split(" ")[0]}
+                </div>
+              )}
             </DrawerTitle>
             <DrawerDescription>
               {step === 1 && "Enter a name for your new ledger."}
-              {step === 2 && "This is default currency for your expenses."}
+              {step === 2 && "This is default currency for your expenses and debts."}
               {step === 3 && "Don't worry, you can add more members later!"}
             </DrawerDescription>
           </DrawerHeader>
-
           {step === 1 && (
-            <form onSubmit={() => setStep(2)}>
-              <div className="flex flex-col gap-4 py-4 mx-8">
+            <form onSubmit={() => setStep(2)} className="flex flex-col justify-start">
+              <div className="flex flex-col gap-4 py-4 mx-4">
                 <div className="space-y-2">
                   <FloatingLabelInput
                     label="Enter Ledger Name"
@@ -264,8 +273,11 @@ export default function Home() {
                   className="text-primary font-mono"
                 />
               </div>
-              <DrawerFooter>
-                <Button type="submit" disabled={!!error || !name}>
+              <DrawerFooter className="flex flex-row w-full p-4 text-primary gap-4">
+                <Button className="flex-grow" type="button" variant="outline" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button className="flex-grow" type="submit">
                   Next
                 </Button>
               </DrawerFooter>
@@ -273,11 +285,11 @@ export default function Home() {
           )}
 
           {step === 2 && (
-            <form onSubmit={() => setStep(3)} className="overflow-y-auto">
-              <Command className="px-4 bg-background">
+            <form onSubmit={() => setStep(3)} className="flex flex-col justify-start">
+              <Command className="p-4 bg-background">
                 <div className="border rounded-lg">
                   <div className="relative">
-                    <CommandInput placeholder="Search currency..." />
+                    <CommandInput placeholder="Search currency..." autoFocus />
                     <div className="absolute right-0 top-1/2 -translate-y-1/2 font-large px-4 py-2">
                       {currencies[selectedCurrency]}
                     </div>
@@ -285,14 +297,17 @@ export default function Home() {
 
                   <CommandList>
                     <CommandEmpty>No currency found.</CommandEmpty>
-                    <CommandEmpty>No currency found.</CommandEmpty>
-                    <CommandGroup className="max-h-[200px] overflow-y-auto">
+                    <CommandGroup>
                       {currencyList.map((currency) => (
                         <CommandItem
                           key={currency.value}
                           value={currency.value}
-                          onSelect={(currentValue) => {
-                            setSelectedCurrency(currentValue === selectedCurrency ? "" : currentValue)
+                          onSelect={(selected) => {
+                            if (selected === selectedCurrency) {
+                              setStep(step + 1)
+                            } else {
+                              setSelectedCurrency(selected)
+                            }
                           }}
                         >
                           <Check
@@ -309,11 +324,11 @@ export default function Home() {
                 </div>
               </Command>
 
-              <DrawerFooter className="flex flex-row w-full p-4 text-primary">
+              <DrawerFooter className="flex flex-row w-full p-4 text-primary gap-4">
                 <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
                   Back
                 </Button>
-                <Button className="flex-grow" type="submit">
+                <Button className="flex-grow" type="submit" disabled={selectedCurrency === ""}>
                   Next
                 </Button>
               </DrawerFooter>
@@ -321,25 +336,23 @@ export default function Home() {
           )}
 
           {step === 3 && (
-            <ScrollArea>
-              <form onSubmit={handleSubmit}>
-                <div className="px-4 mt-2">
-                  <TagInput tags={newLedgerMembers} setTags={setNewLedgerMembers} placeholder={"Add members..."} />
-                </div>
-                <DrawerFooter className="flex flex-row w-full text-primary">
-                  <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
-                    Back
-                  </Button>
-                  <ConfettiButton
-                    className="flex-grow"
-                    type="submit"
-                    disabled={!name || !selectedCurrency || newLedgerMembers.length === 0}
-                  >
-                    Create!
-                  </ConfettiButton>
-                </DrawerFooter>
-              </form>
-            </ScrollArea>
+            <form onSubmit={handleSubmit} className="flex flex-col justify-start">
+              <div className="px-4 mt-2">
+                <TagInput tags={newLedgerMembers} setTags={setNewLedgerMembers} placeholder={"Add members..."} />
+              </div>
+              <DrawerFooter className="flex flex-row w-full text-primary gap-4 px-4">
+                <Button className="flex-grow" type="button" variant="outline" onClick={() => setStep(step - 1)}>
+                  Back
+                </Button>
+                <ConfettiButton
+                  className="flex-grow"
+                  type="submit"
+                  disabled={!name || !selectedCurrency || newLedgerMembers.length === 0}
+                >
+                  Create!
+                </ConfettiButton>
+              </DrawerFooter>
+            </form>
           )}
         </DrawerContent>
       </Drawer>
