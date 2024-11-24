@@ -37,9 +37,7 @@ function MembersRow(props) {
     e.preventDefault()
 
     if (isEditing) {
-      console.log("submitting", newName)
       onSubmit && (await onSubmit(member, newName))
-      setNewName(name)
     }
 
     setIsEditing(!isEditing)
