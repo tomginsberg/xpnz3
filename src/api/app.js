@@ -923,22 +923,6 @@ app.get("/ledgers/:ledgerName/categories", categoriesGetHandler)
 app.get("/ledgers/:ledgerName/balance", balancesGetHandler)
 app.get("/ledgers/:ledgerName/settlement", settlementsGetHandler)
 
-app.get("/ledger-exists/:ledgerName", async (request, reply) => {
-  const { ledgerName } = request.params
-
-  try {
-    const ledger = await db("ledgers").where({ name: ledgerName }).first()
-
-    if (ledger) {
-      return reply.send(true)
-    } else {
-      return reply.send(false)
-    }
-  } catch (error) {
-    return reply.code(500).send({ error: "Internal server error" })
-  }
-})
-
 // app.get ('/recurrences', recurrencesGetHandler);
 // app.get ('/recurrences/:id', recurrencesGetHandler);
 // app.post ('/recurrences', recurrencesPutPostHandler);
