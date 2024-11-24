@@ -91,7 +91,7 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
       />
 
       {paidBy.length > 1 && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {paidBy.map((payer, index) => (
             <div key={payer.member} className="flex items-center space-x-2 space-y-2">
               <div className="flex-grow">

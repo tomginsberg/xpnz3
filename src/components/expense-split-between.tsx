@@ -107,7 +107,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
       />
 
       {isUnequalSplit && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           {splitBetween.map((splitter, index) => (
             <div key={splitter.member} className="flex items-center space-x-2">
               <div className="flex-grow">

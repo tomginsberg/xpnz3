@@ -131,10 +131,12 @@ const AnimatedCard = memo(
 
               <div className="flex flex-wrap justify-between items-end px-4 pb-4 mt-auto gap-y-2">
                 {/* Category */}
-                {expense.category && expense.name && (
-                  <div className="text-gray-700 dark:text-gray-300">
+                {expense.category && expense.name ? (
+                  <div className="text-gray-700 dark:text-gray-300 flex-grow">
                     <p className="text-lg">{expense.category}</p>
                   </div>
+                ) : (
+                  <div className="flex-grow" />
                 )}
 
                 {/* Member Avatars */}

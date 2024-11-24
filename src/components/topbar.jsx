@@ -61,7 +61,7 @@ function XpnzNavigationButton(props) {
   const navigate = useNavigate()
 
   return (
-    <Button onClick={() => navigate(route)} variant="outline" className="justify-start">
+    <Button onClick={() => navigate(route)} variant="outline" className="justify-start transition-none">
       <span className="mr-2">{icon}</span> {label}
     </Button>
   )
@@ -151,7 +151,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                 </Button>
               </SheetTrigger>
 
-              <SheetContent side="left" className="bg-card text-primary">
+              <SheetContent side="left" className="bg-card text-primary transition-none">
                 <SheetDescription className="sr-only">Sidebar</SheetDescription>
                 <SheetHeader>
                   <SheetTitle className="text-left">Options</SheetTitle>
@@ -161,7 +161,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                   {/*<XpnzNavigationButton route="/receipt" icon="🧾" label="Add Itemized Receipt" />*/}
                   {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring Expenses" />*/}
                   {/*<XpnzNavigationButton route="/plots" icon="📊" label="Ledger Metrics" />*/}
-                  <Button onClick={share} variant="outline" className="justify-start">
+                  <Button onClick={share} variant="outline" className="justify-start transition-none">
                     <span className="mr-2">🤝</span> Share
                   </Button>
 
@@ -198,7 +198,9 @@ export default function Topbar({ onSearch, toggleExpansion }) {
 
                 <SheetFooter>
                   <SheetClose asChild>
-                    <Button variant="secondary">Close</Button>
+                    <Button variant="outline" className="transition-none">
+                      Close
+                    </Button>
                   </SheetClose>
                 </SheetFooter>
               </SheetContent>
