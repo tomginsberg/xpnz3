@@ -96,7 +96,7 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
       expenses
         .filter(
           (expense) =>
-            expense.expense_type !== "transfer" && !(expense.category || "").toLowerCase().includes("transfer")
+            expense.expense_type === "expense" && !(expense.category || "").toLowerCase().includes("transfer")
         )
         .reduce((acc, curr) => acc + curr.amount * curr.exchange_rate, 0)
         .toFixed(2),
