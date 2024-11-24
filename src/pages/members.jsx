@@ -182,6 +182,14 @@ function MembersAdd(props) {
   )
 }
 
+function MembersRows({balance, onDelete, onSubmit}) {
+  if (balance === undefined) return <></>
+
+  return balance.map((m) => (
+    <MembersRow key={m.id} className="mt-3" member={m} onDelete={onDelete} onSubmit={onSubmit} />
+  ))
+}
+
 export default function MembersPage() {
   const { ledgerName } = useParams()
   const { balance: trueBalance, pushMember, deleteMember, editMember } = useOutletContext()
@@ -210,13 +218,6 @@ export default function MembersPage() {
     await editMember(member.id, newName)
   }
 
-  const MembersRows = () => {
-    if (balance === undefined) return <></>
-
-    return balance.map((m) => (
-      <MembersRow key={m.id} className="mt-3" member={m} onDelete={onDelete} onSubmit={onSubmit} />
-    ))
-  }
 
   return (
     <div className="mt-[72px] mb-[120%]">
@@ -226,7 +227,7 @@ export default function MembersPage() {
         existingMembers={balance ? balance.map((m) => m.name) : []}
       />
       <div className="px-3 -translate-y-3">
-        <MembersRows />
+        <MembersRows balance={balance} onDelete={onDelete} onSubmit={onSubmit} />
       </div>
     </div>
   )
