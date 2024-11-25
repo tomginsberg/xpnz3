@@ -12,7 +12,8 @@ import Home from "@/pages/home"
 import Error from "@/pages/error"
 import { FlatLoading, MasonaryLoading } from "@/components/loading"
 import { api } from "../xpnz.config.js"
-import { currencySymbols } from "./api/client.js"
+
+import { currencySymbols } from "./api/utilities.js"
 
 const MembersTab = React.lazy(() => import("@/pages/members"))
 const DebtsTab = React.lazy(() => import("@/pages/debts"))
