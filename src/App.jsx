@@ -1,6 +1,15 @@
 // App.jsx
 import React, { Suspense, useCallback, useEffect, useState } from "react"
-import { BrowserRouter as Router, Navigate, Outlet, Route, Routes, useParams } from "react-router-dom"
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Outlet,
+  Route,
+  Routes,
+  useParams,
+  useNavigate,
+  useLocation
+} from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -21,8 +30,18 @@ const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
 
 function LedgerLayout() {
   const { ledgerName } = useParams()
-  const [searchTerm, setSearchTerm] = React.useState("")
+  const location = useLocation()
 
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Redirect to lowercase ledgerName if it's not already lowercase
+    if (ledgerName !== ledgerName?.toLowerCase()) {
+      navigate(`${location.pathname.toLowerCase()}`, { replace: true })
+    }
+  }, [ledgerName, navigate])
+
+  const [searchTerm, setSearchTerm] = React.useState("")
   const [ledgerExists, setLedgerExists] = useState(null)
   const [currency, setCurrency] = useState("")
   const [currencySymbol, setCurrencySymbol] = useState("")
@@ -62,9 +81,7 @@ function LedgerLayout() {
     balance,
     settlement,
     categories,
-    ledgerInfo,
     members,
-    memberNames,
     pushMember,
     editMember,
     deleteMember,
@@ -73,7 +90,6 @@ function LedgerLayout() {
     pushExpense,
     copyExpense,
     editExpense,
-    deleteExpense,
     isDrawerOpen,
     isEditMode,
     openAddExpenseDrawer,

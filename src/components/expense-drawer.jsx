@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 // External utilities and libraries
 import confetti from "canvas-confetti"
-import { Check, ChevronsUpDown, Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
+import { Check, ChevronsUpDown, Save, SquareArrowUpLeft } from "lucide-react"
 
 // Internal utilities
 import { currencies } from "@/api/utilities.js"
@@ -25,7 +25,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Command, CommandEmpty, CommandGroup, CommandList, CommandItem, CommandInput } from "@/components/ui/command"
 // Internal components

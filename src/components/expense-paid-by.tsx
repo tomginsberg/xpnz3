@@ -35,9 +35,22 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   isIncome
 }) => {
   const onPaidByMembersChange = (values: string[]) => {
-    if (values.length === 1) {
-      setPaidBy([{ member: values[0], amount }])
-    } else {
+    const oldMembers = paidBy
+    if (oldMembers.length === 0 && values.length >= 1) {
+      setPaidBy( () =>  {
+        const newMembers: PaidBy[] = []
+        values.forEach((item, index) => {
+          if (index === 0) {
+            newMembers[index] = {member: item, amount: amount}
+          }
+          else {
+            newMembers[index] = {member: item, amount: 0}
+          }
+        })
+        return newMembers
+      })
+    }
+    else {
       setPaidBy(
         values.map((member) => {
           const existing = paidBy.find((p) => p.member === member)
@@ -64,7 +77,9 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   }, [paidBy])
 
   useEffect(() => {
-    setAmount(Math.round(amount * 100) / 100)
+    if (amount) {
+      setAmount(Math.round(amount * 100) / 100)
+    }
     if (paidBy.length == 1) {
       setPaidBy([{ member: paidBy[0].member, amount: amount }])
     }
