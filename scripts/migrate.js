@@ -21,13 +21,14 @@ async function makeTransactionsTable () {
     table.enu ('currency', supportedCurrencies);
     table.string ('category');
     table.string ('expense_type');
-    table.string ('ledger').references ('name').inTable ('ledgers');
     table.datetime ('created_at');
     table.date ('date');
     table.float ('exchange_rate');
     table.boolean ('is_template');
     table.boolean ('is_deleted');
   });
+
+  await db.schema.raw ("ALTER TABLE `transactions` ADD COLUMN `ledger` varchar(255) collate nocase REFERENCES `ledgers` (`name`)");
 }
 
 async function makeRecurrencesTable () {
@@ -42,12 +43,12 @@ async function makeRecurrencesTable () {
 async function makeMembersTable () {
   await db.schema.createTable ('members', table => {
     table.string ('id').primary ();
-    table.string ('ledger').references ('name').inTable ('ledgers');
     table.boolean ('is_active');
   });
 
   // add name column to members table with collation nocase using a raw query
   await db.schema.raw ("ALTER TABLE `members` ADD COLUMN `name` varchar(255) collate nocase");
+  await db.schema.raw ("ALTER TABLE `members` ADD COLUMN `ledger` varchar(255) collate nocase REFERENCES `ledgers` (`name`)");
 
   // add unique constraint to members table that enforces unique name per ledger
   await db.schema.table ('members', table => {
