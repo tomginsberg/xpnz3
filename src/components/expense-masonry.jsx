@@ -4,7 +4,6 @@ import { useOutletContext } from "react-router-dom"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import AnimatedCard from "@/components/animated-card"
 import { useInView } from "react-intersection-observer"
 import { fromPairs } from "lodash-es"
@@ -110,63 +109,58 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeInOut" }}
     >
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <div className={cn("sticky top-[125px] z-10 w-full py-2 px-2")}>
-          <CollapsibleTrigger asChild>
-            <button
-              className={cn(
-                "flex items-center justify-between w-full z-10 p-3",
-                isOpen ? "bg-background" : "bg-card rounded-lg"
-              )}
-            >
-              <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
-              <div className="flex items-center gap-3">
-                {Math.round(totalAmount * 100) / 100 !== 0 && (
-                  <span className="text-black dark:text-zinc-400">
-                    {currencySymbol}
-                    {totalAmount}
-                  </span>
-                )}
-                <ChevronDown
-                  className={cn("text-primary h-5 w-5 transition-transform duration-200", isOpen && "rotate-180")}
-                />
-              </div>
-            </button>
-          </CollapsibleTrigger>
-        </div>
-
-        <AnimatePresence>
-          {isOpen && (
-            <CollapsibleContent forceMount>
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <Masonry
-                  breakpointCols={{ default: 5, 1024: 4, 768: 3, 640: 2, 480: 2 }}
-                  className="w-auto flex"
-                  columnClassName="bg-clip-padding"
-                >
-                  {expenses.map((expense) => (
-                    <AnimatedCard
-                      key={expense.id}
-                      className="p-2"
-                      expense={expense}
-                      onEditClick={openEditExpenseDrawer}
-                      onCopyClick={copyExpense}
-                      onDeleteClick={onDeleteClick}
-                      showDetails={isCardOpen(expense.id)}
-                      onCardClick={() => toggleCardState(expense.id)}
-                    />
-                  ))}
-                </Masonry>
-              </motion.div>
-            </CollapsibleContent>
+      <div className={cn("sticky top-[125px] z-10 w-full py-2 px-2")}>
+        <button
+          className={cn(
+            "flex items-center justify-between w-full z-10 p-3",
+            isOpen ? "bg-background" : "bg-card rounded-lg"
           )}
-        </AnimatePresence>
-      </Collapsible>
+          onClick={() => setIsOpen((prev) => !prev)}
+        >
+          <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
+          <div className="flex items-center gap-3">
+            {Math.round(totalAmount * 100) / 100 !== 0 && (
+              <span className="text-black dark:text-zinc-400">
+                {currencySymbol}
+                {totalAmount}
+              </span>
+            )}
+            <ChevronDown
+              className={cn("text-primary h-5 w-5 transition-transform duration-200", isOpen && "rotate-180")}
+            />
+          </div>
+        </button>
+      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+          >
+            <Masonry
+              breakpointCols={{ default: 5, 1024: 4, 768: 3, 640: 2, 480: 2 }}
+              className="w-auto flex"
+              columnClassName="bg-clip-padding"
+            >
+              {expenses.map((expense) => (
+                <AnimatedCard
+                  key={expense.id}
+                  className="p-2"
+                  expense={expense}
+                  onEditClick={openEditExpenseDrawer}
+                  onCopyClick={copyExpense}
+                  onDeleteClick={onDeleteClick}
+                  showDetails={isCardOpen(expense.id)}
+                  onCardClick={() => toggleCardState(expense.id)}
+                />
+              ))}
+            </Masonry>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
