@@ -22,7 +22,7 @@ export default function ExpenseMasonryGrouped() {
       : expenses
 
     const groups = filtered.reduce((acc, expense) => {
-      const monthYear = new Date(expense.date).toLocaleString("default", { month: "long", year: "numeric" })
+      const monthYear = new Date(expense.date).toLocaleDateString("default", { month: "long", year: "numeric", timeZone: "UTC" })
       acc[monthYear] = acc[monthYear] || []
       acc[monthYear].push(expense)
       return acc
