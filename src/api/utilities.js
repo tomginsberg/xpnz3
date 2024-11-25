@@ -163,6 +163,7 @@ export const formatLedgerName = (input) => {
     .replace(/\s+/g, "-")
     .toLowerCase()
 }
+
 function mapCurrenciesToFormatted(currencies) {
   const mappedCurrencies = {}
   for (const [code, flag] of Object.entries(currencies)) {

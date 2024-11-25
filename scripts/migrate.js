@@ -7,7 +7,7 @@ const parse = JSON.parse;
 
 const db = Knex ({ client: 'sqlite3', connection: { filename: 'data.db' }, useNullAsDefault: true });
 
-import { getDateString, getDateTimeString, generateId, supportedCurrencies } from '../src/api/utilities.js';
+import { formatLedgerName, getDateString, getDateTimeString, generateId, supportedCurrencies } from '../src/api/utilities.js';
 
 async function makeLedgersTable () {
   await db.schema.raw ("CREATE TABLE `ledgers` (`name` varchar(255) collate nocase, primary key (`name`))")
@@ -181,7 +181,7 @@ const filenames = process.argv.slice (2).map (filename => path.parse (filename))
 for (var filename of filenames) {
   console.log (`Importing ${filename.base} into ledger ${filename.name}`);
   const fullpath = path.join (filename.dir, filename.base);
-  await importTransactionsFromJsonFile (fullpath, filename.name);
+  await importTransactionsFromJsonFile (fullpath, formatLedgerName(filename.name));
 }
 
 process.exit (0);

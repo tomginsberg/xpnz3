@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 
 // External utilities and libraries
 import confetti from "canvas-confetti"
-import { Check, ChevronsUpDown, Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
+import { Check, ChevronsUpDown, Save, SquareArrowUpLeft } from "lucide-react"
 
 // Internal utilities
 import { currencies } from "@/api/utilities.js"
@@ -25,7 +25,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Command, CommandEmpty, CommandGroup, CommandList, CommandItem, CommandInput } from "@/components/ui/command"
 // Internal components
@@ -51,7 +50,7 @@ export default function ExpenseDrawer({
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
   const [amount, setAmount] = useState(selectedExpense.amount)
-  const [date, setDate] = useState(new Date(selectedExpense.date))
+  const [date, setDate] = useState(new Date(`${selectedExpense.date}T00:00:00`))
   const [category, setCategory] = useState(selectedExpense.category)
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
@@ -70,7 +69,7 @@ export default function ExpenseDrawer({
     setIncome(selectedExpense.income)
     setName(selectedExpense.name)
     setAmount(selectedExpense.amount)
-    setDate(new Date(selectedExpense.date))
+    setDate(new Date(`${selectedExpense.date}T00:00:00`))
     setCategory(selectedExpense.category)
     setPaidBy(selectedExpense.paidBy)
     setSplitBetween(selectedExpense.splitBetween)

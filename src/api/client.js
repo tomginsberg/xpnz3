@@ -1,5 +1,6 @@
 import { api } from "../../xpnz.config.js"
 import { sample } from "lodash-es"
+import { getDateString } from "./utilities.js"
 
 export const expenseNames = [
   "Coffee Break ☕",
@@ -74,7 +75,7 @@ export const emptyExpense = {
   amount: "",
   currency: "",
   income: false,
-  date: new Date(),
+  date: getDateString(),
   category: "",
   paidBy: [], // [{ member: string, amount: number }]
   splitBetween: [] // [{ member: string, weight: number, normalizedWeight: number }]
