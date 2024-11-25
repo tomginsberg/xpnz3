@@ -5,6 +5,7 @@ import { fromPairs, groupBy, omit, pick, sum, uniq } from "lodash-es"
 import cors from "@fastify/cors"
 // import cron from 'node-cron';
 import {
+  defaultCategories,
   generateId,
   getDateString,
   getDateTimeString,
@@ -162,7 +163,7 @@ async function getTransactions(
   const groupedTransactions = groupBy(payload, "id")
   const transactionsRaw = uniqueIds.map((id) => groupedTransactions[id])
 
-  const transactions = transactionsRaw.map((transactions) => {
+  return transactionsRaw.map((transactions) => {
     let transaction = omit(transactions[0], ["member", "amount", "weight", "member_id"])
 
     const multiplier = options.useExchangeRates ? transaction.exchange_rate : 1
@@ -223,8 +224,6 @@ async function getTransactions(
 
     throw new Error("Invalid format.")
   })
-
-  return transactions
 }
 
 async function transactionsGetHandler(request, reply) {
@@ -265,27 +264,6 @@ async function transactionsGetHandler(request, reply) {
 }
 
 async function categoriesGetHandler(request, reply) {
-  const defaultCategories = [
-    "🛒 Groceries",
-    "🍽️ Food",
-    "💡 Utilities",
-    "🏡 Household",
-    "🏠 Rent",
-    "🛠️ Maintenance",
-    "🛡️ Insurance",
-    "🏥 Health",
-    "🎬 Entertainment",
-    "👗 Clothing",
-    "📚 Subscriptions",
-    "💸 Transfer",
-    "📶 Internet",
-    "🚿 Water",
-    "🔥 Gas",
-    "🚡 Transportation",
-    "⚡ Hydro",
-    "❓ Miscellaneous"
-  ]
-
   const { ledgerName } = request.params
 
   const ledger = await db("ledgers").where({ name: ledgerName }).first()
@@ -302,9 +280,7 @@ async function categoriesGetHandler(request, reply) {
     .distinct()
 
   const categories = payload.map((transaction) => transaction.category).filter((category) => category !== "")
-  const allCategories = uniq([...defaultCategories, ...categories])
-
-  return allCategories
+  return uniq([...defaultCategories, ...categories])
 }
 
 async function getBalance(ledger, options, trx = db) {
@@ -502,11 +478,13 @@ async function updateAddTransaction(transaction, isUpdate) {
     "is_deleted"
   ])
 
-  async function getExchangeRate (baseCurrency, newCurrency) {
+  async function getExchangeRate(baseCurrency, newCurrency) {
     if (baseCurrency === newCurrency) return 1
 
     try {
-      const exchangeRates = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`).then((response) => response.json())
+      const exchangeRates = await fetch(`https://open.er-api.com/v6/latest/${baseCurrency}`).then((response) =>
+        response.json()
+      )
       return 1 / exchangeRates.rates[newCurrency]
     } catch (error) {
       throw new Error("Internal server error: Unable to get exchange rates.")
@@ -520,7 +498,8 @@ async function updateAddTransaction(transaction, isUpdate) {
   try {
     await db.transaction(async (trx) => {
       if (isUpdate) {
-        const { is_deleted = undefined, currency = undefined } = await trx("transactions").where({ id: transaction.id }).select(["is_deleted", "currency"]).first() || {}
+        const { is_deleted = undefined, currency = undefined } =
+          (await trx("transactions").where({ id: transaction.id }).select(["is_deleted", "currency"]).first()) || {}
 
         if (is_deleted === undefined) {
           throw new Error("The specified transaction does not exist.")
@@ -531,7 +510,10 @@ async function updateAddTransaction(transaction, isUpdate) {
         }
 
         if (currency !== transaction.currency) {
-          const { currency: ledgerCurrency } = await trx("ledgers").where({ name: transaction.ledger }).select("currency").first()
+          const { currency: ledgerCurrency } = await trx("ledgers")
+            .where({ name: transaction.ledger })
+            .select("currency")
+            .first()
 
           newTransaction.exchange_rate = await getExchangeRate(ledgerCurrency, transaction.currency)
         }
@@ -542,7 +524,10 @@ async function updateAddTransaction(transaction, isUpdate) {
         transaction.id = generateId()
         newTransaction.id = transaction.id
 
-        const { currency: ledgerCurrency } = await trx("ledgers").where({ name: transaction.ledger }).select("currency").first()
+        const { currency: ledgerCurrency } = await trx("ledgers")
+          .where({ name: transaction.ledger })
+          .select("currency")
+          .first()
         newTransaction.exchange_rate = await getExchangeRate(ledgerCurrency, transaction.currency)
 
         await trx("transactions").insert(newTransaction)
