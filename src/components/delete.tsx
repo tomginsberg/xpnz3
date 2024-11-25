@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react"
-import { Fingerprint } from "lucide-react"
+import { Fingerprint, MousePointerClick } from "lucide-react"
 import { motion, useAnimation } from "framer-motion"
 
 interface HoldToConfirmButtonProps {
@@ -14,6 +14,7 @@ interface HoldToConfirmButtonProps {
   holdText?: string
   className?: string
 }
+
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer"
 
 const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
@@ -82,9 +83,12 @@ const HoldToConfirmButton: React.FC<HoldToConfirmButtonProps> = ({
         onTouchStart={startHolding}
         onTouchEnd={stopHolding}
       >
+        <MousePointerClick
+          className={`w-12 h-12 hidden sm:block ${isHolding ? `${activeColor} animate-pulse` : "text-secondary-foreground"}`}
+        />
         <Fingerprint
-          className={`w-12 h-12 ${isHolding ? `${activeColor} animate-pulse` : "text-secondary-foreground"}`}
-        ></Fingerprint>
+          className={`w-12 h-12 sm:hidden ${isHolding ? `${activeColor} animate-pulse` : "text-secondary-foreground"}`}
+        />
       </button>
     </div>
   )
