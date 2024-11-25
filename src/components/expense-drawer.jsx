@@ -3,10 +3,10 @@ import { useEffect, useState } from "react"
 
 // External utilities and libraries
 import confetti from "canvas-confetti"
-import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
+import { Check, ChevronsUpDown, Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
 
 // Internal utilities
-import { currencies } from "@/api/client.js"
+import { currencies } from "@/api/utilities.js"
 import { useToast } from "@/hooks/use-toast"
 
 // UI components
@@ -19,14 +19,15 @@ import {
   DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerTitle
+  DrawerTitle,
+  DrawerTrigger
 } from "@/components/ui/drawer"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
-
+import { Command, CommandEmpty, CommandGroup, CommandList, CommandItem, CommandInput } from "@/components/ui/command"
 // Internal components
 import { SplitBetweenForm } from "@/components/expense-split-between"
 import { PaidByForm } from "@/components/expense-paid-by"
@@ -34,6 +35,7 @@ import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
 import { union } from "lodash-es"
 import { getRandomExpenseName } from "@/api/client.js"
+import { cn } from "@/lib/utils"
 
 export default function ExpenseDrawer({
   selectedExpense,
@@ -54,6 +56,8 @@ export default function ExpenseDrawer({
   const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
   const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
   const [currency, setCurrency] = useState(selectedExpense.currency || defaultCurrency)
+  const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState(false)
+  const [randomExpenseName, setRandomExpenseName] = useState("")
 
   const id = selectedExpense.id
   const memberNames = union(
@@ -71,7 +75,7 @@ export default function ExpenseDrawer({
     setPaidBy(selectedExpense.paidBy)
     setSplitBetween(selectedExpense.splitBetween)
     setCurrency(selectedExpense.currency || defaultCurrency)
-  }, [selectedExpense])
+  }, [selectedExpense, defaultCurrency])
 
   const confettiExplosion = () => {
     const shoot = () => {
@@ -164,6 +168,12 @@ export default function ExpenseDrawer({
     return () => document.removeEventListener("keydown", down)
   }, [])
 
+  useEffect(() => {
+    if (isDrawerOpen) {
+      setRandomExpenseName(getRandomExpenseName())
+    }
+  }, [isDrawerOpen])
+
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
       <DrawerContent
@@ -191,7 +201,7 @@ export default function ExpenseDrawer({
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder={getRandomExpenseName()}
+                  placeholder={randomExpenseName}
                 />
               </div>
 
@@ -211,18 +221,60 @@ export default function ExpenseDrawer({
 
                 <div className="flex-1 space-y-2">
                   <Label htmlFor="currency">Currency</Label>
-                  <Select onValueChange={setCurrency} defaultValue={currency} value={currency}>
-                    <SelectTrigger id="currency" className="min-w-[95px]">
-                      <SelectValue placeholder={currencies[currency]} />
-                    </SelectTrigger>
-                    <SelectContent aria-describedby="currency select">
-                      {Object.entries(currencies).map(([code, flag]) => (
-                        <SelectItem key={code} value={code}>
-                          {flag}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Drawer open={currencyDrawerOpen} onOpenChange={setCurrencyDrawerOpen}>
+                    <DrawerTrigger id="currency" className="min-w-[95px]" asChild>
+                      <Button variant="outline">
+                        {currencies[currency]} <ChevronsUpDown />
+                      </Button>
+                    </DrawerTrigger>
+                    <DrawerContent>
+                      <DrawerTitle className="text-primary py-3 text-center">Select Currency</DrawerTitle>
+                      <DrawerDescription className="sr-only">Currency select element</DrawerDescription>
+                      <Command className="p-4 bg-background">
+                        <div className="border rounded-lg">
+                          <div className="relative">
+                            <CommandInput placeholder="Search currency..." />
+                            <div className="absolute right-0 top-1/2 -translate-y-1/2 font-large px-4 py-2">
+                              {currencies[currency]}
+                            </div>
+                          </div>
+
+                          <CommandList>
+                            <CommandEmpty>No currency found.</CommandEmpty>
+                            <CommandGroup>
+                              {Object.entries(currencies).map(([code, flag]) => (
+                                <CommandItem
+                                  key={code}
+                                  value={code}
+                                  onSelect={(x) => {
+                                    setCurrency(x)
+                                    setCurrencyDrawerOpen(false)
+                                  }}
+                                >
+                                  <Check
+                                    className={cn("mr-2 h-4 w-4", code === currency ? "opacity-100" : "opacity-0")}
+                                  />
+                                  {flag}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </div>
+                      </Command>
+                    </DrawerContent>
+                  </Drawer>
+                  {/*<Select onValueChange={setCurrency} defaultValue={currency} value={currency}>*/}
+                  {/*  <SelectTrigger id="currency" className="min-w-[95px]">*/}
+                  {/*    <SelectValue placeholder={currencies[currency]} />*/}
+                  {/*  </SelectTrigger>*/}
+                  {/*  <SelectContent aria-describedby="currency select">*/}
+                  {/*    {Object.entries(currencies).map(([code, flag]) => (*/}
+                  {/*      <SelectItem key={code} value={code}>*/}
+                  {/*        {flag}*/}
+                  {/*      </SelectItem>*/}
+                  {/*    ))}*/}
+                  {/*  </SelectContent>*/}
+                  {/*</Select>*/}
                 </div>
               </div>
 
