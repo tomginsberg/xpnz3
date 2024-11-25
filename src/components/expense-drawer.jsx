@@ -32,6 +32,7 @@ import { SplitBetweenForm } from "@/components/expense-split-between"
 import { PaidByForm } from "@/components/expense-paid-by"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
+import { union } from "lodash-es"
 
 export default function ExpenseDrawer({
   /* props */ selectedExpense,
@@ -53,20 +54,22 @@ export default function ExpenseDrawer({
   const [currency, setCurrency] = useState(selectedExpense.currency || defaultCurrency)
 
   const id = selectedExpense.id
-  const memberNames = members.map((member) => member.name)
+  const memberNames = union(
+    paidBy.map((x) => x.member),
+    splitBetween.map((x) => x.member),
+    members.filter((member) => member.is_active).map((member) => member.name)
+  )
 
   useEffect(() => {
-    if (isDrawerOpen) {
-      setIncome(selectedExpense.income)
-      setName(selectedExpense.name)
-      setAmount(selectedExpense.amount)
-      setDate(new Date(selectedExpense.date))
-      setCategory(selectedExpense.category)
-      setPaidBy(selectedExpense.paidBy)
-      setSplitBetween(selectedExpense.splitBetween)
-      setCurrency(selectedExpense.currency || defaultCurrency)
-    }
-  }, [isDrawerOpen])
+    setIncome(selectedExpense.income)
+    setName(selectedExpense.name)
+    setAmount(selectedExpense.amount)
+    setDate(new Date(selectedExpense.date))
+    setCategory(selectedExpense.category)
+    setPaidBy(selectedExpense.paidBy)
+    setSplitBetween(selectedExpense.splitBetween)
+    setCurrency(selectedExpense.currency || defaultCurrency)
+  }, [selectedExpense])
 
   const confettiExplosion = () => {
     const shoot = () => {
