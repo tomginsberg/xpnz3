@@ -1,13 +1,12 @@
 // components/animated-card.jsx
-import { memo, useEffect, useState, useCallback } from "react"
+import { memo, useCallback } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Copy, Pencil, Trash2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { useOutletContext } from "react-router-dom"
-import { currencySymbols } from "../api/client.js"
-import { formatDigit } from "../api/utilities.js"
+import { currencySymbols, formatDigit } from "@/api/utilities.js"
 
 const AnimatedCard = memo(
   ({ expense, showDetails, onCardClick, onEditClick, onDeleteClick, onCopyClick, className }) => {
@@ -186,9 +185,9 @@ const AnimatedCard = memo(
                           .map(
                             (data) =>
                               data.member +
-                              (data.normalizedWeight > 0
-                                ? ` ${expenseCurrencySymbol}` + data.normalizedWeight.toString()
-                                : ` ${expenseCurrencySymbol}` + (-data.normalizedWeight).toString())
+                              (data.amount > 0
+                                ? ` ${expenseCurrencySymbol}` + data.amount.toString()
+                                : ` ${expenseCurrencySymbol}` + (-data.amount).toString())
                           )
                           .join(", ")}
                       </p>
