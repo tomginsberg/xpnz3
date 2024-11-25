@@ -12,8 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger
 } from "@/components/ui/drawer"
-import { currencies } from "@/api/client.js"
-import { formatLedgerName } from "@/api/utilities.js"
+import { formatLedgerName, currencies } from "@/api/utilities.js"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { FloatingLabelInput } from "@/components/ui/floating-label"
