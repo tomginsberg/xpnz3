@@ -10,7 +10,7 @@ export default function AnimatedTextImageBlock({ title, subtitle, image, imageAl
       transition={{ duration: 1 }}
       className={cn("absolute top-48 items-center justify-center w-full", className)}
     >
-      <img src={image} alt={imageAlt} width="32" height="32" className="justify-center w-full px-[40%]" />
+      <img src={image} alt={imageAlt} width="32" height="32" className="justify-center w-full px-[40%] pb-4" />
       <p className="text-2xl text-muted-foreground text-center">{title}</p>
       <p className="text text-foreground/30 text-center">{subtitle}</p>
     </motion.div>
