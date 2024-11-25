@@ -150,6 +150,18 @@ export default function ExpenseDrawer({
     confettiExplosion()
   }
 
+  useEffect(() => {
+    const down = (e) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        confettiExplosion()
+      }
+    }
+
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
+
   return (
     <Drawer open={isDrawerOpen} onClose={handleCloseDrawer}>
       <DrawerContent
