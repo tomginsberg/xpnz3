@@ -171,9 +171,9 @@ const DebtsTab = () => {
 
       {debts.length === 0 && loaded && (
         <AnimatedTextImageBlock
-          image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f30e/512.gif"
-          imageAlt="🌎"
-          title="Everyone is Settled Up!"
+          image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f942/512.gif"
+          imageAlt="🥂"
+          title="Everyone is settled up"
           subtitle="Add more expensed to see debts"
         />
       )}

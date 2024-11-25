@@ -10,8 +10,8 @@ export default function ExpensesTab() {
   const isEmpty = expenses.length === 0
   return isEmpty ? (
     <AnimatedTextImageBlock
-      image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f308/512.gif"
-      imageAlt="🌈"
+      image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f9a7/512.webp"
+      imageAlt="🦧"
       title="No expenses found"
       subtitle="Add your first expense to get started"
     />
