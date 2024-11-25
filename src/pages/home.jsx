@@ -13,7 +13,7 @@ import {
   DrawerTrigger
 } from "@/components/ui/drawer"
 import { currencies } from "@/api/client.js"
-
+import { formatLedgerName } from "@/api/utilities.js"
 import { Button } from "@/components/ui/button"
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { FloatingLabelInput } from "@/components/ui/floating-label"
@@ -181,14 +181,6 @@ export default function Home() {
     }
   }, [name])
 
-  const formatLedgerName = (input) => {
-    // Remove non-alphanumeric characters and replace spaces with dashes
-    return input
-      .trim()
-      .replace(/[^a-zA-Z0-9\s-]/g, "")
-      .replace(/\s+/g, "-")
-      .toLowerCase()
-  }
   const baseURl = "xpnz.ca/"
   const previewUrl = `${baseURl}${formatLedgerName(name)}`
 
