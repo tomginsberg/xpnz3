@@ -6,7 +6,7 @@ import confetti from "canvas-confetti"
 import { Save, SquareArrowUpLeft, Trash2 } from "lucide-react"
 
 // Internal utilities
-import { categories, currencies } from "@/api/client.js"
+import { currencies } from "@/api/client.js"
 import { useToast } from "@/hooks/use-toast"
 
 // UI components
@@ -33,16 +33,18 @@ import { PaidByForm } from "@/components/expense-paid-by"
 import CalculatorInput from "./calculator-input"
 import { CategoryPicker } from "./category-picker"
 import { union } from "lodash-es"
+import { getRandomExpenseName } from "@/api/client.js"
 
 export default function ExpenseDrawer({
-  /* props */ selectedExpense,
+  selectedExpense,
   isDrawerOpen,
   isEditMode,
   handleCloseDrawer,
   members,
   pushExpense,
   editExpense,
-  defaultCurrency
+  defaultCurrency,
+  categories
 }) {
   const [income, setIncome] = useState(selectedExpense.income)
   const [name, setName] = useState(selectedExpense.name)
@@ -189,13 +191,7 @@ export default function ExpenseDrawer({
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder={"Expense"}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault()
-                      setTimeout(() => e.target.blur(), 0)
-                    }
-                  }}
+                  placeholder={getRandomExpenseName()}
                 />
               </div>
 

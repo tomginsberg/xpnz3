@@ -83,8 +83,8 @@ function LedgerLayout() {
     onDeleteClick,
     handleDelete
   } = useExpense(ledgerName)
-  const emptyMode = expenses.length === 0
 
+  const emptyMode = expenses.length === 0
   const [expandAll, setExpandAll] = useState(false)
   const toggleExpansion = useCallback(() => {
     setExpandAll(!expandAll)
@@ -128,6 +128,7 @@ function LedgerLayout() {
         pushExpense={pushExpense}
         editExpense={editExpense}
         defaultCurrency={currency}
+        categories={categories}
       />
       <HoldToDelete onConfirm={handleDelete} isDrawerOpen={isDeleteDrawerOpen} handleCloseDrawer={closeDeleteDrawer} />
     </>
