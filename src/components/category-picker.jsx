@@ -17,7 +17,6 @@ import { Slot } from "@radix-ui/react-slot"
 function CategoryPickerSelector({
   categories,
   inputValue,
-  selectedCategory,
   onChangeCapture,
   onPlusButtonClick,
   onCategorySelect,
