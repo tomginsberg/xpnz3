@@ -1,8 +1,8 @@
-import React, { useState, useEffect, KeyboardEvent } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { AlertCircle, ArrowRight, Delete, X } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import React, { useState, useEffect, KeyboardEvent } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { AlertCircle, ArrowRight, Delete, X } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface CalculatorProps {
   initialValue: string
@@ -10,7 +10,7 @@ interface CalculatorProps {
 }
 
 export function Calculator({ initialValue, onEnter }: CalculatorProps) {
-  const [input, setInput] = useState((initialValue || '').toString())
+  const [input, setInput] = useState((initialValue || "").toString())
   const [error, setError] = useState<string | null>(null)
   const [isEvaluated, setIsEvaluated] = useState(false)
 
@@ -22,18 +22,18 @@ export function Calculator({ initialValue, onEnter }: CalculatorProps) {
   const evaluateExpression = (expression: string) => {
     try {
       // Replace 'x' with '*' for multiplication
-      const result = eval(expression.toString().replace(/×/g, '*'))
+      const result = eval(expression.toString().replace(/×/g, "*"))
       if (isNaN(result) || !isFinite(result)) {
-        throw new Error('Invalid result')
+        throw new Error("Invalid result")
       }
       // round to max 3 decimal places
       // remove trailing zeroes
       if (result % 1 !== 0) {
-        return result.toFixed(3).replace(/\.?0+$/, '')
+        return result.toFixed(3).replace(/\.?0+$/, "")
       }
       return result.toString()
     } catch (error) {
-      throw new Error('Invalid expression')
+      throw new Error("Invalid expression")
     }
   }
 
@@ -44,7 +44,7 @@ export function Calculator({ initialValue, onEnter }: CalculatorProps) {
       setIsEvaluated(true)
       setError(null)
     } catch (error) {
-      setError('Invalid expression. Please check and try again.')
+      setError("Invalid expression. Please check and try again.")
     }
   }
 
@@ -53,20 +53,20 @@ export function Calculator({ initialValue, onEnter }: CalculatorProps) {
       const result = isEvaluated ? input : evaluateExpression(input)
       onEnter(parseFloat(result))
     } catch (error) {
-      setError('Invalid expression. Please check and try again.')
+      setError("Invalid expression. Please check and try again.")
     }
   }
 
   const handleButtonClick = (value: string) => {
     setError(null)
-    if (value === 'Enter') {
+    if (value === "Enter") {
       handleSubmit()
-    } else if (value === 'Backspace') {
+    } else if (value === "Backspace") {
       if (input) {
         setInput((prev) => prev.toString().slice(0, -1))
         setIsEvaluated(false)
       }
-    } else if (value === '=') {
+    } else if (value === "=") {
       if (isEvaluated) {
         handleSubmit()
       } else {
@@ -85,49 +85,49 @@ export function Calculator({ initialValue, onEnter }: CalculatorProps) {
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault()
-      handleButtonClick('=')
+      handleButtonClick("=")
     }
   }
 
   const handleClearInput = () => {
-    setInput('')
+    setInput("")
     setError(null)
     setIsEvaluated(false)
   }
 
   const buttons = [
-    '7',
-    '8',
-    '9',
-    '/',
-    '4',
-    '5',
-    '6',
-    '×',
-    '1',
-    '2',
-    '3',
-    '-',
-    '0',
-    '.',
-    '=',
-    '+',
-    '(',
-    ')',
-    'Enter',
-    'Backspace'
+    "7",
+    "8",
+    "9",
+    "/",
+    "4",
+    "5",
+    "6",
+    "×",
+    "1",
+    "2",
+    "3",
+    "-",
+    "0",
+    ".",
+    "=",
+    "+",
+    "(",
+    ")",
+    "Enter",
+    "Backspace"
   ]
 
   const buttonVariants: { [key: string]: string } = {
-    '/': 'secondary',
-    '×': 'secondary',
-    '-': 'secondary',
-    '+': 'secondary',
-    '=': 'secondary',
-    Enter: 'outline',
-    Backspace: 'destructive'
+    "/": "secondary",
+    "×": "secondary",
+    "-": "secondary",
+    "+": "secondary",
+    "=": "secondary",
+    Enter: "outline",
+    Backspace: "destructive"
   }
 
   return (
@@ -164,14 +164,13 @@ export function Calculator({ initialValue, onEnter }: CalculatorProps) {
             key={btn}
             onClick={() => handleButtonClick(btn)}
             className="h-12"
-            useGlobalStyles={false}
             // @ts-expect-error error with button variant type
-            variant={buttonVariants[btn] || 'default'}
+            variant={buttonVariants[btn] || "default"}
             aria-label={btn}
           >
-            {btn === 'Backspace' ? (
+            {btn === "Backspace" ? (
               <Delete className="h-4 w-4" />
-            ) : btn === 'Enter' ? (
+            ) : btn === "Enter" ? (
               <ArrowRight className="h-4 w-4 text-black dark:text-white" />
             ) : (
               btn
