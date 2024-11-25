@@ -268,3 +268,65 @@ export const supportedCurrencies = [
   "ZMW",
   "ZWL"
 ]
+
+export const defaultCategories = [
+  "🚰 Utilities",
+  "🛒 Groceries",
+  "🏠 Rent",
+  "🚗 Auto",
+  "💳 Subscriptions",
+  "🛍️ Shopping",
+  "🏥 Health",
+  "🍽️ Dining",
+  "🚌 Transit",
+  "🎉 Entertainment",
+  "🏋️ Fitness",
+  "📚 Education",
+  "🐾 Pets",
+  "🎁 Gifts",
+  "🧹 Household",
+  "💻 Internet",
+  "📱 Phone",
+  "🛫 Travel",
+  "🍷 Alcohol",
+  "🧴 Personal Care",
+  "💡 Electricity",
+  "🌊 Water",
+  "🚿 Gas",
+  "🌐 Cable",
+  "📉 Investments",
+  "🛡️ Insurance",
+  "📬 Postal",
+  "🧾 Taxes",
+  "👶 Childcare",
+  "🎓 Tuition",
+  "🧰 Maintenance",
+  "🎨 Crafts",
+  "📸 Photography",
+  "🎠 Hobbies",
+  "🚸 School Supplies",
+  "🧢 Sportswear",
+  "⚽ Sports",
+  "👟 Footwear",
+  "🔧 Tools",
+  "💊 Supplements",
+  "💒 Donations",
+  "❓ Misc",
+  "🖥️ Tech",
+  "📖 Books",
+  "🧽 Cleaning",
+  "🚪 Home Improvement",
+  "🏛️ Museums",
+  "🎸 Music Instruments",
+  "🎭 Theater",
+  "🚬 Tobacco"
+]
+
+export const formatLedgerName = (input) => {
+  // Remove non-alphanumeric characters and replace spaces with dashes
+  return input
+    .trim()
+    .replace(/[^a-zA-Z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .toLowerCase()
+}
