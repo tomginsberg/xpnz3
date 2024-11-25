@@ -277,7 +277,7 @@ export default function Home() {
                 <Button className="flex-grow" type="button" variant="outline" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button className="flex-grow" type="submit">
+                <Button className="flex-grow" type="submit" disabled={error}>
                   Next
                 </Button>
               </DrawerFooter>
