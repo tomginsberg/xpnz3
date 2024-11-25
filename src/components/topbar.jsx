@@ -24,7 +24,7 @@ import { useTheme } from "@/components/theme-provider"
 import Error from "@/pages/error"
 import { cn } from "@/lib/utils"
 
-function XpnzMenuIcon() {
+function MenuIcon() {
   return (
     <svg strokeWidth="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-5 w-5">
       <path
@@ -55,8 +55,7 @@ function XpnzMenuIcon() {
   )
 }
 
-function XpnzNavigationButton(props) {
-  const { route, icon, label } = props
+function NavigationButton({ route, icon, label }) {
   const navigate = useNavigate()
 
   return (
@@ -66,9 +65,7 @@ function XpnzNavigationButton(props) {
   )
 }
 
-function XpnzDropdown(props) {
-  const { descriptor, label, placeholder, value, onChange, options } = props
-
+function Dropdown({ descriptor, label, placeholder, value, onChange, options }) {
   return (
     <div className="space-y-2">
       <Label htmlFor={descriptor} className="mb-2">
@@ -97,7 +94,6 @@ export default function Topbar({ onSearch, toggleExpansion }) {
   const pageType = pathSegments[2] || "expenses"
   const [expanded, setExpanded] = useState(false)
 
-  const [select, setSelect] = useState(true)
   const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark")
 
   const { setTheme } = useTheme()
@@ -146,8 +142,8 @@ export default function Topbar({ onSearch, toggleExpansion }) {
             <div className="text-primary">
               <Sheet>
                 <SheetTrigger asChild>
-                  <Button size="icon" variant="ghost" className="group translate-y-[3px] -translate-x-1">
-                    <XpnzMenuIcon />
+                  <Button size="icon" variant="ghost" className="group -translate-x-1">
+                    <MenuIcon />
                   </Button>
                 </SheetTrigger>
 
@@ -157,10 +153,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                     <SheetTitle className="text-left">Options</SheetTitle>
                   </SheetHeader>
                   <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
-                    <XpnzNavigationButton route="/" icon="🏠" label="Home" />
-                    {/*<XpnzNavigationButton route="/receipt" icon="🧾" label="Add Itemized Receipt" />*/}
-                    {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring Expenses" />*/}
-                    {/*<XpnzNavigationButton route="/plots" icon="📊" label="Ledger Metrics" />*/}
+                    <NavigationButton route="/" icon="🏠" label="Home" />
                     <Button onClick={share} variant="outline" className="justify-start transition-none">
                       <span className="mr-2">🤝</span> Share
                     </Button>
@@ -169,16 +162,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
 
                     <h2 className="text-lg font-bold">Settings</h2>
 
-                    {/*<XpnzDropdown*/}
-                    {/*  descriptor="currency"*/}
-                    {/*  label="Default Currency"*/}
-                    {/*  placeholder="Select a currency"*/}
-                    {/*  value={currency}*/}
-                    {/*  onChange={setCurrency}*/}
-                    {/*  options={Object.entries(currencies).map(([value, text]) => ({ value, text }))}*/}
-                    {/*/>*/}
-
-                    <XpnzDropdown
+                    <Dropdown
                       descriptor="theme"
                       label="Theme"
                       placeholder="Select a theme"
