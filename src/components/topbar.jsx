@@ -147,7 +147,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                   </Button>
                 </SheetTrigger>
 
-                <SheetContent side="left" className="bg-card text-primary transition-none">
+                <SheetContent side="left" className="bg-background text-primary transition-none">
                   <SheetDescription className="sr-only">Sidebar</SheetDescription>
                   <SheetHeader>
                     <SheetTitle className="text-left">Options</SheetTitle>
