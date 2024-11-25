@@ -307,8 +307,10 @@ async function categoriesGetHandler(request, reply) {
   return allCategories
 }
 
-async function getBalance(ledger, options = { moneyFormat: "dollars" }, trx = db) {
-  if (options.moneyFormat !== "dollars" && options.moneyFormat !== "cents") {
+async function getBalance(ledger, options, trx = db) {
+  const { moneyFormat = "dollars", errorOnUnbalancedDeletedMember = true } = options || {}
+
+  if (moneyFormat !== "dollars" && moneyFormat !== "cents") {
     throw new Error("Invalid money format. Please contact the maintainer.")
   }
 
@@ -346,13 +348,13 @@ async function getBalance(ledger, options = { moneyFormat: "dollars" }, trx = db
     )
     const balance = paid - owes
 
-    if (Boolean(member.is_active) !== true) {
+    if (errorOnUnbalancedDeletedMember && Boolean(member.is_active) !== true) {
       if (balance !== 0)
         throw new Error("Assertion failure: inactive member has a non-zero balance. Please contact the maintainer.")
       return undefined
     }
 
-    if (options.moneyFormat === "dollars") {
+    if (moneyFormat === "dollars") {
       return {
         name: m,
         id: member.id,
@@ -459,6 +461,19 @@ async function membersDeleteHandler(request, reply) {
   }
 }
 
+async function auditMembers(ledger, trx = db) {
+  const deletedMembers = await trx("members").where({ is_active: false })
+  if (deletedMembers.length === 0) return
+
+  const balance = await getBalance(ledger, { moneyFormat: "cents", errorOnUnbalancedDeletedMember: false }, trx)
+
+  const deletedMemberIds = deletedMembers.map((m) => m.id)
+  const unbalancedMemberIds = balance.filter((m) => m.balance !== 0).map((m) => m.id)
+  const intersection = deletedMemberIds.filter((id) => unbalancedMemberIds.includes(id))
+
+  return await trx("members").select("id").whereIn("id", intersection).update({ is_active: true })
+}
+
 async function updateAddTransaction(transaction, isUpdate) {
   if (transaction.name) transaction.name = transaction.name.trim()
   if (transaction.category) transaction.category = transaction.category.trim()
@@ -543,6 +558,8 @@ async function updateAddTransaction(transaction, isUpdate) {
         .filter((item) => item.amount !== 0 || item.weight !== 0)
 
       await trx("transactions_member_junction").insert(transactionsMemberJunctionItems)
+
+      await auditMembers(transaction.ledger, trx)
     })
   } catch (error) {
     throw new Error("Internal server error: Unable to insert transaction into the database.")
@@ -679,6 +696,8 @@ async function transactionsDeleteHandler(request, reply) {
 
     // Change transaction.is_deleted to true
     await trx("transactions").where("id", id).update("is_deleted", true)
+
+    await auditMembers(transaction.ledger, trx)
 
     reply.code(200).send({ message: "Transaction deleted successfully." })
   })
