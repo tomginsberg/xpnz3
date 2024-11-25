@@ -22,25 +22,45 @@ import { api } from "@/../xpnz.config.js"
 import { TagInput } from "@/components/ui/tag-input"
 import { cn } from "@/lib/utils"
 import { ConfettiButton } from "@/components/ui/confetti"
+import { BorderBeam } from "@/components/ui/border-beam"
+import TypingAnimation from "@/components/ui/typing-animation"
 
 export function Combobox({ values }) {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
 
+  // add a keyboard shortcut for command k to open the Drawer
+  useEffect(() => {
+    const down = (e) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        setOpen((open) => !open)
+      }
+    }
+
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
+
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <Button variant="secondary" role="combobox" aria-expanded={open} className="w-full justify-between">
+        <Button
+          role="combobox"
+          aria-expanded={open}
+          className="hover:from-purple-600 hover:to-pink-600 dark:hover:from-purple-600 dark:hover:to-pink-600 text-white drop-shadow-md border-none w-full justify-between rounded-lg bg-gradient-to-r from-purple-400 via-pink-500 to-red-500  dark:from-pink-800 dark:to-red-700 transition-colors ease-in-out duration-200 "
+        >
           Find a ledger...
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <kbd className="hidden pointer-events-none sm:inline-flex sm:block h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 block sm:hidden" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="p-1">
-        <DrawerTitle>
-          <h2 className="text-primary text-center pt-3">Find Your Ledger</h2>
-        </DrawerTitle>
+        <DrawerTitle className="text-primary text-center pt-3">Find Your Ledger</DrawerTitle>
         <DrawerDescription className="sr-only">Search for a ledger by name.</DrawerDescription>
-        <Command className="bg-background">
+        <Command className="bg-background h-fit">
           <CommandInput placeholder="Search" className="text-primary" autoFocus={true} />
           <CommandList>
             <CommandEmpty>No ledger found.</CommandEmpty>
@@ -52,7 +72,7 @@ export function Combobox({ values }) {
                   onSelect={() => {
                     navigate(`/${link}`)
                   }}
-                  className="bg-card text-pretty text-primary rounded-lg my-2 text-lg font-semibold justify-between transition-all ease-in-out duration-200"
+                  className="px-4 text-pretty text-primary rounded-lg my-2 text-lg font-semibold justify-between transition-all ease-in-out duration-200"
                 >
                   <span>{value}</span>
                   <span className="text-primary">
@@ -184,13 +204,14 @@ export default function Home() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 dark:from-black dark:via-pink-900 dark:to-red-900 flex flex-col items-center justify-center p-4">
+      <div className="h-screen w-screen overflow-hidden bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 dark:from-black dark:via-pink-900 dark:to-red-900 flex flex-col items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-transparent border border-white text-white rounded-lg shadow-xl p-8 w-full max-w-md"
+          className="relative bg-gradient-to-r from-purple-500 via-pink-500 to-red-600  dark:from-pink-900 dark:to-red-800 text-white rounded-lg shadow-lg  p-8 w-full max-w-md"
         >
+          <BorderBeam borderWidth={5} />
           <motion.div
             initial={{ opacity: 0, y: -200, scale: 1 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -200,7 +221,11 @@ export default function Home() {
             <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4b8/512.gif" alt="Group Expense" />
           </motion.div>
           <h1 className="text-4xl font-bold text-center mb-6">xpnz</h1>
-          <p className="text-center mb-6">Track group expenses with ease</p>
+          <TypingAnimation
+            className="text-center mb-6 text-md font-normal"
+            duration={30}
+            text="track group expenses with ease"
+          />
 
           <div className="mb-6">
             <Combobox
@@ -214,9 +239,10 @@ export default function Home() {
 
           <Button
             onClick={() => setIsCreateDrawerOpen(true)}
-            className="w-full border border-gray-400 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg"
+            className="justify-between w-full shadow-lg border-none bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg"
           >
             Create New Ledger
+            <ArrowUpRightFromCircle />
           </Button>
         </motion.div>
       </div>
@@ -277,7 +303,7 @@ export default function Home() {
                 <Button className="flex-grow" type="button" variant="outline" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button className="flex-grow" type="submit">
+                <Button className="flex-grow" type="submit" disabled={error}>
                   Next
                 </Button>
               </DrawerFooter>

@@ -52,7 +52,7 @@ export default function CalculatorInput({
             placeholder={"0.00"}
             min={0.0}
             step={"any"}
-            value={value}
+            value={Number.isNaN(value) ? "" : value}
             onChange={(e) => onChange(parseFloat(e.target.value))}
             className="pl-10 rounded-r-none z-10"
             disabled={disabled}
