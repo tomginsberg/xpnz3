@@ -121,10 +121,12 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
             >
               <h2 className="text-primary text-xl font-bold">{monthYear}</h2>
               <div className="flex items-center gap-3">
-                <span className="text-black dark:text-zinc-400">
-                  {currencySymbol}
-                  {totalAmount}
-                </span>
+                {Math.round(totalAmount * 100) / 100 !== 0 && (
+                  <span className="text-black dark:text-zinc-400">
+                    {currencySymbol}
+                    {totalAmount}
+                  </span>
+                )}
                 <ChevronDown
                   className={cn("text-primary h-5 w-5 transition-transform duration-200", isOpen && "rotate-180")}
                 />

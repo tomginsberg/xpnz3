@@ -23,33 +23,35 @@ function CategoryPickerSelector({
   className
 }) {
   return (
-    <Command className={cn("bg-background", className)}>
-      <div className="relative">
-        <CommandInput placeholder="Search category..." value={inputValue} onChangeCapture={onChangeCapture} />
-        <Button
-          onClick={onPlusButtonClick}
-          variant="ghost"
-          className="absolute right-[0.175rem] top-[0.175rem] py-2 px-3"
-        >
-          <PlusCircle className="size-6" />
-        </Button>
+    <Command className={cn("bg-background p-4", className)}>
+      <div className="border rounded-lg">
+        <div className="relative">
+          <CommandInput placeholder="Search category..." value={inputValue} onChangeCapture={onChangeCapture} />
+          <Button
+            onClick={onPlusButtonClick}
+            variant="ghost"
+            className="absolute right-[0.175rem] top-[0.175rem] py-2 px-3"
+          >
+            <PlusCircle className="size-6" />
+          </Button>
+        </div>
+        <CommandList>
+          <CommandEmpty
+            className="flex flex-row justify-center mt-2 hover:bg-card rounded-lg px-2 py-1"
+            onClick={onPlusButtonClick}
+          >
+            <PlusCircle className="mr-2 h-4 w-4 mt-1" />
+            Add new category
+          </CommandEmpty>
+          <CommandGroup>
+            {categories.map((category, index) => (
+              <CommandItem key={index} value={category} onSelect={onCategorySelect}>
+                {category}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
       </div>
-      <CommandList>
-        <CommandEmpty
-          className="flex flex-row justify-center mt-2 hover:bg-card rounded-lg px-2 py-1"
-          onClick={onPlusButtonClick}
-        >
-          <PlusCircle className="mr-2 h-4 w-4 mt-1" />
-          Add new category
-        </CommandEmpty>
-        <CommandGroup>
-          {categories.map((category, index) => (
-            <CommandItem key={index} value={category} onSelect={onCategorySelect}>
-              {category}
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </CommandList>
     </Command>
   )
 }
@@ -187,7 +189,7 @@ export function CategoryPicker({
       <Drawer open={isSelectDrawerOpen} onClose={() => setIsSelectDrawerOpen(false)}>
         <DrawerContent aria-describedby="category picker">
           <DrawerHeader>
-            <DrawerTitle className="text-primary">Select Category</DrawerTitle>
+            <DrawerTitle className="text-primary text-center">Select Category</DrawerTitle>
           </DrawerHeader>
           <CategoryPickerSelector
             categories={categories}
