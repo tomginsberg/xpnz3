@@ -7,17 +7,21 @@ import { api } from "@/../xpnz.config.js"
 export function useXpnzApi(ledger) {
   const [loaded, setLoaded] = useState(false)
   const [balance, setBalance] = useState([])
-  // const [categories, setCategories] = useState([])
+  const [categories, setCategories] = useState([])
   const [expenses, setExpenses] = useState([])
   const [ledgerInfo, setLedgerInfo] = useState({})
   const [members, setMembers] = useState([])
   const [settlement, setSettlement] = useState([])
-  const categories = useMemo(() => uniq(expenses.map((e) => e.category)), [expenses])
+  // const categories = useMemo(() => uniq(expenses.map((e) => e.category)), [expenses])
+
+  const apiGetCategories = async () => {
+    const response = await fetch(`${api.base}/ledgers/${ledger}/categories`, { cache: "no-store" })
+    setCategories(await response.json())
+  }
 
   const apiGetBalance = async () => {
     const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" })
-    const balance = await response.json()
-    setBalance(balance)
+    setBalance(await response.json())
   }
 
   const apiGetExpenses = async () => {
@@ -34,7 +38,7 @@ export function useXpnzApi(ledger) {
           }))
           .filter((c) => c.amount > 0),
         splitBetween: expense.contributions
-          .map((c) => ({ member: c.member, weight: c.weight, normalizedWeight: c.owes }))
+          .map((c) => ({ member: c.member, weight: c.weight, amount: c.owes }))
           .filter((c) => c.weight > 0)
       }
     })
@@ -64,7 +68,14 @@ export function useXpnzApi(ledger) {
       setLoaded(false)
       try {
         // Fetch all data concurrently
-        await Promise.all([apiGetMembers(), apiGetExpenses(), apiGetBalance(), apiGetSettlement(), apiGetLedgerInfo()])
+        await Promise.all([
+          apiGetMembers(),
+          apiGetExpenses(),
+          apiGetBalance(),
+          apiGetSettlement(),
+          apiGetLedgerInfo(),
+          apiGetCategories()
+        ])
       } catch (error) {
         console.error("Failed to fetch data:", error)
       }
@@ -150,6 +161,7 @@ export function useXpnzApi(ledger) {
       await apiGetExpenses()
       await apiGetBalance()
       await apiGetSettlement()
+      await apiGetCategories()
     },
     [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
   )
@@ -169,6 +181,7 @@ export function useXpnzApi(ledger) {
       await apiGetExpenses()
       await apiGetBalance()
       await apiGetSettlement()
+      await apiGetCategories()
     },
     [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
   )
@@ -184,8 +197,9 @@ export function useXpnzApi(ledger) {
       await apiGetExpenses()
       await apiGetBalance()
       await apiGetSettlement()
+      await apiGetCategories()
     },
-    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
+    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement, apiGetCategories]
   )
 
   return {
