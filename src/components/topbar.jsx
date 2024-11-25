@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
 
-import { currencies } from "@/api/client.js"
 import { useTheme } from "@/components/theme-provider"
 import Error from "@/pages/error"
 import { cn } from "@/lib/utils"
@@ -98,7 +97,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
   const pageType = pathSegments[2] || "expenses"
   const [expanded, setExpanded] = useState(false)
 
-  const [currency, setCurrency] = useState("CAD")
+  const [select, setSelect] = useState(true)
   const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark")
 
   const { setTheme } = useTheme()
@@ -140,115 +139,117 @@ export default function Topbar({ onSearch, toggleExpansion }) {
   if (!headline) return <Error />
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-20">
-      <div className="bg-background pb-1">
-        <div className="flex justify-between items-center p-4">
-          <div className="text-primary">
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button size="icon" variant="ghost" className="group translate-y-[3px] -translate-x-1">
-                  <XpnzMenuIcon />
-                </Button>
-              </SheetTrigger>
-
-              <SheetContent side="left" className="bg-card text-primary transition-none">
-                <SheetDescription className="sr-only">Sidebar</SheetDescription>
-                <SheetHeader>
-                  <SheetTitle className="text-left">Options</SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
-                  <XpnzNavigationButton route="/" icon="🏠" label="Home" />
-                  {/*<XpnzNavigationButton route="/receipt" icon="🧾" label="Add Itemized Receipt" />*/}
-                  {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring Expenses" />*/}
-                  {/*<XpnzNavigationButton route="/plots" icon="📊" label="Ledger Metrics" />*/}
-                  <Button onClick={share} variant="outline" className="justify-start transition-none">
-                    <span className="mr-2">🤝</span> Share
+    <>
+      <div className="fixed top-0 left-0 right-0 z-20">
+        <div className="bg-background pb-1">
+          <div className="flex justify-between items-center p-4">
+            <div className="text-primary">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button size="icon" variant="ghost" className="group translate-y-[3px] -translate-x-1">
+                    <XpnzMenuIcon />
                   </Button>
+                </SheetTrigger>
 
-                  <Separator className="my-2" />
-
-                  <h2 className="text-lg font-bold">Settings</h2>
-
-                  {/*<XpnzDropdown*/}
-                  {/*  descriptor="currency"*/}
-                  {/*  label="Default Currency"*/}
-                  {/*  placeholder="Select a currency"*/}
-                  {/*  value={currency}*/}
-                  {/*  onChange={setCurrency}*/}
-                  {/*  options={Object.entries(currencies).map(([value, text]) => ({ value, text }))}*/}
-                  {/*/>*/}
-
-                  <XpnzDropdown
-                    descriptor="theme"
-                    label="Theme"
-                    placeholder="Select a theme"
-                    value={themeName}
-                    onChange={(value) => {
-                      setThemeName(value)
-                      setTheme(value)
-                    }}
-                    options={[
-                      { value: "light", text: "Light" },
-                      { value: "dark", text: "Dark" }
-                    ]}
-                  />
-
-                  <Separator className="my-2" />
-                </div>
-
-                <SheetFooter>
-                  <SheetClose asChild>
-                    <Button variant="outline" className="transition-none">
-                      Close
+                <SheetContent side="left" className="bg-card text-primary transition-none">
+                  <SheetDescription className="sr-only">Sidebar</SheetDescription>
+                  <SheetHeader>
+                    <SheetTitle className="text-left">Options</SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
+                    <XpnzNavigationButton route="/" icon="🏠" label="Home" />
+                    {/*<XpnzNavigationButton route="/receipt" icon="🧾" label="Add Itemized Receipt" />*/}
+                    {/*<XpnzNavigationButton route="/recurring" icon="🔄" label="Recurring Expenses" />*/}
+                    {/*<XpnzNavigationButton route="/plots" icon="📊" label="Ledger Metrics" />*/}
+                    <Button onClick={share} variant="outline" className="justify-start transition-none">
+                      <span className="mr-2">🤝</span> Share
                     </Button>
-                  </SheetClose>
-                </SheetFooter>
-              </SheetContent>
-            </Sheet>
-            <span aria-label={headline.label} className="text-2xl mr-2">
-              {headline.emoji}
-            </span>{" "}
-            <span className="font-semibold text-2xl">{headline.label}</span>
-          </div>
 
-          <div className="flex">
-            {pageType === "expenses" && (
-              <Button className="px-5" variant="ghost" onClick={toggleExpand} aria-label="Toggle Expand">
-                <ExpandIcon
-                  className={cn(
-                    "absolute h-5 w-5 rotate-0 scale-100 transition-all text-primary",
-                    expanded && "scale-0 -rotate-90"
-                  )}
-                />
-                <ShrinkIcon
-                  className={cn(
-                    "absolute h-5 w-5 transition-all rotate-0 scale-100 text-primary",
-                    !expanded && "rotate-90 scale-0"
-                  )}
-                />
+                    <Separator className="my-2" />
+
+                    <h2 className="text-lg font-bold">Settings</h2>
+
+                    {/*<XpnzDropdown*/}
+                    {/*  descriptor="currency"*/}
+                    {/*  label="Default Currency"*/}
+                    {/*  placeholder="Select a currency"*/}
+                    {/*  value={currency}*/}
+                    {/*  onChange={setCurrency}*/}
+                    {/*  options={Object.entries(currencies).map(([value, text]) => ({ value, text }))}*/}
+                    {/*/>*/}
+
+                    <XpnzDropdown
+                      descriptor="theme"
+                      label="Theme"
+                      placeholder="Select a theme"
+                      value={themeName}
+                      onChange={(value) => {
+                        setThemeName(value)
+                        setTheme(value)
+                      }}
+                      options={[
+                        { value: "light", text: "Light" },
+                        { value: "dark", text: "Dark" }
+                      ]}
+                    />
+
+                    <Separator className="my-2" />
+                  </div>
+
+                  <SheetFooter>
+                    <SheetClose asChild>
+                      <Button variant="outline" className="transition-none">
+                        Close
+                      </Button>
+                    </SheetClose>
+                  </SheetFooter>
+                </SheetContent>
+              </Sheet>
+              <span aria-label={headline.label} className="text-2xl mr-2">
+                {headline.emoji}
+              </span>{" "}
+              <span className="font-semibold text-2xl">{headline.label}</span>
+            </div>
+
+            <div className="flex">
+              {pageType === "expenses" && (
+                <Button className="px-5" variant="ghost" onClick={toggleExpand} aria-label="Toggle Expand">
+                  <ExpandIcon
+                    className={cn(
+                      "absolute h-5 w-5 rotate-0 scale-100 transition-all text-primary",
+                      expanded && "scale-0 -rotate-90"
+                    )}
+                  />
+                  <ShrinkIcon
+                    className={cn(
+                      "absolute h-5 w-5 transition-all rotate-0 scale-100 text-primary",
+                      !expanded && "rotate-90 scale-0"
+                    )}
+                  />
+                </Button>
+              )}
+              <Button className="px-5" variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
+                <Sun className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black" />
+                <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white" />
               </Button>
-            )}
-            <Button className="px-5" variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
-              <Sun className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white" />
-            </Button>
-          </div>
-        </div>
-
-        {pageType === "expenses" && (
-          <div className="px-4">
-            <div className="relative mb-4 mt-1">
-              <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
-              <Input
-                type="search"
-                placeholder="Search expenses..."
-                className="pb-2 w-full pl-10 text-primary border-none"
-                onChange={(e) => onSearch(e.target.value)}
-              />
             </div>
           </div>
-        )}
+
+          {pageType === "expenses" && (
+            <div className="px-4">
+              <div className="relative mb-4 mt-1">
+                <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                <Input
+                  type="search"
+                  placeholder="Search expenses..."
+                  className="pb-2 w-full pl-10 text-primary border-none"
+                  onChange={(e) => onSearch(e.target.value)}
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }
