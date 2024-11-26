@@ -30,16 +30,6 @@ const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
 
 function LedgerLayout() {
   const { ledgerName } = useParams()
-  const location = useLocation()
-
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    // Redirect to lowercase ledgerName if it's not already lowercase
-    if (ledgerName !== ledgerName?.toLowerCase()) {
-      navigate(`${location.pathname.toLowerCase()}`, { replace: true })
-    }
-  }, [ledgerName, navigate])
 
   const [searchTerm, setSearchTerm] = React.useState("")
   const [ledgerExists, setLedgerExists] = useState(null)
@@ -53,8 +43,8 @@ function LedgerLayout() {
       try {
         // delay for testing
         const response = await fetch(`${api.base}/ledgers/${ledgerName}`)
-        const ledgerData = await response.json()
-        if (ledgerData?.name === ledgerName) {
+        if (response.status === 200) {
+          const ledgerData = await response.json()
           setLedgerExists(true)
           setCurrency(ledgerData?.currency)
           setCurrencySymbol(currencySymbols[ledgerData?.currency])
