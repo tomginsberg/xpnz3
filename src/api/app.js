@@ -279,8 +279,10 @@ async function categoriesGetHandler(request, reply) {
     .where("is_deleted", false)
     .distinct()
 
-  const categories = payload.map((transaction) => transaction.category).filter((category) => category !== "")
-  return uniq([...defaultCategories, ...categories])
+  const categories = payload.map(transaction => transaction.category)
+  const filteredCategories = categories.filter(category => category)
+
+  return uniq([...defaultCategories, ...filteredCategories])
 }
 
 async function getBalance(ledger, options, trx = db) {
@@ -453,9 +455,6 @@ async function auditMembers(ledger, trx = db) {
 async function updateAddTransaction(transaction, isUpdate) {
   if (transaction.name) transaction.name = transaction.name.trim()
   if (transaction.category) transaction.category = transaction.category.trim()
-
-  if (transaction.name === "") transaction = omit(transaction, "name")
-  if (transaction.category === "") transaction = omit(transaction, "category")
 
   transaction.date = transaction.date || getDateString()
 
