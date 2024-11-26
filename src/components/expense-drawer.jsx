@@ -156,16 +156,28 @@ export default function ExpenseDrawer({
   }
 
   useEffect(() => {
-    const down = (e) => {
-      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+    const handleKeydown = (e) => {
+      if (e.key === "Escape") {
+        e.preventDefault()
+        if (isDrawerOpen) {
+          handleCloseDrawer()
+        }
+      } else if (e.key === "s" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        if (isDrawerOpen) {
+          document.getElementById("save").click()
+        } else {
+          document.getElementById("searchbar").focus()
+        }
+      } else if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
         confettiExplosion()
       }
     }
 
-    document.addEventListener("keydown", down)
-    return () => document.removeEventListener("keydown", down)
-  }, [])
+    document.addEventListener("keydown", handleKeydown)
+    return () => document.removeEventListener("keydown", handleKeydown)
+  }, [isDrawerOpen, handleCloseDrawer])
 
   useEffect(() => {
     if (isDrawerOpen) {
@@ -196,7 +208,7 @@ export default function ExpenseDrawer({
                   </div>
                 </div>
                 <Input
-                  required={true}
+                  required={!category}
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -328,7 +340,7 @@ export default function ExpenseDrawer({
                   </span>
                   Cancel
                 </Button>
-                <Button type="submit" variant="outline">
+                <Button type="submit" variant="outline" id="save">
                   <span className="mr-2">
                     <Save className="size-4" />
                   </span>

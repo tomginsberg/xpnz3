@@ -22,6 +22,18 @@ const Toolbar: React.FC<ToolbarProps> = ({ ledger, onClickPlus, emptyMode = fals
     { id: "debts", label: "💳" }
   ]
 
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "=" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault()
+        onClickPlus()
+      }
+    }
+
+    document.addEventListener("keydown", down)
+    return () => document.removeEventListener("keydown", down)
+  }, [])
+
   const location = useLocation()
   const currentPath = location.pathname.split("/").pop() || "expenses"
   const navigate = useNavigate()

@@ -226,6 +226,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                 <Search className="h-5 w-5 absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
                 <Input
                   type="search"
+                  id="searchbar"
                   placeholder="Search expenses..."
                   className="pb-2 w-full pl-10 text-primary border-none"
                   onChange={(e) => onSearch(e.target.value)}
