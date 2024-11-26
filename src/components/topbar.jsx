@@ -1,7 +1,7 @@
 // component topbar
 
 import { useState } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { ExpandIcon, Moon, Search, ShrinkIcon, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -89,6 +89,7 @@ function Dropdown({ descriptor, label, placeholder, value, onChange, options }) 
 
 export default function Topbar({ onSearch, toggleExpansion }) {
   const location = useLocation()
+  const { ledgerName } = useParams()
   // Extract the page type from the pathname
   const pathSegments = location.pathname.split("/")
   const pageType = pathSegments[2] || "expenses"
@@ -119,7 +120,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
   }
 
   const share = async () => {
-    const text = `💸 Track group expenses with XPNZ @ https://xpnz.ca${location.pathname}`
+    const text = `💸 Track group expenses with XPNZ @ https://xpnz.ca/${ledgerName}`
 
     if (navigator.share) {
       await navigator.share({ text })
