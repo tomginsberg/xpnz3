@@ -180,12 +180,16 @@ function MembersAdd(props) {
   )
 }
 
-function MembersRows({balance, onDelete, onSubmit}) {
+function MembersRows({ balance, onDelete, onSubmit }) {
   if (balance === undefined) return <></>
 
-  return balance.map((m) => (
-    <MembersRow key={m.id} className="mt-3" member={m} onDelete={onDelete} onSubmit={onSubmit} />
-  ))
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pb-3 mt-3">
+      {balance.map((m) => (
+        <MembersRow key={m.id} className="flex-grow h-full" member={m} onDelete={onDelete} onSubmit={onSubmit} />
+      ))}
+    </div>
+  )
 }
 
 export default function MembersPage() {
@@ -215,7 +219,6 @@ export default function MembersPage() {
 
     await editMember(member.id, newName)
   }
-
 
   return (
     <div className="mt-[72px] mb-[120%]">

@@ -127,43 +127,47 @@ const DebtsTab = () => {
   }
 
   return (
-    <div className="mt-[85px] px-2">
-      {debts.map((member, index) => (
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          key={index}
-          className="flex items-center rounded-lg bg-card p-4 my-3"
-        >
-          <div className="flex-1">
-            <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
-              {member[0]} → {member[1]}
-            </h2>
-            <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">${member[2]}</p>
-          </div>
-          <Button
-            variant="ghost"
-            className="transition-none h-10 w-10 scale-125"
-            onClick={() => openSettleDialog(member[0], member[1], member[2])}
+    <div className="mt-[85px] px-2 pb-64">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pb-3">
+        {debts.map((member, index) => (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.8 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            key={index}
+            className="flex items-center rounded-lg bg-card p-4"
           >
-            <CircleCheckBig className="text-gray-700 dark:text-gray-200" />
-          </Button>
-        </motion.div>
-      ))}
+            <div className="flex-1">
+              <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                {member[0]} → {member[1]}
+              </h2>
+              <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">${member[2]}</p>
+            </div>
+            <Button
+              variant="ghost"
+              className="transition-none h-10 w-10 scale-125"
+              onClick={() => openSettleDialog(member[0], member[1], member[2])}
+            >
+              <CircleCheckBig className="text-gray-700 dark:text-gray-200" />
+            </Button>
+          </motion.div>
+        ))}
+      </div>
 
       {debts.length !== 0 && loaded && (
         <motion.div
-          initial={{ opacity: 0, x: -200, scale: 0.8 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
+          initial={{ opacity: 0, y: 50, scale: 0.5 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className=""
+          className="flex justify-start"
         >
           <Button
             onClick={copyDebts}
             variant={"outline"}
-            className={`transition-none rounded-lg p-3 text-primary ${buttonClass}`}
+            className={`transition-none rounded-lg p-3 text-primary ${buttonClass} w-full sm:w-auto`}
           >
+            {" "}
+            Send Debts
             {!animationComplete ? <Share2 className="w-5 h-6" /> : <Check className="w-5 h-6" />}
           </Button>
         </motion.div>
