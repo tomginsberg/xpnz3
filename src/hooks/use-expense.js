@@ -1,6 +1,7 @@
 // hooks/useTransaction.js
 import { useState, useCallback } from "react"
 import { emptyExpense } from "@/api/client.js"
+import { getDateString } from "@/api/utilities.js"
 
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 
@@ -75,7 +76,7 @@ const useExpense = (ledgerName) => {
     setSelectedExpense({
       ...expense,
       id: "",
-      date: new Date().toISOString()
+      date: getDateString()
     })
   }, [])
 
