@@ -1,8 +1,8 @@
 // component topbar
 
-import { useState } from "react"
+import React, { useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { ExpandIcon, Moon, Search, ShrinkIcon, Sun } from "lucide-react"
+import { ExpandIcon, Moon, Search, Share2, ShrinkIcon, Sun } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -216,6 +216,10 @@ export default function Topbar({ onSearch, toggleExpansion }) {
               <Button className="px-5" variant="ghost" onClick={toggleTheme} aria-label="Toggle theme">
                 <Sun className="absolute h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-black" />
                 <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 text-white" />
+              </Button>
+
+              <Button className="px-5" variant="ghost" onClick={share} aria-label="Share">
+                <Share2 className="absolute h-5 w-5 text-primary" />
               </Button>
             </div>
           </div>
