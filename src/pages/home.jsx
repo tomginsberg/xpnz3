@@ -21,8 +21,8 @@ import { api } from "@/../xpnz.config.js"
 import { TagInput } from "@/components/ui/tag-input"
 import { cn } from "@/lib/utils"
 import { ConfettiButton } from "@/components/ui/confetti"
-import { BorderBeam } from "@/components/ui/border-beam"
 import TypingAnimation from "@/components/ui/typing-animation"
+import ShinyButton from "@/components/ui/shiny-button"
 
 export function Combobox({ values }) {
   const [open, setOpen] = useState(false)
@@ -196,45 +196,44 @@ export default function Home() {
   return (
     <>
       <div className="h-screen w-screen overflow-hidden bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 dark:from-black dark:via-pink-900 dark:to-red-900 flex flex-col items-center justify-center p-4">
-        <motion.div
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="relative bg-gradient-to-r from-purple-500 via-pink-500 to-red-600  dark:from-pink-900 dark:to-red-800 text-white rounded-lg shadow-lg  p-8 w-full max-w-md"
-        >
-          <BorderBeam borderWidth={5} />
-          <motion.div
-            initial={{ opacity: 0, y: -200, scale: 1 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 2, bounce: 0.5, type: "spring" }}
-            className="mb-4"
-          >
-            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4b8/512.gif" alt="Group Expense" />
-          </motion.div>
-          <h1 className="text-4xl font-bold text-center mb-6">xpnz</h1>
-          <TypingAnimation
-            className="text-center mb-6 text-md font-normal"
-            duration={30}
-            text="track group expenses with ease"
-          />
-
-          <div className="mb-6">
-            <Combobox
-              values={ledgers.map((ledger) => ({
-                key: ledger.name,
-                value: ledger.name,
-                link: ledger.name
-              }))}
+        <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          <ShinyButton className="text-white relative bg-gradient-to-r from-purple-500 via-pink-500 to-red-600  dark:from-pink-900 dark:to-red-800 text-white rounded-lg shadow-lg  p-8 w-full max-w-md">
+            {/*<BorderBeam borderWidth={5} />*/}
+            <motion.div
+              initial={{ opacity: 0, y: -200, scale: 1 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 2, bounce: 0.5, type: "spring" }}
+              className="mb-4"
+            >
+              <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f4b8/512.gif" alt="Group Expense" />
+            </motion.div>
+            <h1 className="text-4xl font-bold text-center mb-6">xpnz</h1>
+            <TypingAnimation
+              className="text-center mb-6 text-md font-normal"
+              duration={30}
+              text="track group expenses with ease"
             />
-          </div>
 
-          <Button
-            onClick={() => setIsCreateDrawerOpen(true)}
-            className="justify-between w-full shadow-lg border-none bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg"
-          >
-            Create New Ledger
-            <ArrowUpRightFromCircle />
-          </Button>
+            <div className="mb-6">
+              <Combobox
+                values={ledgers.map((ledger) => ({
+                  key: ledger.name,
+                  value: ledger.name,
+                  link: ledger.name
+                }))}
+              />
+            </div>
+
+            <Button
+              onClick={() => {
+                setIsCreateDrawerOpen(true)
+              }}
+              className="z-20 drop-shadow-md justify-between w-full border-none bg-gradient-to-r from-purple-400 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-2 px-4 rounded-lg"
+            >
+              Create New Ledger
+              <ArrowUpRightFromCircle />
+            </Button>
+          </ShinyButton>
         </motion.div>
       </div>
       <Drawer open={isCreateDrawerOpen} onOpenChange={setIsCreateDrawerOpen} onClose={handleClose}>
