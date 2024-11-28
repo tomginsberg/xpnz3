@@ -3,17 +3,17 @@ import React, { useCallback, useEffect, useState } from "react"
 import { motion } from "framer-motion"
 
 // External icons
-import { Check, CircleCheckBig, Share2, SquareArrowUpLeft } from "lucide-react"
+import { Check, CircleCheckBig, Replace, Share2, SquareArrowUpLeft } from "lucide-react"
 
 // Internal hooks
 
 // Internal utilities
-import { getDateString } from "@/api/utilities.js"
+import { getDateString } from "../api/utilities.js"
 
 // Internal components
-import { Button } from "@/components/ui/button"
-import { ConfettiButton } from "@/components/ui/confetti"
-import AnimatedTextImageBlock from "@/components/animated-text-image-block.jsx"
+import { Button } from "../components/ui/button"
+import { ConfettiButton } from "../components/ui/confetti"
+import AnimatedTextImageBlock from "../components/animated-text-image-block.jsx"
 import {
   Drawer,
   DrawerClose,
@@ -22,22 +22,29 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle
-} from "@/components/ui/drawer"
-
+} from "../components/ui/drawer"
+import { ToggleGroup, ToggleGroupItem } from "../components/ui/toggle-group"
 import { useParams, useOutletContext } from "react-router-dom"
-import { useToast } from "@/hooks/use-toast"
+import { useToast } from "../hooks/use-toast"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger } from "../components/ui/select"
 
 const mapMemberToMemberId = (memberName, members) => {
-  const m = members.find((member) => member.name == memberName)
+  const m = members.find((member) => member.name === memberName)
   return m.id
 }
 
 const DebtsTab = () => {
   const { ledgerName } = useParams()
   const { toast } = useToast()
-  const { loaded, settlement: trueSettlement, members: members, pushExpense: pushExpense } = useOutletContext()
-  const { currency } = useOutletContext()
-
+  const {
+    currency,
+    currencySymbol,
+    loaded,
+    settlement: trueSettlement,
+    members: members,
+    pushExpense: pushExpense
+  } = useOutletContext()
+  console.log("members", members)
   const xpnzApi = {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
@@ -49,6 +56,18 @@ const DebtsTab = () => {
       const contributions = [
         { id: mapMemberToMemberId(memberFrom, members), paid: amount, weight: 0 },
         { id: mapMemberToMemberId(memberTo, members), paid: 0, weight: 1 }
+      ]
+
+      pushExpense(expenseName, currency, category, dateString, expense_type, contributions)
+    },
+    transferDebt: ({ originalFrom, newFrom, amount }) => {
+      const expenseName = `${originalFrom} → ${newFrom}`
+      const category = "🔀 Debt Swap"
+      const dateString = getDateString()
+      const expense_type = "transfer"
+      const contributions = [
+        { id: mapMemberToMemberId(originalFrom, members), paid: amount, weight: 0 },
+        { id: mapMemberToMemberId(newFrom, members), paid: 0, weight: 1 }
       ]
 
       pushExpense(expenseName, currency, category, dateString, expense_type, contributions)
@@ -67,6 +86,10 @@ const DebtsTab = () => {
   const [copied, setCopied] = useState(false)
   const [animationComplete, setAnimationComplete] = useState(false)
   const [buttonClass, setButtonClass] = useState("")
+  const [replaceDrawerOpen, setReplaceDrawerOpen] = useState(false)
+  const [membersLedger, setMembersLedger] = useState("members")
+  const [swapMember, setSwapMember] = useState("")
+  const [swapLedger, setSwapLedger] = useState("")
 
   const openSettleDialog = (memberFrom, memberTo, amount) => {
     setSettleMemberFrom(memberFrom)
@@ -79,7 +102,6 @@ const DebtsTab = () => {
     (memberFrom, memberTo, amount) => {
       setSettleVisible(false)
       console.log(`Settling $${amount} from ${memberFrom} to ${memberTo}`)
-      setDebts(debts.filter((debt) => debt[0] !== memberFrom || debt[1] !== memberTo || debt[2] !== amount))
       xpnzApi.settleDebt({
         from: memberFrom,
         to: memberTo,
@@ -89,21 +111,48 @@ const DebtsTab = () => {
     [debts, xpnzApi]
   )
 
+  const transferDebt = useCallback(
+    (originalFrom, newFrom, amount) => {
+      setReplaceDrawerOpen(false)
+      xpnzApi.transferDebt({
+        originalFrom: originalFrom,
+        newFrom: newFrom,
+        amount: amount
+      })
+    },
+    [debts, xpnzApi]
+  )
+
+  function handleTransferSubmit(e) {
+    e.preventDefault()
+    transferDebt(settleMemberFrom, swapMember, settleAmount)
+    handleReplaceDrawerClose()
+    setSettleVisible(false)
+
+    toast({
+      title: "Debt transferred",
+      description: `Transferred ${currencySymbol}${settleAmount} from ${settleMemberFrom} to ${swapMember}`,
+      variant: "default"
+    })
+  }
+
   function handleSubmit(e) {
     e.preventDefault()
     settleDebt(settleMemberFrom, settleMemberTo, settleAmount)
     toast({
       title: "Debt settled",
-      description: `Settled $${settleAmount} from ${settleMemberFrom} to ${settleMemberTo}`,
+      description: `Settled ${currencySymbol}${settleAmount} from ${settleMemberFrom} to ${settleMemberTo}`,
       variant: "default"
     })
   }
 
   const copyDebts = async () => {
-    let text = debts.map((debt) => `${debt[0]} → ${debt[1]}: $${debt[2]}`).join("\n")
+    let text = debts
+      .map((debt) => `${currencySymbol}{debt[0]} → ${currencySymbol}${debt[1]}: ${currencySymbol}${debt[2]}`)
+      .join("\n")
     console.log(text)
 
-    text = `📈 Debts\n\n${text}\n\nsee expenses @ https://xpnz.ca/${ledgerName}`
+    text = `📈 Debts\n\n${text}\n\nsee expenses .. https://xpnz.ca/${ledgerName}`
 
     if (navigator.share) {
       await navigator.share({ text })
@@ -126,6 +175,11 @@ const DebtsTab = () => {
     }, 1500)
   }
 
+  function handleReplaceDrawerClose() {
+    setReplaceDrawerOpen(false)
+    setSwapMember("")
+  }
+
   return (
     <div className="mt-[85px] px-2 pb-64">
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pb-3">
@@ -141,7 +195,10 @@ const DebtsTab = () => {
               <h2 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
                 {member[0]} → {member[1]}
               </h2>
-              <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">${member[2]}</p>
+              <p className="mt-1 font-normal tracking-tight text-gray-700 dark:text-gray-400">
+                {currencySymbol}
+                {member[2]}
+              </p>
             </div>
             <Button
               variant="ghost"
@@ -199,18 +256,89 @@ const DebtsTab = () => {
               <DrawerFooter className="flex flex-row w-full justify-center">
                 <DrawerClose asChild>
                   <Button variant="outline">
-                    <span className="mr-2">
+                    <span className="mr-1">
                       <SquareArrowUpLeft className="size-4" />
-                    </span>{" "}
+                    </span>
                     Cancel
                   </Button>
                 </DrawerClose>
                 <ConfettiButton className="flex-grow" type="submit">
                   Settle Up!
                 </ConfettiButton>
+                <Button
+                  variant="outline"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setReplaceDrawerOpen(true)
+                  }}
+                >
+                  <Replace />
+                </Button>
               </DrawerFooter>
             </form>
           </div>
+        </DrawerContent>
+      </Drawer>
+
+      <Drawer open={replaceDrawerOpen} onOpenChange={setReplaceDrawerOpen} onClose={handleReplaceDrawerClose}>
+        <DrawerContent className="text-primary">
+          <DrawerTitle className="text-center p-2">Transfer {settleMemberFrom}'s debt to...</DrawerTitle>
+          <DrawerDescription className="sr-only">Swap the debt between two members or ledgers</DrawerDescription>
+          <div className="flex flex-col gap-3 p-4">
+            {/*<ToggleGroup*/}
+            {/*  type="single"*/}
+            {/*  variant="outline"*/}
+            {/*  defaultValue="members"*/}
+            {/*  value={membersLedger}*/}
+            {/*  onValueChange={setMembersLedger}*/}
+            {/*  className="gap-3"*/}
+            {/*>*/}
+            {/*  <ToggleGroupItem className="flex-grow" value="members" aria-label="Toggle bold">*/}
+            {/*    Members*/}
+            {/*  </ToggleGroupItem>*/}
+            {/*  <ToggleGroupItem className="flex-grow" value="ledgers" aria-label="Toggle italic">*/}
+            {/*    Ledgers*/}
+            {/*  </ToggleGroupItem>*/}
+            {/*</ToggleGroup>*/}
+
+            <Select onValueChange={setSwapMember}>
+              <div className="flex flex-row justify-center px-12">
+                <SelectTrigger>{swapMember ? swapMember : "Select Member to Cover Debt"}</SelectTrigger>
+              </div>
+              <SelectContent>
+                <SelectGroup>
+                  {members.map((member) => (
+                    <SelectItem key={member.id} value={member.name} disabled={member.name === settleMemberFrom}>
+                      {member.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+
+            {swapMember && (
+              <div className="text-red-500 text-center">
+                Swap debt of {currencySymbol}
+                {settleAmount} from {settleMemberFrom} to {swapMember}
+              </div>
+            )}
+          </div>
+
+          <DrawerFooter className="flex flex-row gap-2">
+            <DrawerClose asChild>
+              <Button variant="outline">
+                <span className="mr-1">
+                  <SquareArrowUpLeft className="size-4" />
+                </span>
+                Cancel
+              </Button>
+            </DrawerClose>
+            <form onSubmit={handleTransferSubmit} className="flex-grow">
+              <ConfettiButton variant="default" type="submit" className="w-full" disabled={!swapMember}>
+                Confirm
+              </ConfettiButton>
+            </form>
+          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </div>
