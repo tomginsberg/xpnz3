@@ -49,6 +49,7 @@ const DebtsTab = () => {
     // Order should be [Payer, Payee, Amount]
     debts: trueSettlement.map(({ payer, payee, amount }) => [payer, payee, amount]),
     settleDebt: ({ from: memberFrom, to: memberTo, amount: amount }) => {
+      console.log(`Settling $${amount} from ${memberFrom} to ${memberTo}`)
       const expenseName = `${memberFrom} → ${memberTo}`
       const category = "💸 Transfer"
       const dateString = getDateString()
@@ -126,6 +127,11 @@ const DebtsTab = () => {
   function handleTransferSubmit(e) {
     e.preventDefault()
     transferDebt(settleMemberFrom, swapMember, settleAmount)
+    setDebts(
+      debts.filter((debt) => {
+        return debt[0] !== settleMemberFrom || debt[1] !== settleMemberTo
+      })
+    )
     handleReplaceDrawerClose()
     setSettleVisible(false)
 
@@ -139,6 +145,7 @@ const DebtsTab = () => {
   function handleSubmit(e) {
     e.preventDefault()
     settleDebt(settleMemberFrom, settleMemberTo, settleAmount)
+    console.log("Settling debt")
     toast({
       title: "Debt settled",
       description: `Settled ${currencySymbol}${settleAmount} from ${settleMemberFrom} to ${settleMemberTo}`,
@@ -147,9 +154,7 @@ const DebtsTab = () => {
   }
 
   const copyDebts = async () => {
-    let text = debts
-      .map((debt) => `${currencySymbol}{debt[0]} → ${currencySymbol}${debt[1]}: ${currencySymbol}${debt[2]}`)
-      .join("\n")
+    let text = debts.map((debt) => `${debt[0]} → ${debt[1]}: ${currencySymbol}${debt[2]}`).join("\n")
     console.log(text)
 
     text = `📈 Debts\n\n${text}\n\nsee expenses .. https://xpnz.ca/${ledgerName}`
