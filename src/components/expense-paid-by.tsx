@@ -37,20 +37,18 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
   const onPaidByMembersChange = (values: string[]) => {
     const oldMembers = paidBy
     if (oldMembers.length === 0 && values.length >= 1) {
-      setPaidBy( () =>  {
+      setPaidBy(() => {
         const newMembers: PaidBy[] = []
         values.forEach((item, index) => {
           if (index === 0) {
-            newMembers[index] = {member: item, amount: amount}
-          }
-          else {
-            newMembers[index] = {member: item, amount: 0}
+            newMembers[index] = { member: item, amount: amount }
+          } else {
+            newMembers[index] = { member: item, amount: 0 }
           }
         })
         return newMembers
       })
-    }
-    else {
+    } else {
       setPaidBy(
         values.map((member) => {
           const existing = paidBy.find((p) => p.member === member)
@@ -97,11 +95,11 @@ const PaidByForm: React.FC<PaidByFormProps> = ({
     <div className="space-y-2">
       <Label>{isIncome ? "Paid To" : "Paid By"}</Label>
       <MultiSelect
-        options={memberNames.map((member) => ({
+        options={memberNames.sort().map((member) => ({
           label: member,
           value: member
         }))}
-        defaultValue={selectedExpense.paidBy.map((p) => p.member)}
+        value={paidBy.map((p) => p.member)}
         onValueChange={onPaidByMembersChange}
       />
 
