@@ -26,7 +26,12 @@ function CategoryPickerSelector({
     <Command className={cn("bg-background p-4", className)}>
       <div className="border rounded-lg">
         <div className="relative">
-          <CommandInput placeholder="Search category..." value={inputValue} onChangeCapture={onChangeCapture} />
+          <CommandInput
+            autoFocus
+            placeholder="Search category..."
+            value={inputValue}
+            onChangeCapture={onChangeCapture}
+          />
           <Button
             onClick={onPlusButtonClick}
             variant="ghost"
@@ -95,6 +100,7 @@ function CategoryPickerCreator({
             Category Name
           </Label>
           <Input
+            autoFocus
             value={inputValue}
             onChange={onInputChange}
             placeholder="Enter category name"
