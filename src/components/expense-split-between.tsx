@@ -1,24 +1,19 @@
-import React, { useEffect, useState } from "react" // shadcn components
-import { MultiSelect } from "@/components/ui/multi-select.tsx"
-import { Switch } from "@/components/ui/switch.tsx" // icons
-import { Label } from "@/components/ui/label.tsx"
-import CalculatorInput from "./calculator-input.tsx"
+import React, { useEffect, useState } from "react"
+import { MultiSelect } from "@/components/ui/multi-select"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import CalculatorInput from "@/components/calculator-input"
 
 interface Split {
   member: string
   weight: number
+  amount?: number
 }
 
 interface SplitBetweenFormProps {
-  isSplitByMultiple: boolean
-  isUnequalSplit: boolean
-  setIsUnequalSplit: React.Dispatch<React.SetStateAction<boolean>>
-  setIsSplitByMultiple: React.Dispatch<React.SetStateAction<boolean>> // Add setter for isSplitByMultiple
   memberNames: string[]
-  selectedExpense: { splitBetween: Split[] }
-  onSplitBetweenMembersChange: (newMembers: string[]) => void
   splitBetween: Split[]
-  setSplitBetween: React.Dispatch<React.SetStateAction<{ member: string; weight: number }[]>>
+  setSplitBetween: React.Dispatch<React.SetStateAction<Split[]>>
   isIncome: boolean
 }
 
@@ -33,19 +28,22 @@ function areMultipleSplitters(arr: Split[]) {
 
 const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
   memberNames,
-  selectedExpense,
   splitBetween,
   setSplitBetween,
   isIncome
 }) => {
-  const [isUnequalSplit, setIsUnequalSplit] = useState(areWeightsDifferent(selectedExpense.splitBetween))
-  const [isSplitByMultiple, setIsSplitByMultiple] = useState(areMultipleSplitters(selectedExpense.splitBetween))
+  // Initialize isUnequalSplit from current splitBetween
+  const [isUnequalSplit, setIsUnequalSplit] = useState(areWeightsDifferent(splitBetween))
 
-  function onSplitBetweenMembersChange(
-    values: string[], // Array of selected member names
-    setSplitBetween: React.Dispatch<React.SetStateAction<Split[]>>, // Setter for splitBetween state
-    splitBetween: Split[] // Current splitBetween state
-  ) {
+  // Re-derive isUnequalSplit if splitBetween changes (e.g., editing a different expense)
+  useEffect(() => {
+    setIsUnequalSplit(areWeightsDifferent(splitBetween))
+    console.log("splitBetween changed", splitBetween)
+  }, [splitBetween])
+
+  const isSplitByMultiple = areMultipleSplitters(splitBetween)
+
+  function onSplitBetweenMembersChange(values: string[]) {
     setSplitBetween(
       values.map((member) => {
         const existing = splitBetween.find((s) => s.member === member)
@@ -56,54 +54,43 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
 
   function onUnequalSplitWeightChange(value: number, index: number) {
     setSplitBetween((prev) => {
-      const newSplitBetween = [...prev]
-      newSplitBetween[index] = {
-        ...newSplitBetween[index],
-        weight: value
-      }
-      return newSplitBetween
+      const updated = [...prev]
+      updated[index] = { ...updated[index], weight: value }
+      return updated
     })
   }
 
-  useEffect(() => {
-    if (splitBetween.length <= 1) {
-      setIsSplitByMultiple(false)
-      setIsUnequalSplit(false)
-    } else {
-      setIsSplitByMultiple(true)
+  // Handle toggling of unequal split directly here.
+  // If toggled off, reset all weights to 1 immediately.
+  const handleToggleUnequalSplit = (checked: boolean) => {
+    setIsUnequalSplit(checked)
+    if (!checked) {
+      setSplitBetween((prev) => prev.map((s) => ({ ...s, weight: 1 })))
     }
-  }, [splitBetween])
-
-  useEffect(() => {
-    if (!isUnequalSplit) {
-      setSplitBetween((prev) => prev.map((s) => ({ member: s.member, weight: 1 })))
-    }
-  }, [isUnequalSplit])
+  }
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label>Split Between</Label>
         <div className="flex items-center space-x-2">
-          <Label htmlFor="unequal-split" className={String(!isSplitByMultiple && "text-muted")}>
+          <Label htmlFor="unequal-split" className={!isSplitByMultiple ? "text-muted" : ""}>
             Unequal Split
           </Label>
           <Switch
             disabled={!isSplitByMultiple}
             id="unequal-split"
             checked={isUnequalSplit}
-            onCheckedChange={setIsUnequalSplit}
+            onCheckedChange={handleToggleUnequalSplit}
           />
         </div>
       </div>
 
       <MultiSelect
-        options={memberNames.map((member) => ({
-          label: member,
-          value: member
-        }))}
-        defaultValue={selectedExpense.splitBetween.map((s) => s.member)}
-        onValueChange={(values) => onSplitBetweenMembersChange(values, setSplitBetween, splitBetween)}
+        // defaultValue={splitBetween.map((s) => s.member)}
+        options={memberNames.map((member) => ({ label: member, value: member }))}
+        value={splitBetween.map((s) => s.member)}
+        onValueChange={onSplitBetweenMembersChange}
       />
 
       {isUnequalSplit && (
