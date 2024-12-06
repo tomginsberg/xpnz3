@@ -47,14 +47,14 @@ export default function ExpenseDrawer({
   defaultCurrency,
   categories
 }) {
-  const [income, setIncome] = useState(selectedExpense.income)
-  const [name, setName] = useState(selectedExpense.name)
-  const [amount, setAmount] = useState(selectedExpense.amount)
+  const [income, setIncome] = useState(false)
+  const [name, setName] = useState("")
+  const [amount, setAmount] = useState("")
   const [date, setDate] = useState(new Date(`${selectedExpense.date}T00:00:00`))
-  const [category, setCategory] = useState(selectedExpense.category)
-  const [paidBy, setPaidBy] = useState(selectedExpense.paidBy)
-  const [splitBetween, setSplitBetween] = useState(selectedExpense.splitBetween)
-  const [currency, setCurrency] = useState(selectedExpense.currency || defaultCurrency)
+  const [category, setCategory] = useState("")
+  const [paidBy, setPaidBy] = useState([])
+  const [splitBetween, setSplitBetween] = useState([])
+  const [currency, setCurrency] = useState("")
   const [currencyDrawerOpen, setCurrencyDrawerOpen] = useState(false)
   const [randomExpenseName, setRandomExpenseName] = useState("")
 
@@ -274,18 +274,6 @@ export default function ExpenseDrawer({
                       </Command>
                     </DrawerContent>
                   </Drawer>
-                  {/*<Select onValueChange={setCurrency} defaultValue={currency} value={currency}>*/}
-                  {/*  <SelectTrigger id="currency" className="min-w-[95px]">*/}
-                  {/*    <SelectValue placeholder={currencies[currency]} />*/}
-                  {/*  </SelectTrigger>*/}
-                  {/*  <SelectContent aria-describedby="currency select">*/}
-                  {/*    {Object.entries(currencies).map(([code, flag]) => (*/}
-                  {/*      <SelectItem key={code} value={code}>*/}
-                  {/*        {flag}*/}
-                  {/*      </SelectItem>*/}
-                  {/*    ))}*/}
-                  {/*  </SelectContent>*/}
-                  {/*</Select>*/}
                 </div>
               </div>
 
@@ -324,7 +312,6 @@ export default function ExpenseDrawer({
               <div>
                 <SplitBetweenForm
                   memberNames={memberNames}
-                  selectedExpense={selectedExpense}
                   splitBetween={splitBetween}
                   setSplitBetween={setSplitBetween}
                   isIncome={income}
