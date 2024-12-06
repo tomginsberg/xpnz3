@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Calculator } from "./calculator"
+import { Calculator } from "@/components/calculator"
 import { Banknote, Calculator as CalculatorIcon, HandCoins, Lock } from "lucide-react"
 import { Drawer, DrawerContent, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 
