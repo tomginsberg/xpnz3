@@ -117,6 +117,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
     debts: { emoji: "💳", label: "Debts" },
     recurring: { emoji: "🔄", label: "Recurring" },
     dash: { emoji: "📊", label: "Dashboard" }
+    // itemize: { emoji: "📝", label: "Itemized Receipt Split" }
   }
 
   const share = async () => {
@@ -155,6 +156,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
                   </SheetHeader>
                   <div className="flex flex-col py-4 gap-2 text-black dark:text-white">
                     <NavigationButton route="/" icon="🏠" label="Home" />
+                    <NavigationButton route={`/${ledgerName}/itemize`} icon="📝" label="Itemize (Beta)" />
                     <Button onClick={share} variant="outline" className="justify-start transition-none">
                       <span className="mr-2">🤝</span> Share
                     </Button>

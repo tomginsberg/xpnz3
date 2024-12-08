@@ -1,15 +1,6 @@
 // App.jsx
 import React, { Suspense, useCallback, useEffect, useState } from "react"
-import {
-  BrowserRouter as Router,
-  Navigate,
-  Outlet,
-  Route,
-  Routes,
-  useParams,
-  useNavigate,
-  useLocation
-} from "react-router-dom"
+import { BrowserRouter as Router, Navigate, Outlet, Route, Routes, useParams } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -27,6 +18,7 @@ import { currencySymbols } from "./api/utilities.js"
 const MembersTab = React.lazy(() => import("@/pages/members"))
 const DebtsTab = React.lazy(() => import("@/pages/debts"))
 const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
+const ItemizedTab = React.lazy(() => import("@/pages/itemize"))
 
 function LedgerLayout() {
   const { ledgerName } = useParams()
@@ -172,6 +164,15 @@ export default function App() {
               element={
                 <Suspense fallback={<FlatLoading />}>
                   <DebtsTab />
+                </Suspense>
+              }
+            />
+
+            <Route
+              path="itemize"
+              element={
+                <Suspense fallback={<FlatLoading />}>
+                  <ItemizedTab />
                 </Suspense>
               }
             />
