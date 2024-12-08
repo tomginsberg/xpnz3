@@ -27,6 +27,11 @@ type Item = {
   split: Split
 }
 
+type Member = {
+  name: string
+  id: string
+}
+
 const INITIAL_ITEM: Item = { id: crypto.randomUUID(), name: "", amount: "", taxed: false, members: [], split: {} }
 
 export default function Itemizer() {
@@ -35,8 +40,8 @@ export default function Itemizer() {
   const [items, setItems] = useState<Item[]>([INITIAL_ITEM])
   const [remaining, setRemaining] = useState<number>(0)
   const [splitBetween, setSplitBetween] = useState<string[]>([])
-  const { members: membersData } = useOutletContext()
-  const [members] = useState(membersData.map((member) => member.name))
+  const { members: membersData } = useOutletContext<{ members: Member[] }>()
+  const [members] = useState(membersData.map((member: { name: string }) => member.name))
   const [memberTotals, setMemberTotals] = useState<Split>({})
   const [itemsTotal, setItemsTotal] = useState<number>(0)
 
@@ -61,7 +66,7 @@ export default function Itemizer() {
     setMemberTotals(newMemberTotals)
   }, [total, taxPercentage, items])
 
-  const handleItemChange = (id: string, field: keyof Item, value: any) => {
+  const handleItemChange = (id: string, field: keyof Item, value: string | boolean) => {
     const newItems = items.map((item) => (item.id === id ? { ...item, [field]: value } : item))
     setItems(newItems)
 
