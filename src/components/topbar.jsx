@@ -117,7 +117,7 @@ export default function Topbar({ onSearch, toggleExpansion }) {
     debts: { emoji: "💳", label: "Debts" },
     recurring: { emoji: "🔄", label: "Recurring" },
     dash: { emoji: "📊", label: "Dashboard" },
-    itemize: { emoji: "📝", label: "Itemized Receipt Split" }
+    itemize: { emoji: "📝", label: "Itemized Split" }
   }
 
   const share = async () => {
