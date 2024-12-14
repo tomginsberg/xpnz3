@@ -1,15 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import {
-  TrendingUp,
-  TrendingDown,
-  ChartArea,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight
-} from "lucide-react"
+import { TrendingUp, TrendingDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts"
 
 import { Button } from "@/components/ui/button"
@@ -161,10 +153,7 @@ export function ExpenseChartDrawer({
         <DrawerDescription className="sr-only">Expense summary plot</DrawerDescription>
         <div className="px-2 py-6">
           <Card className="border-none shadow-none bg-background">
-            <CardTitle className="flex flex-row text-center justify-center gap-2">
-              <ChartArea className="h-6 w-6" />
-              <span>Monthly Summary</span>
-            </CardTitle>
+            <CardTitle className="text-center">Monthly Summary</CardTitle>
             <CardContent className="ps-0 pe-4 pt-6 pb-2">
               <ChartContainer config={chartConfig}>
                 <BarChart data={visibleChartData}>
