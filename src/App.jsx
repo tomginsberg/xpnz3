@@ -89,6 +89,13 @@ function LedgerLayout() {
     setExpandAll(!expandAll)
   }, [expandAll])
 
+  const [showChart, setShowChart] = useState(false)
+  const toggleChart = useCallback(() => {
+    setShowChart(!showChart)
+  }, [showChart])
+
+  const [enableChart, setEnableChart] = useState(false)
+
   // Context value to pass to child components
   const outletContext = {
     searchTerm,
@@ -106,7 +113,11 @@ function LedgerLayout() {
     deleteMember,
     pushExpense,
     currency,
-    currencySymbol
+    currencySymbol,
+    showChart,
+    toggleChart,
+    enableChart,
+    setEnableChart
   }
 
   if (isLoading) return <div></div>
@@ -115,7 +126,12 @@ function LedgerLayout() {
 
   return (
     <>
-      <Topbar onSearch={setSearchTerm} toggleExpansion={toggleExpansion} />
+      <Topbar
+        onSearch={setSearchTerm}
+        toggleExpansion={toggleExpansion}
+        toggleChart={toggleChart}
+        showChartToggle={enableChart}
+      />
       <Outlet context={outletContext} />
       <Toolbar ledger={ledgerName} onClickPlus={openAddExpenseDrawer} emptyMode={emptyMode} />
       <ExpenseDrawer

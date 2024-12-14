@@ -6,10 +6,20 @@ import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
 import AnimatedCard from "@/components/animated-card"
 import { useInView } from "react-intersection-observer"
-import { fromPairs } from "lodash-es"
+import { ExpenseChartDrawer } from "@/components/expense-chart-drawer"
 
 export default function ExpenseMasonryGrouped() {
-  const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense } = useOutletContext()
+  const {
+    searchTerm,
+    expenses,
+    openEditExpenseDrawer,
+    onDeleteClick,
+    copyExpense,
+    showChart,
+    toggleChart,
+    enableChart,
+    setEnableChart
+  } = useOutletContext()
 
   const filteredGroups = useMemo(() => {
     const filtered = searchTerm
@@ -21,7 +31,11 @@ export default function ExpenseMasonryGrouped() {
       : expenses
 
     const groups = filtered.reduce((acc, expense) => {
-      const monthYear = new Date(expense.date).toLocaleDateString("default", { month: "long", year: "numeric", timeZone: "UTC" })
+      const monthYear = new Date(expense.date).toLocaleDateString("default", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC"
+      })
       acc[monthYear] = acc[monthYear] || []
       acc[monthYear].push(expense)
       return acc
@@ -35,26 +49,29 @@ export default function ExpenseMasonryGrouped() {
 
   const [monthCount, setMonthCount] = useState(2)
 
-  const { ref, inView, entry } = useInView({
+  const { ref } = useInView({
     onChange: (inView) => inView && setMonthCount((prev) => prev + 2)
   })
 
   return (
-    <div className="min-h-screen bg-background">
-      <main className="mt-[132px] mb-96">
-        {filteredGroups.slice(0, monthCount).map((group) => (
-          <MonthGroup
-            key={group.monthYear}
-            monthYear={group.monthYear}
-            expenses={group.expenses}
-            openEditExpenseDrawer={openEditExpenseDrawer}
-            copyExpense={copyExpense}
-            onDeleteClick={onDeleteClick}
-          />
-        ))}
-      </main>
-      <div ref={ref} className="flex justify-center items-center h-16" />
-    </div>
+    <>
+      <ExpenseChartDrawer data={filteredGroups} isOpen={showChart} onClose={toggleChart} setEnable={setEnableChart} />
+      <div className="min-h-screen bg-background">
+        <main className="mt-[132px] mb-96">
+          {filteredGroups.slice(0, monthCount).map((group) => (
+            <MonthGroup
+              key={group.monthYear}
+              monthYear={group.monthYear}
+              expenses={group.expenses}
+              openEditExpenseDrawer={openEditExpenseDrawer}
+              copyExpense={copyExpense}
+              onDeleteClick={onDeleteClick}
+            />
+          ))}
+        </main>
+        <div ref={ref} className="flex justify-center items-center h-16" />
+      </div>
+    </>
   )
 }
 

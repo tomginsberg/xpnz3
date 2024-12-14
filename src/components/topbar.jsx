@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
-import { ExpandIcon, Moon, Search, Share2, ShrinkIcon, Sun } from "lucide-react"
+import { ExpandIcon, Moon, Search, Share2, ShrinkIcon, Sun, ChartArea } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -87,7 +87,7 @@ function Dropdown({ descriptor, label, placeholder, value, onChange, options }) 
   )
 }
 
-export default function Topbar({ onSearch, toggleExpansion }) {
+export default function Topbar({ onSearch, toggleExpansion, toggleChart, showChartToggle }) {
   const location = useLocation()
   const { ledgerName } = useParams()
   // Extract the page type from the pathname
@@ -199,6 +199,11 @@ export default function Topbar({ onSearch, toggleExpansion }) {
             </div>
 
             <div className="flex">
+              {pageType === "expenses" && showChartToggle && (
+                <Button className="px-5" variant="ghost" onClick={toggleChart} aria-label="Toggle Expand">
+                  <ChartArea className={cn("absolute h-5 w-5 text-primary")} />
+                </Button>
+              )}
               {pageType === "expenses" && (
                 <Button className="px-5" variant="ghost" onClick={toggleExpand} aria-label="Toggle Expand">
                   <ExpandIcon
