@@ -73,6 +73,7 @@
     "react-intersection-observer": "^9.13.1",
     "react-masonry-css": "^1.0.16",
     "react-router-dom": "^6.26.2",
+    "recharts": "^2.14.1",
     "seedrandom": "^3.0.5",
     "sqlite3": "^5.1.7",
     "supabase": "^1.223.10",
