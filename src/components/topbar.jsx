@@ -1,6 +1,6 @@
 // component topbar
 
-import React, { useState } from "react"
+import { useEffect, useState } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { ExpandIcon, Moon, Search, Share2, ShrinkIcon, Sun, ChartArea } from "lucide-react"
 
@@ -94,10 +94,14 @@ export default function Topbar({ onSearch, toggleExpansion, toggleChart, showCha
   const pathSegments = location.pathname.split("/")
   const pageType = pathSegments[2] || "expenses"
   const [expanded, setExpanded] = useState(false)
-
+  const [searchValue, setSearchValue] = useState("")
   const [themeName, setThemeName] = useState(localStorage.getItem("vite-ui-theme") || "dark")
 
   const { setTheme } = useTheme()
+
+  useEffect(() => {
+    onSearch(searchValue)
+  }, [searchValue])
 
   function toggleTheme() {
     const newTheme = themeName === "dark" ? "light" : "dark"
@@ -238,9 +242,10 @@ export default function Topbar({ onSearch, toggleExpansion, toggleChart, showCha
                 <Input
                   type="search"
                   id="searchbar"
+                  value={searchValue}
                   placeholder="Search expenses..."
                   className="pb-2 w-full pl-10 text-primary border-none"
-                  onChange={(e) => onSearch(e.target.value)}
+                  onChange={(e) => setSearchValue(e.target.value)}
                 />
               </div>
             </div>
