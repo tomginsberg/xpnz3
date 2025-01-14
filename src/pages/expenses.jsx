@@ -6,9 +6,9 @@ import AnimatedTextImageBlock from "@/components/animated-text-image-block"
 import ExpenseMasonry from "@/components/expense-masonry"
 
 export default function ExpensesTab() {
-  const { expenses } = useOutletContext()
+  const { expenses, loaded } = useOutletContext()
   const isEmpty = expenses.length === 0
-  return isEmpty ? (
+  return isEmpty && loaded ? (
     <AnimatedTextImageBlock
       image="https://fonts.gstatic.com/s/e/notoemoji/latest/1f9a7/512.webp"
       imageAlt="🦧"
