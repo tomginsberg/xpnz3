@@ -142,9 +142,9 @@ export function ExpenseChartDrawer({
     updateVisibleData(allChartData, newEnd)
   }
 
-  useEffect(() => {
-    console.log("end index", endIndex, allChartData.length)
-  }, [endIndex])
+  // useEffect(() => {
+  //   console.log("end index", endIndex, allChartData.length)
+  // }, [endIndex])
 
   return (
     <Drawer open={isOpen} onClose={onClose}>

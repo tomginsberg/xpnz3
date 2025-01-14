@@ -38,7 +38,7 @@ const SplitBetweenForm: React.FC<SplitBetweenFormProps> = ({
   // Re-derive isUnequalSplit if splitBetween changes (e.g., editing a different expense)
   useEffect(() => {
     setIsUnequalSplit(areWeightsDifferent(splitBetween))
-    console.log("splitBetween changed", splitBetween)
+    // console.log("splitBetween changed", splitBetween)
   }, [splitBetween])
 
   const isSplitByMultiple = areMultipleSplitters(splitBetween)
