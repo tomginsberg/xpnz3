@@ -688,7 +688,8 @@ async function transactionsDeleteHandler(request, reply) {
 }
 
 const ledgersGetHandler = async (request, reply) => {
-  return db("ledgers").select()
+  // Only return non-private ledgers for the dropdown
+  return db("ledgers").where({ is_private: false }).select()
 }
 
 async function ledgersGetHandlerWithRoute(request, reply) {
@@ -702,7 +703,7 @@ async function ledgersGetHandlerWithRoute(request, reply) {
 }
 
 async function ledgersPutHandler(request, reply) {
-  const { name, currency, members } = request.body
+  const { name, currency, members, is_private = false } = request.body
 
   try {
     await db.transaction(async (trx) => {
@@ -711,7 +712,7 @@ async function ledgersPutHandler(request, reply) {
         throw { status: 409, message: "A ledger with the specified name already exists." }
       }
 
-      await trx("ledgers").insert({ name, currency })
+      await trx("ledgers").insert({ name, currency, is_private })
 
       const ledgerMembers = members.map((member) => ({
         id: generateId(),
@@ -765,6 +766,7 @@ const ledgersPutBodySchema = {
   properties: {
     name: { type: "string" },
     currency: { type: "string", enum: supportedCurrencies },
+    is_private: { type: "boolean" },
     members: {
       type: "array",
       minItems: 1,

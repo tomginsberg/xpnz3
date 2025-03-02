@@ -1,4 +1,4 @@
-import { AlertCircle, ArrowUpRightFromCircle, Check, ChevronsUpDown, Save } from "lucide-react"
+import { AlertCircle, ArrowUpRightFromCircle, Check, ChevronsUpDown, Save, Lock, Unlock } from "lucide-react"
 
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -91,6 +91,7 @@ export default function Home() {
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false)
   const [name, setName] = useState("")
   const [newLedgerMembers, setNewLedgerMembers] = useState([])
+  const [isPrivate, setIsPrivate] = useState(false)
   const [step, setStep] = useState(1)
   const [error, setError] = useState("")
   const defaultCurrency = "CAD"
@@ -122,7 +123,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ name, currency, members })
+        body: JSON.stringify({ name, currency, members, is_private: isPrivate })
       })
 
       if (!response.ok) {
@@ -280,6 +281,21 @@ export default function Home() {
                     </div>
                   )}
                 </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsPrivate(!isPrivate)}
+                  className="flex items-center justify-between text-primary"
+                >
+                  <span className="flex items-center">
+                    {isPrivate ? <Lock className="w-4 h-4 mr-2" /> : <Unlock className="w-4 h-4 mr-2" />}
+                    {isPrivate ? "Private Ledger" : "Public Ledger"}
+                  </span>
+                  <span className="text-sm text-muted-foreground">
+                    {isPrivate ? "Hidden from search" : "Visible in search"}
+                  </span>
+                </Button>
 
                 <FloatingLabelInput
                   label="URL Preview"

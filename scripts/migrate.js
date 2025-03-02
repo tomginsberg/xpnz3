@@ -11,7 +11,10 @@ import { formatLedgerName, getDateString, getDateTimeString, generateId, support
 
 async function makeLedgersTable () {
   await db.schema.raw ("CREATE TABLE `ledgers` (`name` varchar(255) collate nocase, primary key (`name`))")
-  await db.schema.table ('ledgers', table => { table.enu('currency', supportedCurrencies); });
+  await db.schema.table ('ledgers', table => { 
+    table.enu('currency', supportedCurrencies);
+    table.boolean('is_private').defaultTo(false);
+  });
 }
 
 async function makeTransactionsTable () {
