@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react"
-import { Plus, Minus, ChevronUp } from "lucide-react"
+import { useCallback, useEffect, useState } from "react"
+import { ArrowRight, ChevronUp, Minus, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -22,7 +22,7 @@ type Split = {
 type Item = {
   id: string
   name: string
-  amount: string
+  amount: number | string
   taxed: boolean
   members: string[]
   split: Split
@@ -40,6 +40,32 @@ const INITIAL_ITEM: Item = {
   taxed: false,
   members: [],
   split: {}
+}
+
+function calculateAmounts(item: Item, taxPercentage: string) {
+  const itemAmount = item.amount || 0
+  const taxRate = (parseFloat(taxPercentage) || 0) / 100
+  const taxedAmount = item.taxed ? itemAmount * (1 + taxRate) : itemAmount
+  const totalWeight = Object.values(item.split).reduce((a, b) => a + b, 0) || item.members.length
+  return item.members.reduce(
+    (acc: Split, member) => ({
+      ...acc,
+      [member]: ((item.split[member] || 1) / totalWeight) * taxedAmount
+    }),
+    {}
+  )
+}
+
+function normalizeSplit(item: Item) {
+  return item.members.reduce((acc: Split, member) => {
+    const val = item.split[member]
+    const weight = !isNaN(val) && val > 0 ? val : 1
+    return { ...acc, [member]: weight }
+  }, {})
+}
+
+function getTotalWeight(normalizedSplits: Split, item: Item) {
+  return Object.values(normalizedSplits).reduce((a, b) => a + b, 0) || item.members.length
 }
 
 function UnequalSplitDrawer({
@@ -63,13 +89,9 @@ function UnequalSplitDrawer({
   )
 
   // Normalize splits: if split[member] is not a valid positive number, treat it as 1
-  const normalizedSplits = item.members.reduce((acc: Split, member) => {
-    const val = item.split[member]
-    const weight = typeof val === "number" && !isNaN(val) && val > 0 ? val : 1
-    return { ...acc, [member]: weight }
-  }, {})
+  const normalizedSplits = normalizeSplit(item)
 
-  const totalWeight = Object.values(normalizedSplits).reduce((a, b) => a + b, 0) || item.members.length
+  const totalWeight = getTotalWeight(normalizedSplits, item)
 
   return (
     <Drawer>
@@ -78,41 +100,43 @@ function UnequalSplitDrawer({
       </DrawerTrigger>
       <DrawerContent className="text-primary container pb-6">
         <DrawerHeader>
-          <DrawerTitle>Unequal Split for {item.name || "this item"}</DrawerTitle>
-          <DrawerDescription>Set split weights for each member</DrawerDescription>
+          <DrawerTitle className="text-center">Unequal Split for {item.name || "this item"}</DrawerTitle>
+          <DrawerDescription className="text-center">Set split weights for each member</DrawerDescription>
         </DrawerHeader>
-        <div className="py-4 space-y-4">
+        <div className="grid grid-cols-3 items-center gap-4">
+          <span className="text-left">Member</span>
+          <span className="text-center">Split Weight</span>
+          <span className="text-right">Amount</span>
           {item.members.map((member) => (
-            <div key={member} className="flex items-center justify-start gap-4">
-              <Label htmlFor={`split-${item.id}-${member}`}>{member}</Label>
+            <>
+              <Label htmlFor={`split-${item.id}-${member}`} className="text-left">
+                {member}
+              </Label>
               <Input
                 id={`split-${item.id}-${member}`}
                 type="number"
                 value={item.split[member] || ""}
                 onChange={(e) => onSplitChange(member, e.target.value)}
-                className="w-20"
+                className="w-full"
               />
-            </div>
+
+              <span className=" justify-end text-right flex flex-row gap-2">
+                ${((normalizedSplits[member] / totalWeight) * calculateTaxedAmount(item.amount, item.taxed)).toFixed(2)}
+              </span>
+            </>
           ))}
         </div>
-        <div className="mt-4 space-y-2">
-          <div className="font-semibold">Preview:</div>
-          {item.members.map((member) => {
-            const memberShare = (normalizedSplits[member] / totalWeight) * calculateTaxedAmount(item.amount, item.taxed)
-            return (
-              <div key={member} className="flex justify-between">
-                <span>{member}:</span>
-                <span>${memberShare.toFixed(2)}</span>
-              </div>
-            )
-          })}
-        </div>
-        <div className="mt-4 space-x-2">
+
+        <div className="mt-8 space-x-2">
           <Button onClick={onResetSplit}>Remove Split</Button>
         </div>
       </DrawerContent>
     </Drawer>
   )
+}
+
+function itemString(item: Item) {
+  return `${item.name} - $${item.amount} - ${item.members.join(", ")} - ${JSON.stringify(item.split)}`
 }
 
 function ItemComponent({
@@ -227,6 +251,17 @@ function ItemComponent({
             </Button>
           ))}
         </div>
+        <div className="flex flex-wrap gap-2">
+          <div>{itemString(item)}</div>
+          {item.members.map((member) => (
+            <span>
+              {`${member}: $${(
+                ((item.split[member] || 1) / item.members.length) *
+                calculateTaxedAmount(item.amount, item.taxed)
+              ).toFixed(2)}`}
+            </span>
+          ))}
+        </div>
       </div>
       {item.members.length > 0 && (
         <UnequalSplitDrawer
@@ -271,13 +306,9 @@ export default function Itemizer() {
     const newMemberTotals: Split = {}
     items.forEach((item) => {
       // Normalize splits
-      const normalizedSplits = item.members.reduce((acc: Split, member) => {
-        const val = item.split[member]
-        const weight = typeof val === "number" && !isNaN(val) && val > 0 ? val : 1
-        return { ...acc, [member]: weight }
-      }, {})
+      const normalizedSplits = normalizeSplit(item)
 
-      const totalWeight = Object.values(normalizedSplits).reduce((a, b) => a + b, 0) || item.members.length
+      const totalWeight = getTotalWeight(normalizedSplits, item)
       const itemAmount = calculateTaxedAmount(item.amount, item.taxed)
 
       item.members.forEach((member) => {
