@@ -4,7 +4,7 @@ import path from "path"
 
 const parse = JSON.parse
 
-const db = Knex({ client: "sqlite3", connection: { filename: "data.db.local" }, useNullAsDefault: true })
+const db = Knex({ client: "sqlite3", connection: { filename: "data.db" }, useNullAsDefault: true })
 
 import {
   formatLedgerName,
