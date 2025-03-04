@@ -15,7 +15,7 @@ import {
   supportedCurrencies
 } from "./utilities.js"
 
-const db = Knex({ client: "sqlite3", connection: { filename: "data.db" }, useNullAsDefault: true })
+const db = Knex({ client: "sqlite3", connection: { filename: "data.db.local" }, useNullAsDefault: true })
 const app = Fastify({ logger: true })
 
 app.register(cors, { origin: "*" })
@@ -279,8 +279,8 @@ async function categoriesGetHandler(request, reply) {
     .where("is_deleted", false)
     .distinct()
 
-  const categories = payload.map(transaction => transaction.category)
-  const filteredCategories = categories.filter(category => category)
+  const categories = payload.map((transaction) => transaction.category)
+  const filteredCategories = categories.filter((category) => category)
 
   return uniq([...defaultCategories, ...filteredCategories])
 }
