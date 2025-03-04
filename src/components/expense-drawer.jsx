@@ -66,27 +66,15 @@ export default function ExpenseDrawer({
   )
 
   useEffect(() => {
-    if (isDrawerOpen) {
-      setIncome(selectedExpense.income)
-      setName(selectedExpense.name)
-      setAmount(selectedExpense.amount)
-      setDate(new Date(`${selectedExpense.date}T00:00:00`))
-      setCategory(selectedExpense.category)
-      setPaidBy(selectedExpense.paidBy)
-      setSplitBetween(selectedExpense.splitBetween)
-      setCurrency(selectedExpense.currency || defaultCurrency)
-    } else {
-      // Reset form state when drawer closes
-      setIncome(false)
-      setName("")
-      setAmount("")
-      setDate(new Date())
-      setCategory("")
-      setPaidBy([])
-      setSplitBetween([])
-      setCurrency(defaultCurrency)
-    }
-  }, [selectedExpense, defaultCurrency, isDrawerOpen])
+    setIncome(selectedExpense.income)
+    setName(selectedExpense.name)
+    setAmount(selectedExpense.amount)
+    setDate(new Date(`${selectedExpense.date}T00:00:00`))
+    setCategory(selectedExpense.category)
+    setPaidBy(selectedExpense.paidBy)
+    setSplitBetween(selectedExpense.splitBetween)
+    setCurrency(selectedExpense.currency || defaultCurrency)
+  }, [selectedExpense, defaultCurrency])
 
   const confettiExplosion = () => {
     const shoot = () => {

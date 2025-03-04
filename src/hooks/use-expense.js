@@ -51,6 +51,7 @@ const useExpense = (ledgerName) => {
 
   const closeExpenseDrawer = useCallback(() => {
     setIsDrawerOpen(false)
+    setSelectedExpense(emptyExpense)
   }, [])
 
   const closeDeleteDrawer = useCallback(() => {
