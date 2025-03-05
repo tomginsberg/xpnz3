@@ -25,12 +25,20 @@ export function useXpnzApi(ledger) {
   }
 
   const apiGetExpenses = async () => {
-    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { cache: "no-store" })
+    // Fetch without useExchangeRates to preserve original currency amounts
+    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { 
+      cache: "no-store",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
     const expenses = await response.json()
     const expensesPlus = expenses.map((expense) => {
       return {
         ...expense,
         income: expense.expense_type === "income",
+        // For chart display, convert if exchange rate is available
+        displayAmount: expense.exchange_rate ? expense.amount * expense.exchange_rate : expense.amount,
         paidBy: expense.contributions
           .map((c) => ({
             member: c.member,
