@@ -80,7 +80,8 @@ function LedgerLayout() {
     isDeleteDrawerOpen,
     closeDeleteDrawer,
     onDeleteClick,
-    handleDelete
+    handleDelete,
+    savingExpenseId
   } = useExpense(ledgerName)
 
   const emptyMode = expenses.length === 0
@@ -117,7 +118,8 @@ function LedgerLayout() {
     showChart,
     toggleChart,
     enableChart,
-    setEnableChart
+    setEnableChart,
+    savingExpenseId
   }
 
   if (isLoading) return <div></div>

@@ -17,6 +17,7 @@ const useExpense = (ledgerName) => {
   const [selectedExpense, setSelectedExpense] = useState(emptyExpense)
   const [isDeleteDrawerOpen, setIsDeleteDrawerOpen] = useState(false)
   const [expenseToDelete, setExpenseToDelete] = useState(null)
+  const [savingExpenseId, setSavingExpenseId] = useState(null)
 
   const {
     balance,
@@ -28,14 +29,32 @@ const useExpense = (ledgerName) => {
     pushMember,
     editMember,
     deleteMember,
-    pushExpense,
-    editExpense,
+    pushExpense: apiPushExpense,
+    editExpense: apiEditExpense,
     deleteExpense,
     loaded
   } = useXpnzApi(ledgerName)
   const memberNames = members.map((member) => member.name)
 
   const setExpenses = () => {} // stub
+
+  const pushExpense = useCallback(async (name, currency, category, date, expense_type, contributions) => {
+    setSavingExpenseId("new")
+    try {
+      await apiPushExpense(name, currency, category, date, expense_type, contributions)
+    } finally {
+      setSavingExpenseId(null)
+    }
+  }, [apiPushExpense])
+
+  const editExpense = useCallback(async (id, name, currency, category, date, expense_type, contributions) => {
+    setSavingExpenseId(id)
+    try {
+      await apiEditExpense(id, name, currency, category, date, expense_type, contributions)
+    } finally {
+      setSavingExpenseId(null)
+    }
+  }, [apiEditExpense])
 
   const openAddExpenseDrawer = useCallback(() => {
     setIsDrawerOpen(true)
@@ -106,7 +125,8 @@ const useExpense = (ledgerName) => {
     isDeleteDrawerOpen,
     closeDeleteDrawer,
     onDeleteClick,
-    handleDelete
+    handleDelete,
+    savingExpenseId
   }
 }
 

@@ -146,13 +146,34 @@ export default function ExpenseDrawer({
     })
 
     const dateString = date.toISOString().split("T")[0]
-    if (isEditMode) {
-      await editExpense(id, name, currency, category, dateString, income ? "income" : "expense", contributions)
-    } else {
-      await pushExpense(name, currency, category, dateString, income ? "income" : "expense", contributions)
-    }
+    
+    // Close drawer
     handleCloseDrawer()
-    confettiExplosion()
+
+    try {
+      // Let the API call happen in the background
+      if (isEditMode) {
+        await editExpense(id, name, currency, category, dateString, income ? "income" : "expense", contributions)
+        confettiExplosion()
+        toast({
+          title: "Updated!",
+          description: "Your expense has been updated successfully.",
+        })
+      } else {
+        await pushExpense(name, currency, category, dateString, income ? "income" : "expense", contributions)
+        confettiExplosion()
+        toast({
+          title: "Added!",
+          description: "Your expense has been added successfully.",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save expense. Please try again.",
+        variant: "destructive"
+      })
+    }
   }
 
   useEffect(() => {

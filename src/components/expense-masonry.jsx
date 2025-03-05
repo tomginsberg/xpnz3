@@ -18,7 +18,8 @@ export default function ExpenseMasonryGrouped() {
     showChart,
     toggleChart,
     enableChart,
-    setEnableChart
+    setEnableChart,
+    savingExpenseId
   } = useOutletContext()
 
   const filteredGroups = useMemo(() => {
@@ -66,6 +67,7 @@ export default function ExpenseMasonryGrouped() {
               openEditExpenseDrawer={openEditExpenseDrawer}
               copyExpense={copyExpense}
               onDeleteClick={onDeleteClick}
+              savingExpenseId={savingExpenseId}
             />
           ))}
         </main>
@@ -75,7 +77,7 @@ export default function ExpenseMasonryGrouped() {
   )
 }
 
-function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, onDeleteClick }) {
+function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, onDeleteClick, savingExpenseId }) {
   const { expandAll, currencySymbol } = useOutletContext()
 
   const [isOpen, setIsOpen] = useState(true)
@@ -172,6 +174,7 @@ function MonthGroup({ monthYear, expenses, openEditExpenseDrawer, copyExpense, o
                   onDeleteClick={onDeleteClick}
                   showDetails={isCardOpen(expense.id)}
                   onCardClick={() => toggleCardState(expense.id)}
+                  savingExpenseId={savingExpenseId}
                 />
               ))}
             </Masonry>

@@ -5,7 +5,7 @@ import AnimatedCard from "@/components/animated-card.jsx"
 import { Masonry } from "masonic"
 
 export default function ExpenseMasonry() {
-  const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense } = useOutletContext()
+  const { searchTerm, expenses, openEditExpenseDrawer, onDeleteClick, copyExpense, savingExpenseId } = useOutletContext()
 
   const [filteredExpenses, setFilteredExpenses] = useState([])
 
@@ -35,6 +35,7 @@ export default function ExpenseMasonry() {
       onEditClick={openEditExpenseDrawer}
       onCopyClick={copyExpense}
       onDeleteClick={onDeleteClick}
+      savingExpenseId={savingExpenseId}
     />
   )
 
