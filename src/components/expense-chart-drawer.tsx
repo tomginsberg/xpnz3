@@ -26,6 +26,7 @@ interface Transaction {
     paid: number
     owes: number
   }>
+  displayAmount: number
 }
 
 interface TransactionMonth {
@@ -80,9 +81,16 @@ export function ExpenseChartDrawer({
             expense.expense_type === "expense" && !(expense.category || "").toLowerCase().includes("transfer")
         )
 
-        const totalExpenses = filteredExpenses.reduce((acc, transaction) => acc + transaction.amount, 0)
+        // Use displayAmount which is already converted to the ledger's base currency
+        const totalExpenses = filteredExpenses.reduce((acc, transaction) => {
+          // Use displayAmount which includes exchange rate conversion if available
+          return acc + transaction.displayAmount
+        }, 0)
 
-        return { month: monthYear, expenses: totalExpenses }
+        return { 
+          month: monthYear, 
+          expenses: totalExpenses
+        }
       })
       .filter(
         // Filter out months with no expenses
