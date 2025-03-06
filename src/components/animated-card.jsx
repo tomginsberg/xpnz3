@@ -9,7 +9,7 @@ import { useOutletContext } from "react-router-dom"
 import { currencySymbols, formatDigit } from "@/api/utilities.js"
 
 const AnimatedCard = memo(
-  ({ expense, showDetails, onCardClick, onEditClick, onDeleteClick, onCopyClick, className }) => {
+  ({ expense, showDetails, onCardClick, onEditClick, onDeleteClick, onCopyClick, className, savingExpenseId }) => {
     // Define animation variants for the card
     const cardVariants = {
       initial: { scale: 1 },
@@ -73,6 +73,8 @@ const AnimatedCard = memo(
       split: "bg-red-200 dark:bg-red-900"
     }
 
+    const isSaving = savingExpenseId === expense.id || (expense.id === "" && savingExpenseId === "new")
+
     return (
       <ContextMenu>
         <ContextMenuTrigger>
@@ -85,10 +87,11 @@ const AnimatedCard = memo(
             viewport={{ once: false, amount: 0 }}
           >
             <motion.div
-              className={
-                "flex flex-col overflow-hidden rounded-lg text-card-foreground h-full" +
-                (showDetails ? " bg-linear-foreground" : " bg-card")
-              }
+              className={cn(
+                "flex flex-col overflow-hidden rounded-lg text-card-foreground h-full",
+                showDetails ? " bg-linear-foreground" : " bg-card",
+                isSaving && "opacity-50 blur-sm"
+              )}
               layout
               variants={cardVariants}
               animate={showDetails ? "expanded" : "initial"}
