@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { ChevronUp, Minus, Plus, AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/drawer"
 import { useOutletContext } from "react-router-dom"
 import { cn } from "@/lib/utils"
-import { Select, SelectTrigger, SelectContent, SelectLabel, SelectItem, SelectValue } from "@/components/ui/select.tsx"
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select.tsx"
 
 type Split = {
   [key: string]: number
@@ -346,6 +346,10 @@ export default function Itemizer() {
   const [splitBetween, setSplitBetween] = useState<string[]>(() => members) // default all
   const [errorMsg, setErrorMsg] = useState<string>("") // for error banner
 
+  function handleSubmit() {
+    console.log(`submitting expense from ${paidByMember}`)
+  }
+
   // Re-sync splitBetween if the members array changes.
   useEffect(() => {
     if (members.length > 0) {
@@ -459,13 +463,13 @@ export default function Itemizer() {
 
         <div className="space-y-2">
           <Label htmlFor="paidBy">Who Paid</Label>
-          <Select id="paidBy">
+          <Select>
             <SelectTrigger>
               <SelectValue placeholder="Select Who Paid" />
             </SelectTrigger>
             <SelectContent>
               {members.map((member) => (
-                <SelectItem key={member} value={member}>
+                <SelectItem key={member} value={member} onSelect={() => setPaidByMember(member)}>
                   {member}
                 </SelectItem>
               ))}
@@ -586,7 +590,7 @@ export default function Itemizer() {
       )}
       {/*save button*/}
       <div className="flex justify-center">
-        <Button>Save Expense 🎉</Button>
+        <Button onClick={handleSubmit}>Save Expense 🎉</Button>
       </div>
     </div>
   )
