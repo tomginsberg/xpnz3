@@ -58,6 +58,7 @@
     "fastify": "^5.0.0",
     "firebase": "^11.4.0",
     "firebase-admin": "^13.2.0",
+    "firebase-tools": "^13.34.0",
     "framer-motion": "^11.11.17",
     "fuse.js": "^7.0.0",
     "knex": "^3.1.0",
