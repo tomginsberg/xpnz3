@@ -6,9 +6,12 @@ import {
   connectFirestoreEmulator,
   collection,
   addDoc,
+  getDocs,
   setDoc,
   doc,
-  Timestamp
+  Timestamp,
+  query,
+  where,
 } from "firebase/firestore";
 
 import { pick } from "lodash-es"
@@ -44,17 +47,24 @@ const db = Knex (
 )
 
 async function migrateData () {
-  // Get all existing ledgers
   const ledgers = await db ("ledgers").select ()
 
   for (const ledger of ledgers) {
+    const ledgerCollection = collection (gdb, "ledgers")
+   
+    const q = query (ledgerCollection, where ("name", "==", ledger.name))
+    const ledgerExists = (await getDocs (q)).size > 0
+
+    if (ledgerExists) {
+      console.log (`Ledger ${ledger.name} already exists in the database. Skipping.`)
+      continue
+    }
+
     const ledgerData = { 
       name: ledger.name,
       currency: ledger.currency,
       permissions: "public"
     }
-
-    const ledgerCollection = collection (gdb, "ledgers")
     const ledgerDocument = await addDoc (ledgerCollection, ledgerData)
     
     const memberCollection = collection (ledgerDocument, "members")
