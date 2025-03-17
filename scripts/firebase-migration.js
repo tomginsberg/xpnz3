@@ -15,8 +15,13 @@ import { pick } from "lodash-es"
 
 import { generateId } from "../src/api/utilities.js"
 
+if (process.env.FIREBASE_API_KEY === undefined) {
+  console.error ("Please set the FIREBASE_API_KEY environment variable.")
+  process.exit (1)
+}
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDt-Nlb1fSowAv4bYoT6dj7ausz0fRXWHs",
+  apiKey: process.env.FIREBASE_API_KEY,
   authDomain: "xpnz-b7857.firebaseapp.com",
   projectId: "xpnz-b7857",
   storageBucket: "xpnz-b7857.firebasestorage.app",
