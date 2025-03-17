@@ -88,7 +88,6 @@ async function migrateData () {
         createdAt: Timestamp.fromDate (createdAtDate),
         date: transaction.date,
         exchangeRate: transaction.exchange_rate,
-        isDeleted: transaction.is_deleted,
       }
 
       const transactionDocument = await setDoc (doc (transactionCollection, transactionId), transactionData)
