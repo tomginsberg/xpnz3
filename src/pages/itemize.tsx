@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { useNavigate } from "react-router-dom"
+import { useToast } from "@/hooks/use-toast"
+
 import {
   Drawer,
   DrawerContent,
@@ -335,9 +338,11 @@ export default function Itemizer() {
   const [totalsVisible, setTotalsVisible] = useState<boolean>(true)
 
   // Get members from context
-  const { members: membersData } = useOutletContext<{ members: Member[] }>()
+  const { members: membersData, pushExpense } = useOutletContext()
   const [members] = useState<string[]>(membersData.map((m) => m.name))
   const [paidByMember, setPaidByMember] = useState<string>("")
+  const [name, setName] = useState<string>("")
+  const [category] = useState<string>("")
 
   // Summaries
   const [memberTotals, setMemberTotals] = useState<Split>({})
@@ -345,10 +350,93 @@ export default function Itemizer() {
   const [remaining, setRemaining] = useState<number>(0)
   const [splitBetween, setSplitBetween] = useState<string[]>(() => members) // default all
   const [errorMsg, setErrorMsg] = useState<string>("") // for error banner
+  const { toast } = useToast()
+  const navigate = useNavigate()
 
-  function handleSubmit() {
-    console.log(`submitting expense from ${paidByMember}`)
-  }
+  // async function handleSubmit() {
+  //   // Basic error checks
+  //   if (paidByMember == "") {
+  //     toast({
+  //       title: "Uh oh!",
+  //       description: "Please select the person who paid for this expense."
+  //     })
+  //     return
+  //   }
+  //   if (splitBetween.length === 0) {
+  //     toast({
+  //       title: "Uh oh!",
+  //       description: "Please select at least one person to split this expense between."
+  //     })
+  //     return
+  //   }
+  //
+  //   // Find the Member object for the payer
+  //   const payingMemberObj = membersData.find((m) => m.name === paidByMember)
+  //   if (!payingMemberObj) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Could not find the member who paid. Please try again.",
+  //       variant: "destructive"
+  //     })
+  //     return
+  //   }
+  //
+  //   /**
+  //    * contributions = an array of { id, paid, weight }
+  //    * - For the single payer: paid = total expense amount, weight = 0.
+  //    * - For each person splitting: paid=0, weight = s.weight (or however your split data is stored).
+  //    */
+  //   const contributions = []
+  //
+  //   // The single payer contributes the entire amount (assuming "amount" is your total expense):
+  //   contributions.push({
+  //     id: payingMemberObj.id,
+  //     paid: amount, // or parseFloat(amount) if "amount" is a string
+  //     weight: 0
+  //   })
+  //
+  //   // Now, for each member in splitBetween, create a record with weight
+  //   // (assuming splitBetween is an array of { member: string, weight: number }):
+  //   splitBetween.forEach((entry) => {
+  //     const splitMemberObj = membersData.find((m) => m.name === entry.member)
+  //     if (!splitMemberObj) return // skip if not found
+  //
+  //     contributions.push({
+  //       id: splitMemberObj.id,
+  //       paid: 0,
+  //       weight: entry.weight
+  //     })
+  //   })
+  //
+  //   // Format your date as needed
+  //   const dateString = date.toISOString().split("T")[0]
+  //
+  //   // Prepare to call your pushExpense function:
+  //   try {
+  //     // Replace these arguments with your actual ones as needed
+  //     await pushExpense(
+  //       name || "Group Bill",
+  //       currency,
+  //       category,
+  //       dateString,
+  //       income ? "income" : "expense",
+  //       contributions
+  //     )
+  //     toast({
+  //       title: "Added!",
+  //       description: "Your expense has been added successfully."
+  //     })
+  //
+  //     // Use React Router to navigate "up" one path segment
+  //     navigate("..") // from e.g. /epc/itemize -> /epc
+  //   } catch (error) {
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to save expense. Please try again.",
+  //       variant: "destructive"
+  //     })
+  //   }
+  // }
 
   // Re-sync splitBetween if the members array changes.
   useEffect(() => {
@@ -448,7 +536,18 @@ export default function Itemizer() {
       {/* Top area: total + tax */}
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="total">Total Receipt Amount</Label>
+          <Label htmlFor="total">Bill Name</Label>
+          <Input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Group Bill"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="total">Bill Total</Label>
           <Input
             id="total"
             type="number"
@@ -463,7 +562,7 @@ export default function Itemizer() {
 
         <div className="space-y-2">
           <Label htmlFor="paidBy">Who Paid</Label>
-          <Select>
+          <Select onValueChange={(value) => setPaidByMember(value)}>
             <SelectTrigger>
               <SelectValue placeholder="Select Who Paid" />
             </SelectTrigger>
@@ -589,9 +688,9 @@ export default function Itemizer() {
         </div>
       )}
       {/*save button*/}
-      <div className="flex justify-center">
-        <Button onClick={handleSubmit}>Save Expense 🎉</Button>
-      </div>
+      {/*<div className="flex justify-center">*/}
+      {/*  <Button onClick={handleSubmit}>Save Expense 🎉</Button>*/}
+      {/*</div>*/}
     </div>
   )
 }
