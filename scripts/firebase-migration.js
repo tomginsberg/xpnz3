@@ -103,7 +103,9 @@ async function migrateData() {
         contributions: contributions.reduce((acc, c) => {
           acc[c.member_id] = { amount: c.amount, weight: c.weight }
           return acc
-        }, {})
+        }, {}),
+        isTemplate: false,
+        isDeleted: false
       }
       await setDoc(doc(transactionCollection, transactionId), transactionData)
     }
