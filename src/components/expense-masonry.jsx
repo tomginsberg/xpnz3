@@ -17,7 +17,6 @@ export default function ExpenseMasonryGrouped() {
     copyExpense,
     showChart,
     toggleChart,
-    enableChart,
     setEnableChart,
     savingExpenseId
   } = useOutletContext()
