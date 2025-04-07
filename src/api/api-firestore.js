@@ -13,7 +13,8 @@ import {
   integerCentsToDollars,
   integerMultiplyByFloat,
   integerSplitByWeights,
-  supportedCurrencies
+  supportedCurrencies,
+  dollarsToIntegerCents
 } from "./utilities.js"
 import { connectFirestoreEmulator } from "firebase/firestore" // Assuming utilities.js exists and is updated
 
@@ -23,12 +24,12 @@ import { connectFirestoreEmulator } from "firebase/firestore" // Assuming utilit
 // Ensure GOOGLE_APPLICATION_CREDENTIALS environment variable is set.
 try {
   admin.initializeApp({
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: "xpnz-b7857.firebaseapp.com",
-    projectId: "xpnz-b7857",
-    storageBucket: "xpnz-b7857.firebasestorage.app",
-    messagingSenderId: "559439908567",
-    appId: "1:559439908567:web:1f4297d0b2511c9df1aa92"
+    // apiKey: process.env.FIREBASE_API_KEY,
+    // authDomain: "xpnz-b7857.firebaseapp.com",
+    projectId: "xpnz-b7857"
+    // storageBucket: "xpnz-b7857.firebasestorage.app",
+    // messagingSenderId: "559439908567",
+    // appId: "1:559439908567:web:1f4297d0b2511c9df1aa92"
   })
   console.log("Firebase Admin SDK initialized successfully.")
 } catch (error) {
