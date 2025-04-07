@@ -39,8 +39,6 @@ try {
 const firestore = admin.firestore() // Firestore database instance
 // --- End Firebase Admin Initialization ---
 
-connectFirestoreEmulator(firestore, "127.0.0.1", 8080)
-
 const app = Fastify({ logger: true })
 
 app.register(cors, { origin: "*" })
