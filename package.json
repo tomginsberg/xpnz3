@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "hound": "tmux new-session -d -s dev 'vite' \\; split-window -h 'npm run api' \\; attach",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "api": "node ./src/api/app.js",
+    "firepi": "node ./src/api/api-firestore.js",
     "migrate": "node ./scripts/migrate.js"
   },
   "prettier": {
