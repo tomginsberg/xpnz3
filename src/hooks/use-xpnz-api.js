@@ -26,10 +26,10 @@ export function useXpnzApi(ledger) {
 
   const apiGetExpenses = async () => {
     // Fetch without useExchangeRates to preserve original currency amounts
-    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, { 
+    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, {
       cache: "no-store",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json"
       }
     })
     const expenses = await response.json()
@@ -41,12 +41,12 @@ export function useXpnzApi(ledger) {
         displayAmount: expense.exchange_rate ? expense.amount * expense.exchange_rate : expense.amount,
         paidBy: expense.contributions
           .map((c) => ({
-            member: c.member,
+            member: c.name || c.member,
             amount: c.paid
           }))
           .filter((c) => c.amount > 0),
         splitBetween: expense.contributions
-          .map((c) => ({ member: c.member, weight: c.weight, amount: c.owes }))
+          .map((c) => ({ member: c.name || c.member, weight: c.weight, amount: c.owes }))
           .filter((c) => c.weight > 0)
       }
     })
