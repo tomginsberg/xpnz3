@@ -41,6 +41,21 @@ export function Combobox({ values }) {
     return () => document.removeEventListener("keydown", down)
   }, [])
 
+  const [pendingRoute, setPendingRoute] = useState()
+
+  function handleSelect(ledgerName) {
+    setPendingRoute(`/${ledgerName}`)
+    setOpen(false)
+  }
+
+  // Whenever open -> false, do the navigate
+  useEffect(() => {
+    if (!open && pendingRoute) {
+      setPendingRoute(null)
+      navigate(pendingRoute)
+    }
+  }, [navigate, open, pendingRoute])
+
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
@@ -69,7 +84,7 @@ export function Combobox({ values }) {
                   key={key}
                   value={value}
                   onSelect={() => {
-                    navigate(`/${link}`)
+                    handleSelect(link)
                   }}
                   className="px-4 text-pretty text-primary rounded-lg my-2 text-lg font-semibold justify-between transition-all ease-in-out duration-200"
                 >
@@ -149,6 +164,14 @@ export default function Home() {
     }
   }
 
+  function handleClose() {
+    setIsCreateDrawerOpen(false)
+    setName("")
+    setNewLedgerMembers([])
+    setStep(1)
+    setSelectedCurrency(defaultCurrency)
+  }
+
   // Usage in handleSubmit function
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -162,6 +185,7 @@ export default function Home() {
           selectedCurrency,
           newLedgerMembers.map((member) => ({ name: member, is_active: true }))
         )
+        handleClose()
 
         // Change location to the new ledger
         navigate(`/${formattedName}`)
@@ -183,14 +207,6 @@ export default function Home() {
 
   const baseURl = "xpnz.ca/"
   const previewUrl = `${baseURl}${formatLedgerName(name)}`
-
-  function handleClose() {
-    setIsCreateDrawerOpen(false)
-    setName("")
-    setNewLedgerMembers([])
-    setStep(1)
-    setSelectedCurrency(defaultCurrency)
-  }
 
   const [selectedCurrency, setSelectedCurrency] = useState(defaultCurrency)
 
