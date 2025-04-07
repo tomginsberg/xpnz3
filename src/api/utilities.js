@@ -104,6 +104,7 @@ export function formatDigit(x) {
 
 export const defaultCategories = [
   "🚰 Utilities",
+  "🍱 Food",
   "🛒 Groceries",
   "🏠 Rent",
   "🚗 Auto",
@@ -111,6 +112,7 @@ export const defaultCategories = [
   "🛍️ Shopping",
   "🏥 Health",
   "🍽️ Dining",
+  "⚡ Hydro",
   "🚌 Transit",
   "🎉 Entertainment",
   "🏋️ Fitness",
@@ -125,7 +127,7 @@ export const defaultCategories = [
   "🧴 Personal Care",
   "💡 Electricity",
   "🌊 Water",
-  "🚿 Gas",
+  "⛽ Gas",
   "🌐 Cable",
   "📉 Investments",
   "🛡️ Insurance",
@@ -509,6 +511,15 @@ export const currencySymbols = {
   ZMW: "ZK",
   ZWD: "Z$",
   ZWL: "$"
+}
+
+export function dollarsToIntegerCents(dollars) {
+  if (typeof dollars !== "number" || isNaN(dollars)) {
+    // console.warn("Invalid input to dollarsToIntegerCents:", dollars);
+    return 0
+  }
+  // Use Math.round to handle potential floating point inaccuracies
+  return Math.floor(dollars * 100)
 }
 
 export const supportedCurrencies = Object.keys(currencySymbols)
