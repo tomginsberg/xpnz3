@@ -37,6 +37,12 @@ type Member = {
   id: string
 }
 
+type Contribution = {
+  id: string
+  paid: number
+  weight: number
+}
+
 /**
  * Returns an object with each member's split replaced by at least 1
  * if it was invalid or <= 0.
@@ -336,13 +342,13 @@ export default function Itemizer() {
 
   // For toggling the "Member Totals" UI
   const [totalsVisible, setTotalsVisible] = useState<boolean>(true)
+  const [disableSubmit, setDisableSubmit] = useState(false)
 
   // Get members from context
-  const { members: membersData, pushExpense } = useOutletContext()
-  const [members] = useState<string[]>(membersData.map((m) => m.name))
+  const { members: membersData, pushExpense, currency } = useOutletContext<any>()
+  const [members] = useState<string[]>(membersData.map((m: Member) => m.name))
   const [paidByMember, setPaidByMember] = useState<string>("")
   const [name, setName] = useState<string>("")
-  const [category] = useState<string>("")
 
   // Summaries
   const [memberTotals, setMemberTotals] = useState<Split>({})
@@ -353,90 +359,83 @@ export default function Itemizer() {
   const { toast } = useToast()
   const navigate = useNavigate()
 
-  // async function handleSubmit() {
-  //   // Basic error checks
-  //   if (paidByMember == "") {
-  //     toast({
-  //       title: "Uh oh!",
-  //       description: "Please select the person who paid for this expense."
-  //     })
-  //     return
-  //   }
-  //   if (splitBetween.length === 0) {
-  //     toast({
-  //       title: "Uh oh!",
-  //       description: "Please select at least one person to split this expense between."
-  //     })
-  //     return
-  //   }
-  //
-  //   // Find the Member object for the payer
-  //   const payingMemberObj = membersData.find((m) => m.name === paidByMember)
-  //   if (!payingMemberObj) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Could not find the member who paid. Please try again.",
-  //       variant: "destructive"
-  //     })
-  //     return
-  //   }
-  //
-  //   /**
-  //    * contributions = an array of { id, paid, weight }
-  //    * - For the single payer: paid = total expense amount, weight = 0.
-  //    * - For each person splitting: paid=0, weight = s.weight (or however your split data is stored).
-  //    */
-  //   const contributions = []
-  //
-  //   // The single payer contributes the entire amount (assuming "amount" is your total expense):
-  //   contributions.push({
-  //     id: payingMemberObj.id,
-  //     paid: amount, // or parseFloat(amount) if "amount" is a string
-  //     weight: 0
-  //   })
-  //
-  //   // Now, for each member in splitBetween, create a record with weight
-  //   // (assuming splitBetween is an array of { member: string, weight: number }):
-  //   splitBetween.forEach((entry) => {
-  //     const splitMemberObj = membersData.find((m) => m.name === entry.member)
-  //     if (!splitMemberObj) return // skip if not found
-  //
-  //     contributions.push({
-  //       id: splitMemberObj.id,
-  //       paid: 0,
-  //       weight: entry.weight
-  //     })
-  //   })
-  //
-  //   // Format your date as needed
-  //   const dateString = date.toISOString().split("T")[0]
-  //
-  //   // Prepare to call your pushExpense function:
-  //   try {
-  //     // Replace these arguments with your actual ones as needed
-  //     await pushExpense(
-  //       name || "Group Bill",
-  //       currency,
-  //       category,
-  //       dateString,
-  //       income ? "income" : "expense",
-  //       contributions
-  //     )
-  //     toast({
-  //       title: "Added!",
-  //       description: "Your expense has been added successfully."
-  //     })
-  //
-  //     // Use React Router to navigate "up" one path segment
-  //     navigate("..") // from e.g. /epc/itemize -> /epc
-  //   } catch (error) {
-  //     toast({
-  //       title: "Error",
-  //       description: "Failed to save expense. Please try again.",
-  //       variant: "destructive"
-  //     })
-  //   }
-  // }
+  async function handleSubmit() {
+    setDisableSubmit(true) // Disable button to prevent double submission
+    // Basic error checks
+    if (paidByMember == "") {
+      toast({
+        title: "Uh oh!",
+        description: "Please select the person who paid for this expense."
+      })
+      setDisableSubmit(false)
+      return
+    }
+    if (splitBetween.length === 0) {
+      toast({
+        title: "Uh oh!",
+        description: "Please select at least one person to split this expense between."
+      })
+      setDisableSubmit(false)
+      return
+    }
+
+    // Find the Member object for the payer
+    const payingMemberObj = membersData.find((m: Member) => m.name === paidByMember)
+    if (!payingMemberObj) {
+      toast({
+        title: "Error",
+        description: "Could not find the member who paid. Please try again.",
+        variant: "destructive"
+      })
+      setDisableSubmit(false)
+      return
+    }
+
+    /**
+     * contributions = an array of { id, paid, weight }
+     * - For the single payer: paid = total expense amount, weight = 0.
+     * - For each person splitting: paid=0, weight = s.weight (or however your split data is stored).
+     */
+    const contributions: Contribution[] = []
+
+    // Contributions should be a list of objects with id, paid, and weight
+    // id is the member's ID
+    // paid is the amount they paid (0 for people who only split, here only one member pays)
+    // weight is the amount they partook in the expense (in general doesn't need to be normalized to sum to the total value)
+    splitBetween.map((member) => {
+      const memberObj = membersData.find((m: Member) => m.name === member)
+      if (!memberObj) return // skip if not found
+      const paid = member === payingMemberObj.name ? parseFloat(total) : 0
+      contributions.push({
+        id: memberObj.id,
+        paid,
+        weight: memberTotals[member]
+      })
+    })
+
+    // Format your date as needed
+    const dateString = new Date().toISOString().split("T")[0]
+
+    // Prepare to call your pushExpense function:
+    try {
+      // Replace these arguments with your actual ones as needed
+      await pushExpense(name || "Group Bill", currency, "🧾 Bill", dateString, "expense", contributions)
+      toast({
+        title: "Added!",
+        description: "Your expense has been added successfully."
+      })
+
+      // Use React Router to navigate "up" one path segment
+      navigate("..") // from e.g. /epc/itemize -> /epc
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save expense. Please try again.",
+        variant: "destructive"
+      })
+      setDisableSubmit(false)
+    }
+  }
 
   // Re-sync splitBetween if the members array changes.
   useEffect(() => {
@@ -687,10 +686,11 @@ export default function Itemizer() {
           </div>
         </div>
       )}
-      {/*save button*/}
-      {/*<div className="flex justify-center">*/}
-      {/*  <Button onClick={handleSubmit}>Save Expense 🎉</Button>*/}
-      {/*</div>*/}
+      <div className="flex justify-center">
+        <Button onClick={handleSubmit} disabled={disableSubmit}>
+          Save Expense 🎉
+        </Button>
+      </div>
     </div>
   )
 }
