@@ -1,15 +1,18 @@
 // start setting up firebase
 // npx firebase login
-// get your FIREBASE_API_KEY and set it as an environment variable
+// get your FIREBASE_API_KEY and have it
 
 // start the emulator
 // npx firebase emulators:start
 
 // run the migration
-// node scripts/firebase-migration.js
+// export FIREBASE_API_KEY=...
+// FIREBASE_API_KEY=... node scripts/firebase-migration.js
 
 // set the FIRESTORE_EMULATOR_HOST environment variable (default localhost:8080)
 // run this test
+
+// api? run FIRESTORE_EMULATOR_HOST=localhost:8080 PORT=8001 npm run firepi
 
 // Import the firebase-admin package
 import admin from "firebase-admin"
@@ -39,7 +42,6 @@ async function testFirestoreConnection() {
     console.log(
       `Attempting to connect to Firestore Emulator at: ${process.env.FIRESTORE_EMULATOR_HOST || "Not Set (SDK will try default)"}`
     )
-    const collections = await db.listCollections()
     console.log("Connected to Firestore Emulator.")
 
     console.log(`\nSearching for ledger with name: "${ledgerNameToFind}"...`)
