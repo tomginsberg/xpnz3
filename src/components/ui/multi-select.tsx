@@ -7,13 +7,15 @@ import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
-  CommandSeparator
+  CommandSeparator,
+  CommandInput
 } from "@/components/ui/command"
 
 const multiSelectVariants = cva("m-1 transition ease-in-out delay-150", {
@@ -173,66 +175,58 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
             )}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start" onEscapeKeyDown={() => setIsPopoverOpen(false)}>
-          <Command>
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup>
-                <CommandItem key="all" onSelect={toggleAll} className="cursor-pointer">
-                  <div
-                    className={cn(
-                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                      value.length === options.length
-                        ? "bg-primary text-primary-foreground"
-                        : "opacity-50 [&_svg]:invisible"
-                    )}
-                  >
-                    <CheckIcon className="h-4 w-4" />
-                  </div>
-                  <span>(Select All)</span>
-                </CommandItem>
-                {options.map((option) => {
-                  const isSelected = value.includes(option.value)
-                  return (
-                    <CommandItem
-                      key={option.value}
-                      onSelect={() => toggleOption(option.value)}
-                      className="cursor-pointer"
-                    >
+        <PopoverContent className="w-[200px] p-0" align="start" onEscapeKeyDown={() => setIsPopoverOpen(false)}>
+          <Command className="p-4 bg-background">
+            <div className="border rounded-lg">
+              <div className="relative flex items-center">
+                <CommandInput placeholder="Search members..." className="pr-20" />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                  {value.length > 0 ? `${value.length} selected` : ''}
+                </div>
+              </div>
+
+              <ScrollArea className="h-[200px]">
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem key="all" onSelect={toggleAll} className="cursor-pointer">
                       <div
                         className={cn(
                           "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                          isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
+                          value.length === options.length
+                            ? "bg-primary text-primary-foreground"
+                            : "opacity-50 [&_svg]:invisible"
                         )}
                       >
                         <CheckIcon className="h-4 w-4" />
                       </div>
-                      {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
-                      <span>{option.label}</span>
+                      <span>(Select All)</span>
                     </CommandItem>
-                  )
-                })}
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup>
-                <div className="flex items-center justify-between">
-                  {value.length > 0 && (
-                    <>
-                      <CommandItem onSelect={handleClear} className="flex-1 justify-center cursor-pointer">
-                        Clear
-                      </CommandItem>
-                      <Separator orientation="vertical" className="flex min-h-6 h-full" />
-                    </>
-                  )}
-                  <CommandItem
-                    onSelect={() => setIsPopoverOpen(false)}
-                    className="flex-1 justify-center cursor-pointer max-w-full"
-                  >
-                    Close
-                  </CommandItem>
-                </div>
-              </CommandGroup>
-            </CommandList>
+                    {options.map((option) => {
+                      const isSelected = value.includes(option.value)
+                      return (
+                        <CommandItem
+                          key={option.value}
+                          onSelect={() => toggleOption(option.value)}
+                          className="cursor-pointer"
+                        >
+                          <div
+                            className={cn(
+                              "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
+                              isSelected ? "bg-primary text-primary-foreground" : "opacity-50 [&_svg]:invisible"
+                            )}
+                          >
+                            <CheckIcon className="h-4 w-4" />
+                          </div>
+                          {option.icon && <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
+                          <span>{option.label}</span>
+                        </CommandItem>
+                      )
+                    })}
+                  </CommandGroup>
+                </CommandList>
+              </ScrollArea>
+            </div>
           </Command>
         </PopoverContent>
         {animation > 0 && value.length > 0 && (
