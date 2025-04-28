@@ -157,7 +157,7 @@ const DebtsTab = () => {
     let text = debts.map((debt) => `${debt[0]} → ${debt[1]}: ${currencySymbol}${debt[2]}`).join("\n")
     console.log(text)
 
-    text = `📈 Debts\n\n${text}\n\nsee expenses .. https://xpnz.ca/${ledgerName}`
+    text = `📈 Debts\n\n${text}\n\nsee expenses on https://xpnz.ca/${ledgerName}`
 
     if (navigator.share) {
       await navigator.share({ text })
