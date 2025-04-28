@@ -17,23 +17,36 @@ import {
   dollarsToIntegerCents
 } from "./utilities.js"
 import { connectFirestoreEmulator } from "firebase/firestore" // Assuming utilities.js exists and is updated
+import { fileURLToPath } from "url"
+import { dirname, join } from "path"
+import fs from "fs"
+
+// Setup path resolution for ES modules
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const serviceAccountPath = join(__dirname, "../../serviceAccountKey.json")
 
 // --- Firebase Admin Initialization ---
-// Load service account credentials from environment variables
-// or specify the path directly.
-// Ensure GOOGLE_APPLICATION_CREDENTIALS environment variable is set.
 try {
+  // Check if running in emulator mode
+  const useEmulator = true
+  
+  if (useEmulator) {
+    console.log("Using Firebase Emulator")
+    process.env.FIRESTORE_EMULATOR_HOST = "127.0.0.1:8080"
+  }
+  
+  // Load service account file
+  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"))
+  
   admin.initializeApp({
-    // apiKey: process.env.FIREBASE_API_KEY,
-    // authDomain: "xpnz-b7857.firebaseapp.com",
-    projectId: "xpnz-b7857"
-    // storageBucket: "xpnz-b7857.firebasestorage.app",
-    // messagingSenderId: "559439908567",
-    // appId: "1:559439908567:web:1f4297d0b2511c9df1aa92"
+    credential: admin.credential.cert(serviceAccount)
   })
+  
   console.log("Firebase Admin SDK initialized successfully.")
 } catch (error) {
   console.error("Firebase Admin SDK initialization failed:", error)
+  console.error(error.stack)
   process.exit(1)
 }
 
