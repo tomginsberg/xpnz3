@@ -1,13 +1,12 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { CheckIcon, XCircle, ChevronDown, XIcon, WandSparkles } from "lucide-react"
+import { CheckIcon, XCircle, ChevronDown, XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Command,
   CommandEmpty,
@@ -44,10 +43,7 @@ interface MultiSelectProps
   value: string[] // Now we rely on the parent to control this
   onValueChange: (value: string[]) => void
   placeholder?: string
-  animation?: number
   maxCount?: number
-  modalDrawer?: boolean
-  asChild?: boolean
   className?: string
 }
 
@@ -59,17 +55,13 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       onValueChange,
       variant,
       placeholder = "Select options",
-      animation = 0,
       maxCount = 3,
-      modalDrawer = false,
-      asChild = false,
       className,
       ...props
     },
     ref
   ) => {
     const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
-    const [isAnimating, setIsAnimating] = React.useState(false)
 
     const toggleOption = (option: string) => {
       const newSelectedValues = value.includes(option) ? value.filter((v) => v !== option) : [...value, option]
@@ -120,11 +112,9 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                       <Badge
                         key={val}
                         className={cn(
-                          isAnimating ? "animate-bounce" : "",
                           multiSelectVariants({ variant }),
                           "bg-background"
                         )}
-                        style={{ animationDuration: `${animation}s` }}
                       >
                         {IconComponent && <IconComponent className="h-4 w-4 mr-2" />}
                         {option?.label}
@@ -140,8 +130,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                   })}
                   {value.length > maxCount && (
                     <Badge
-                      className={cn(isAnimating ? "animate-bounce" : "", multiSelectVariants({ variant }))}
-                      style={{ animationDuration: `${animation}s` }}
+                      className={cn(multiSelectVariants({ variant }))}
                     >
                       {`+ ${value.length - maxCount} more`}
                       <XCircle
