@@ -106,6 +106,7 @@ export const defaultCategories = [
   "🛒 Groceries",
   "🌮 Food",
   "⛽ Gas",
+  "💸 Transfer",
   "🏠 Rent",
   "🚰 Utilities",
   "🚌 Transit",
