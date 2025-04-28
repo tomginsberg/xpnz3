@@ -23,11 +23,10 @@ function CategoryPickerSelector({
   className
 }) {
   return (
-    <Command className={cn("bg-background p-4", className)}>
-      <div className="border rounded-lg">
+    <Command className={cn("bg-background", className)}>
         <div className="relative">
           <CommandInput
-            autoFocus
+            autoFocus={false}
             placeholder="Search category..."
             value={inputValue}
             onChangeCapture={onChangeCapture}
@@ -56,7 +55,6 @@ function CategoryPickerSelector({
             ))}
           </CommandGroup>
         </CommandList>
-      </div>
     </Command>
   )
 }
@@ -195,7 +193,7 @@ export function CategoryPicker({
       <Drawer open={isSelectDrawerOpen} onClose={() => setIsSelectDrawerOpen(false)}>
         <DrawerContent aria-describedby="category picker">
           <DrawerHeader>
-            <DrawerTitle className="text-primary text-center">Select Category</DrawerTitle>
+            <DrawerTitle className="hidden text-primary text-center">Select Category</DrawerTitle>
           </DrawerHeader>
           <CategoryPickerSelector
             categories={categories}
@@ -204,7 +202,7 @@ export function CategoryPicker({
             onChangeCapture={handleInputChange}
             onPlusButtonClick={handlePlusButtonClick}
             onCategorySelect={handleCategorySelect}
-            className="px-4"
+            className="px-2"
           />
         </DrawerContent>
       </Drawer>

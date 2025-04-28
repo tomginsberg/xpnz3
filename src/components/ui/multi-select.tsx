@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Command,
@@ -46,7 +46,7 @@ interface MultiSelectProps
   placeholder?: string
   animation?: number
   maxCount?: number
-  modalPopover?: boolean
+  modalDrawer?: boolean
   asChild?: boolean
   className?: string
 }
@@ -61,14 +61,14 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       placeholder = "Select options",
       animation = 0,
       maxCount = 3,
-      modalPopover = false,
+      modalDrawer = false,
       asChild = false,
       className,
       ...props
     },
     ref
   ) => {
-    const [isPopoverOpen, setIsPopoverOpen] = React.useState(false)
+    const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
     const [isAnimating, setIsAnimating] = React.useState(false)
 
     const toggleOption = (option: string) => {
@@ -80,8 +80,8 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       onValueChange([])
     }
 
-    const handleTogglePopover = () => {
-      setIsPopoverOpen((prev) => !prev)
+    const handleToggleDrawer = () => {
+      setIsDrawerOpen((prev) => !prev)
     }
 
     const clearExtraOptions = () => {
@@ -99,12 +99,12 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
     }
 
     return (
-      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen} modal={modalPopover}>
-        <PopoverTrigger asChild>
+      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}  onClose={() => setIsDrawerOpen(false)}>
+        <DrawerTrigger asChild>
           <Button
             ref={ref}
             {...props}
-            onClick={handleTogglePopover}
+            onClick={handleToggleDrawer}
             className={cn(
               "flex w-full p-1 rounded-md border min-h-10 h-auto items-center justify-between bg-inherit hover:bg-inherit [&_svg]:pointer-events-auto",
               className
@@ -173,18 +173,15 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
               </div>
             )}
           </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0" align="start" onEscapeKeyDown={() => setIsPopoverOpen(false)}>
-          <Command className="p-4 bg-background">
-            <div className="border rounded-lg">
-              <div className="relative flex items-center">
-                <CommandInput placeholder="Search members..." className="pr-20" />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                  {value.length > 0 ? `${value.length} selected` : ''}
-                </div>
-              </div>
-
-              <ScrollArea className="h-[200px]">
+        </DrawerTrigger>
+        <DrawerContent aria-describedby="category picker creator">
+                  <DrawerHeader>
+                    <DrawerTitle className="text-primary hidden">Select Members</DrawerTitle>
+                  </DrawerHeader>
+          <Command className="bg-background px-2">
+            
+                <CommandInput placeholder="Search members..." className="w-full" autoFocus={false}/>
+        
                 <CommandList>
                   <CommandEmpty>No results found.</CommandEmpty>
                   <CommandGroup>
@@ -224,20 +221,9 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
                     })}
                   </CommandGroup>
                 </CommandList>
-              </ScrollArea>
-            </div>
           </Command>
-        </PopoverContent>
-        {animation > 0 && value.length > 0 && (
-          <WandSparkles
-            className={cn(
-              "cursor-pointer my-2 text-foreground bg-background w-3 h-3",
-              isAnimating ? "" : "text-muted-foreground"
-            )}
-            onClick={() => setIsAnimating(!isAnimating)}
-          />
-        )}
-      </Popover>
+        </DrawerContent>
+      </Drawer>
     )
   }
 )
