@@ -1,0 +1,24 @@
+{
+  "name": "functions",
+  "description": "Cloud Functions for XPNZ",
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --platform=node --target=node16 --outfile=lib/index.js",
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "lib/index.js",
+  "type": "module",
+  "dependencies": {
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "esbuild": "^0.18.11",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
