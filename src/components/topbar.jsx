@@ -59,9 +59,11 @@ function NavigationButton({ route, icon, label }) {
   const navigate = useNavigate()
 
   return (
-    <Button onClick={() => navigate(route)} variant="outline" className="justify-start transition-none">
-      <span className="mr-2">{icon}</span> {label}
-    </Button>
+    <SheetClose asChild>
+      <Button onClick={() => navigate(route)} variant="outline" className="justify-start transition-none">
+        <span className="mr-2">{icon}</span> {label}
+      </Button>
+    </SheetClose>
   )
 }
 
