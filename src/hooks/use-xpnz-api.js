@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 
 import { api } from "@/../xpnz.config.js"
+import * as firebaseServices from "../api/firebase/services.js"
 
 export function useXpnzApi(ledger) {
   const [loaded, setLoaded] = useState(false)
@@ -13,60 +14,94 @@ export function useXpnzApi(ledger) {
   
   // Memoize API fetching functions to prevent recreating them on each render
   const apiGetCategories = useCallback(async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}/categories`, { cache: "no-store" })
-    setCategories(await response.json())
+    try {
+      const categoriesData = await firebaseServices.getCategories(ledger)
+      setCategories(categoriesData)
+    } catch (error) {
+      console.error("Failed to fetch categories:", error)
+      setCategories([]) // Set empty array on error
+    }
   }, [ledger])
 
   const apiGetBalance = useCallback(async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" })
-    setBalance(await response.json())
+    // Balance calculation is complex, still using API for now
+    // TODO: This will be migrated to Firebase client in future
+    try {
+      const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" })
+      setBalance(await response.json())
+    } catch (error) {
+      console.error("Failed to fetch balance:", error)
+      setBalance([])
+    }
   }, [ledger])
 
   const apiGetExpenses = useCallback(async () => {
-    // Fetch without useExchangeRates to preserve original currency amounts
-    const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, {
-      cache: "no-store",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    const expenses = await response.json()
-    const expensesPlus = expenses.map((expense) => {
-      return {
-        ...expense,
-        income: expense.expense_type === "income",
-        // For chart display, convert if exchange rate is available
-        displayAmount: expense.exchange_rate ? expense.amount * expense.exchange_rate : expense.amount,
-        paidBy: expense.contributions
-          .map((c) => ({
-            member: c.name || c.member,
-            amount: c.paid
-          }))
-          .filter((c) => c.amount > 0),
-        splitBetween: expense.contributions
-          .map((c) => ({ member: c.name || c.member, weight: c.weight, amount: c.owes }))
-          .filter((c) => c.weight > 0)
-      }
-    })
-    setExpenses(expensesPlus)
+    try {
+      const transactions = await firebaseServices.getTransactions(ledger)
+      const expensesPlus = transactions.map((expense) => {
+        return {
+          ...expense,
+          income: expense.expense_type === "income",
+          // For chart display, convert if exchange rate is available
+          displayAmount: expense.exchange_rate ? expense.amount * expense.exchange_rate : expense.amount,
+          paidBy: expense.contributions
+            .map((c) => ({
+              member: c.name,
+              amount: c.paid
+            }))
+            .filter((c) => c.amount > 0),
+          splitBetween: expense.contributions
+            .map((c) => ({ 
+              member: c.name, 
+              weight: c.weight, 
+              amount: c.owes 
+            }))
+            .filter((c) => c.weight > 0)
+        }
+      })
+      setExpenses(expensesPlus)
+    } catch (error) {
+      console.error("Failed to fetch expenses:", error)
+      setExpenses([])
+    }
   }, [ledger])
 
   const apiGetSettlement = useCallback(async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: "no-store" })
-    const settlement = await response.json()
-    setSettlement(settlement)
+    // Settlement calculation is complex, still using API for now
+    // TODO: This will be migrated to Firebase client in future
+    try {
+      const response = await fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: "no-store" })
+      const settlement = await response.json()
+      setSettlement(settlement)
+    } catch (error) {
+      console.error("Failed to fetch settlement:", error)
+      setSettlement([])
+    }
   }, [ledger])
 
   const apiGetMembers = useCallback(async () => {
-    const response = await fetch(`${api.base}/members?ledger=${ledger}`, { cache: "no-store" })
-    const members = await response.json()
-    setMembers(members)
+    try {
+      const membersData = await firebaseServices.getMembers(ledger)
+      setMembers(membersData)
+    } catch (error) {
+      console.error("Failed to fetch members:", error)
+      setMembers([])
+    }
   }, [ledger])
 
   const apiGetLedgerInfo = useCallback(async () => {
-    const response = await fetch(`${api.base}/ledgers/${ledger}`, { cache: "no-store" })
-    const ledgerInfo = await response.json()
-    setLedgerInfo(ledgerInfo)
+    try {
+      const ledgerDoc = await firebaseServices.findLedgerByName(ledger)
+      if (ledgerDoc) {
+        setLedgerInfo({ 
+          id: ledgerDoc.id, 
+          ...ledgerDoc.data
+        })
+      }
+    } catch (error) {
+      console.error("Failed to fetch ledger info:", error)
+      setLedgerInfo({})
+    }
   }, [ledger])
 
   // Memoize the fetchData function to prevent recreation on renders
@@ -92,6 +127,7 @@ export function useXpnzApi(ledger) {
     fetchData() // Call the async function immediately
   }, [fetchData])
 
+  // All write operations continue to use the API
   const pushMember = useCallback(
     async (name) => {
       const member = { name, ledger, is_active: true }
