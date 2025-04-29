@@ -196,7 +196,7 @@ export function useXpnzApi(ledger) {
 
   const deleteExpense = useCallback(
     async (id) => {
-      await fetch(`${api.base}/transactions/${id}`, {
+      await fetch(`${api.base}/transactions/${id}?ledger=${ledger}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: "{}"
