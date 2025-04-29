@@ -9,6 +9,21 @@ import {
   limit,
   orderBy
 } from "firebase/firestore";
+import { getFunctions, httpsCallable, connectFunctionsEmulator } from "firebase/functions";
+
+// Initialize Firebase Functions
+const functions = getFunctions();
+
+// Connect to Firebase Functions emulator in development environment
+if (window.location.hostname === "localhost") {
+  console.log("Connecting to Functions emulator on localhost:5001");
+  connectFunctionsEmulator(functions, "localhost", 5001);
+}
+
+// Create client for our Firebase Cloud Functions
+export const firebaseFunctions = {
+  getBalances: httpsCallable(functions, 'getBalances')
+};
 
 /**
  * Find a ledger document ID by its name

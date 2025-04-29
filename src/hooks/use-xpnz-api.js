@@ -24,14 +24,21 @@ export function useXpnzApi(ledger) {
   }, [ledger])
 
   const apiGetBalance = useCallback(async () => {
-    // Balance calculation is complex, still using API for now
-    // TODO: This will be migrated to Firebase client in future
+    // Now using Firebase Function instead of REST API
     try {
-      const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" })
-      setBalance(await response.json())
+      const result = await firebaseServices.firebaseFunctions.getBalances({ ledgerName: ledger });
+      setBalance(result.data); // Cloud Functions wrap the response in a 'data' property
     } catch (error) {
-      console.error("Failed to fetch balance:", error)
-      setBalance([])
+      console.error("Failed to fetch balance via Firebase Function:", error);
+      // Fallback to REST API if Firebase Function fails
+      try {
+        console.warn("Attempting fallback to REST API for balance calculation");
+        const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" });
+        setBalance(await response.json());
+      } catch (fallbackError) {
+        console.error("Both Firebase Function and fallback failed:", fallbackError);
+        setBalance([]);
+      }
     }
   }, [ledger])
 
