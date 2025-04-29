@@ -1,4 +1,4 @@
-// hooks/useTransaction.js
+// hooks/useExpense.js
 import { useState, useCallback } from "react"
 import { emptyExpense } from "@/api/client.js"
 import { getDateString } from "@/api/utilities.js"
@@ -6,12 +6,13 @@ import { getDateString } from "@/api/utilities.js"
 import { useXpnzApi } from "@/hooks/use-xpnz-api.js"
 
 /**
- * Custom hook to manage transaction drawer state.
+ * Custom hook to manage transaction drawer state and expense operations.
  *
- * @returns {Object} - Contains drawer states and handler functions.
- * @param ledgerName
+ * @param {string} ledgerName - The name of the current ledger
+ * @returns {Object} - Contains drawer states, expense data, and handler functions
  */
 const useExpense = (ledgerName) => {
+  // UI state
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
   const [selectedExpense, setSelectedExpense] = useState(emptyExpense)
@@ -19,25 +20,26 @@ const useExpense = (ledgerName) => {
   const [expenseToDelete, setExpenseToDelete] = useState(null)
   const [savingExpenseId, setSavingExpenseId] = useState(null)
 
+  // Fetch API data and functions
   const {
+    loaded,
     balance,
+    settlement,
     categories,
     expenses,
     ledgerInfo,
     members,
-    settlement,
+    memberNames,
     pushMember,
     editMember,
     deleteMember,
     pushExpense: apiPushExpense,
     editExpense: apiEditExpense,
-    deleteExpense,
-    loaded
+    deleteExpense: apiDeleteExpense,
+    refreshData
   } = useXpnzApi(ledgerName)
-  const memberNames = members.map((member) => member.name)
 
-  const setExpenses = () => {} // stub
-
+  // Enhanced API operations with loading states
   const pushExpense = useCallback(async (name, currency, category, date, expense_type, contributions) => {
     setSavingExpenseId("new")
     try {
@@ -56,6 +58,16 @@ const useExpense = (ledgerName) => {
     }
   }, [apiEditExpense])
 
+  const deleteExpense = useCallback(async (id) => {
+    setSavingExpenseId(id)
+    try {
+      await apiDeleteExpense(id)
+    } finally {
+      setSavingExpenseId(null)
+    }
+  }, [apiDeleteExpense])
+
+  // UI state handlers
   const openAddExpenseDrawer = useCallback(() => {
     setIsDrawerOpen(true)
     setIsEditMode(false)
@@ -88,7 +100,7 @@ const useExpense = (ledgerName) => {
     }
     setIsDeleteDrawerOpen(false)
     setExpenseToDelete(null)
-  }, [expenseToDelete, setExpenses])
+  }, [expenseToDelete, deleteExpense])
 
   const copyExpense = useCallback((expense) => {
     setIsDrawerOpen(true)
@@ -100,7 +112,9 @@ const useExpense = (ledgerName) => {
     })
   }, [])
 
+  // Return all needed values and functions
   return {
+    // Data
     loaded,
     balance,
     settlement,
@@ -108,25 +122,36 @@ const useExpense = (ledgerName) => {
     ledgerInfo,
     members,
     memberNames,
+    expenses,
+    selectedExpense,
+    
+    // Member operations
     pushMember,
     editMember,
     deleteMember,
-    expenses,
-    selectedExpense,
+    
+    // Expense operations
     pushExpense,
-    copyExpense,
     editExpense,
     deleteExpense,
+    copyExpense,
+    
+    // UI state
     isDrawerOpen,
     isEditMode,
+    isDeleteDrawerOpen,
+    savingExpenseId,
+    
+    // UI handlers
     openAddExpenseDrawer,
     openEditExpenseDrawer,
     closeExpenseDrawer,
-    isDeleteDrawerOpen,
     closeDeleteDrawer,
     onDeleteClick,
     handleDelete,
-    savingExpenseId
+    
+    // Refresh function
+    refreshData
   }
 }
 

@@ -1,5 +1,5 @@
 // App.jsx
-import React, { Suspense, useCallback, useEffect, useState } from "react"
+import React, { Suspense, useCallback, useEffect, useState, useMemo } from "react"
 import { BrowserRouter as Router, Navigate, Outlet, Route, Routes, useParams } from "react-router-dom"
 import Toolbar from "@/components/toolbar"
 import Topbar from "@/components/topbar"
@@ -15,6 +15,7 @@ import { api } from "../xpnz.config.js"
 
 import { currencySymbols } from "./api/utilities.js"
 
+// Use React.lazy for code-splitting
 const MembersTab = React.lazy(() => import("@/pages/members"))
 const DebtsTab = React.lazy(() => import("@/pages/debts"))
 const ExpensesTab = React.lazy(() => import("@/pages/expenses"))
@@ -23,17 +24,21 @@ const ItemizedTab = React.lazy(() => import("@/pages/itemize"))
 function LedgerLayout() {
   const { ledgerName } = useParams()
 
-  const [searchTerm, setSearchTerm] = React.useState("")
+  // UI state
+  const [searchTerm, setSearchTerm] = useState("")
   const [ledgerExists, setLedgerExists] = useState(null)
   const [currency, setCurrency] = useState("")
   const [currencySymbol, setCurrencySymbol] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [expandAll, setExpandAll] = useState(false)
+  const [showChart, setShowChart] = useState(false)
+  const [enableChart, setEnableChart] = useState(false)
 
   // Check if the ledger exists
   useEffect(() => {
     async function checkLedger() {
       try {
-        // delay for testing
+        setIsLoading(true)
         const response = await fetch(`${api.base}/ledgers/${ledgerName}`)
         if (response.status === 200) {
           const ledgerData = await response.json()
@@ -54,73 +59,81 @@ function LedgerLayout() {
     checkLedger()
   }, [ledgerName])
 
-  // Expense data and functions
-  // Load all of the expenseAPI functions and variables
-  // But only push a few to the outletContext.
-  // If needed, we can add the rest for future implementations.
-  const {
+  // Load all expense data and functions through the hook
+  const expenseAPI = useExpense(ledgerName)
+  const { 
     loaded,
-    balance,
-    settlement,
-    categories,
-    members,
-    pushMember,
-    editMember,
-    deleteMember,
     expenses,
-    selectedExpense,
-    pushExpense,
-    copyExpense,
-    editExpense,
+    openAddExpenseDrawer,
     isDrawerOpen,
     isEditMode,
-    openAddExpenseDrawer,
-    openEditExpenseDrawer,
+    selectedExpense,
     closeExpenseDrawer,
     isDeleteDrawerOpen,
     closeDeleteDrawer,
-    onDeleteClick,
-    handleDelete,
-    savingExpenseId
-  } = useExpense(ledgerName)
-
-  const emptyMode = expenses.length === 0
-  const [expandAll, setExpandAll] = useState(false)
+    handleDelete
+  } = expenseAPI
+  
+  // Memoized callbacks for UI interactions
   const toggleExpansion = useCallback(() => {
-    setExpandAll(!expandAll)
-  }, [expandAll])
+    setExpandAll(prevState => !prevState)
+  }, [])
 
-  const [showChart, setShowChart] = useState(false)
   const toggleChart = useCallback(() => {
-    setShowChart(!showChart)
-  }, [showChart])
+    setShowChart(prevState => !prevState)
+  }, [])
 
-  const [enableChart, setEnableChart] = useState(false)
+  // Calculate if we're in empty mode once when expenses change
+  const emptyMode = useMemo(() => expenses.length === 0, [expenses.length])
 
-  // Context value to pass to child components
-  const outletContext = {
+  // Memoize the context value to prevent unnecessary re-renders
+  const outletContext = useMemo(() => ({
     searchTerm,
     expenses,
-    openEditExpenseDrawer,
-    onDeleteClick,
-    copyExpense,
+    openEditExpenseDrawer: expenseAPI.openEditExpenseDrawer,
+    onDeleteClick: expenseAPI.onDeleteClick,
+    copyExpense: expenseAPI.copyExpense,
     expandAll,
     loaded,
-    balance,
-    settlement,
-    members,
-    pushMember,
-    editMember,
-    deleteMember,
-    pushExpense,
+    balance: expenseAPI.balance,
+    settlement: expenseAPI.settlement,
+    members: expenseAPI.members,
+    memberNames: expenseAPI.memberNames,
+    pushMember: expenseAPI.pushMember,
+    editMember: expenseAPI.editMember,
+    deleteMember: expenseAPI.deleteMember,
+    pushExpense: expenseAPI.pushExpense,
     currency,
     currencySymbol,
     showChart,
     toggleChart,
     enableChart,
     setEnableChart,
-    savingExpenseId
-  }
+    savingExpenseId: expenseAPI.savingExpenseId
+  }), [
+    searchTerm, 
+    expenses, 
+    expenseAPI.openEditExpenseDrawer,
+    expenseAPI.onDeleteClick, 
+    expenseAPI.copyExpense,
+    expandAll, 
+    loaded, 
+    expenseAPI.balance, 
+    expenseAPI.settlement, 
+    expenseAPI.members,
+    expenseAPI.memberNames,
+    expenseAPI.pushMember,
+    expenseAPI.editMember,
+    expenseAPI.deleteMember,
+    expenseAPI.pushExpense,
+    currency, 
+    currencySymbol, 
+    showChart, 
+    toggleChart, 
+    enableChart, 
+    setEnableChart, 
+    expenseAPI.savingExpenseId
+  ])
 
   if (isLoading) return <div></div>
   if (!ledgerExists)
@@ -141,18 +154,19 @@ function LedgerLayout() {
         isDrawerOpen={isDrawerOpen}
         isEditMode={isEditMode}
         handleCloseDrawer={closeExpenseDrawer}
-        members={members}
-        pushExpense={pushExpense}
-        editExpense={editExpense}
+        members={expenseAPI.members}
+        pushExpense={expenseAPI.pushExpense}
+        editExpense={expenseAPI.editExpense}
         defaultCurrency={currency}
-        categories={categories}
+        categories={expenseAPI.categories}
       />
       <HoldToDelete onConfirm={handleDelete} isDrawerOpen={isDeleteDrawerOpen} handleCloseDrawer={closeDeleteDrawer} />
     </>
   )
 }
 
-export default function App() {
+// Root App component with all routes
+const App = () => {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Router>
@@ -203,3 +217,5 @@ export default function App() {
     </ThemeProvider>
   )
 }
+
+export default App

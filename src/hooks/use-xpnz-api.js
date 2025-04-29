@@ -1,7 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 
-import { uniq } from "lodash-es"
-
 import { api } from "@/../xpnz.config.js"
 
 export function useXpnzApi(ledger) {
@@ -12,19 +10,19 @@ export function useXpnzApi(ledger) {
   const [ledgerInfo, setLedgerInfo] = useState({})
   const [members, setMembers] = useState([])
   const [settlement, setSettlement] = useState([])
-  // const categories = useMemo(() => uniq(expenses.map((e) => e.category)), [expenses])
-
-  const apiGetCategories = async () => {
+  
+  // Memoize API fetching functions to prevent recreating them on each render
+  const apiGetCategories = useCallback(async () => {
     const response = await fetch(`${api.base}/ledgers/${ledger}/categories`, { cache: "no-store" })
     setCategories(await response.json())
-  }
+  }, [ledger])
 
-  const apiGetBalance = async () => {
+  const apiGetBalance = useCallback(async () => {
     const response = await fetch(`${api.base}/ledgers/${ledger}/balance`, { cache: "no-store" })
     setBalance(await response.json())
-  }
+  }, [ledger])
 
-  const apiGetExpenses = async () => {
+  const apiGetExpenses = useCallback(async () => {
     // Fetch without useExchangeRates to preserve original currency amounts
     const response = await fetch(`${api.base}/transactions?ledger=${ledger}`, {
       cache: "no-store",
@@ -51,52 +49,48 @@ export function useXpnzApi(ledger) {
       }
     })
     setExpenses(expensesPlus)
-  }
+  }, [ledger])
 
-  const apiGetSettlement = async () => {
+  const apiGetSettlement = useCallback(async () => {
     const response = await fetch(`${api.base}/ledgers/${ledger}/settlement`, { cache: "no-store" })
     const settlement = await response.json()
     setSettlement(settlement)
-  }
+  }, [ledger])
 
-  const apiGetMembers = async () => {
+  const apiGetMembers = useCallback(async () => {
     const response = await fetch(`${api.base}/members?ledger=${ledger}`, { cache: "no-store" })
     const members = await response.json()
     setMembers(members)
-  }
+  }, [ledger])
 
-  const apiGetLedgerInfo = async () => {
+  const apiGetLedgerInfo = useCallback(async () => {
     const response = await fetch(`${api.base}/ledgers/${ledger}`, { cache: "no-store" })
     const ledgerInfo = await response.json()
     setLedgerInfo(ledgerInfo)
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoaded(false)
-      try {
-        // Fetch all data concurrently
-        await Promise.all([
-          apiGetMembers(),
-          apiGetExpenses(),
-          apiGetBalance(),
-          apiGetSettlement(),
-          apiGetLedgerInfo(),
-          apiGetCategories()
-        ])
-      } catch (error) {
-        console.error("Failed to fetch data:", error)
-      }
-      setLoaded(true)
-    }
-
-    fetchData() // Call the async function immediately
   }, [ledger])
 
-  // useEffect(() => {
-  //   const categories = uniq(expenses.map((e) => e.category))
-  //   setCategories(categories)
-  // }, [expenses])
+  // Memoize the fetchData function to prevent recreation on renders
+  const fetchData = useCallback(async () => {
+    setLoaded(false)
+    try {
+      // Fetch all data concurrently
+      await Promise.all([
+        apiGetMembers(),
+        apiGetExpenses(),
+        apiGetBalance(),
+        apiGetSettlement(),
+        apiGetLedgerInfo(),
+        apiGetCategories()
+      ])
+    } catch (error) {
+      console.error("Failed to fetch data:", error)
+    }
+    setLoaded(true)
+  }, [apiGetMembers, apiGetExpenses, apiGetBalance, apiGetSettlement, apiGetLedgerInfo, apiGetCategories])
+
+  useEffect(() => {
+    fetchData() // Call the async function immediately
+  }, [fetchData])
 
   const pushMember = useCallback(
     async (name) => {
@@ -111,7 +105,7 @@ export function useXpnzApi(ledger) {
       await apiGetMembers()
       await apiGetBalance()
     },
-    [ledger, apiGetMembers, apiGetBalance]
+    [apiGetMembers, apiGetBalance, ledger]
   )
 
   const editMember = useCallback(
@@ -129,7 +123,7 @@ export function useXpnzApi(ledger) {
       await apiGetSettlement()
       await apiGetExpenses()
     },
-    [ledger, apiGetMembers, apiGetBalance, apiGetSettlement]
+    [apiGetMembers, apiGetBalance, apiGetSettlement, apiGetExpenses, ledger]
   )
 
   const deleteMember = useCallback(
@@ -143,7 +137,7 @@ export function useXpnzApi(ledger) {
       await apiGetMembers()
       await apiGetBalance()
     },
-    [ledger, apiGetMembers, apiGetBalance]
+    [apiGetMembers, apiGetBalance]
   )
 
   const pushExpense = useCallback(
@@ -171,7 +165,7 @@ export function useXpnzApi(ledger) {
       await apiGetSettlement()
       await apiGetCategories()
     },
-    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
+    [apiGetExpenses, apiGetBalance, apiGetSettlement, apiGetCategories, ledger]
   )
 
   const editExpense = useCallback(
@@ -191,7 +185,7 @@ export function useXpnzApi(ledger) {
       await apiGetSettlement()
       await apiGetCategories()
     },
-    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement]
+    [apiGetExpenses, apiGetBalance, apiGetSettlement, apiGetCategories, ledger]
   )
 
   const deleteExpense = useCallback(
@@ -207,8 +201,13 @@ export function useXpnzApi(ledger) {
       await apiGetSettlement()
       await apiGetCategories()
     },
-    [ledger, apiGetExpenses, apiGetBalance, apiGetSettlement, apiGetCategories]
+    [apiGetExpenses, apiGetBalance, apiGetSettlement, apiGetCategories, ledger]
   )
+
+  // Memoize any derived data to prevent recalculation on each render
+  const memberNames = useMemo(() => 
+    members.map((member) => member.name),
+  [members])
 
   return {
     balance,
@@ -216,6 +215,7 @@ export function useXpnzApi(ledger) {
     expenses,
     ledgerInfo,
     members,
+    memberNames, // Return the memoized member names
     settlement,
     pushMember,
     editMember,
@@ -223,6 +223,7 @@ export function useXpnzApi(ledger) {
     pushExpense,
     editExpense,
     deleteExpense,
-    loaded
+    loaded,
+    refreshData: fetchData // Export refresh function for manual refreshes
   }
 }
