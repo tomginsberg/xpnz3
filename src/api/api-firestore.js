@@ -1115,7 +1115,12 @@ async function ledgersPostHandler(request, reply) {
 
     const ledgerRef = await firestore.runTransaction(async (t) => {
       const newLedgerRef = firestore.collection("ledgers").doc() // Auto-ID
-      t.set(newLedgerRef, { name, currency, permissions })
+      t.set(newLedgerRef, { 
+        name, 
+        currency, 
+        permissions,
+        createdAt: admin.firestore.FieldValue.serverTimestamp() // Add creation timestamp
+      })
 
       const membersCollectionRef = newLedgerRef.collection("members")
       for (const member of members) {
@@ -1124,7 +1129,8 @@ async function ledgersPostHandler(request, reply) {
         t.set(memberRef, {
           name: member.name,
           isActive: Boolean(member.is_active), // Store as boolean
-          userId: null
+          userId: null,
+          createdAt: admin.firestore.FieldValue.serverTimestamp() // Also add timestamp for members
         })
       }
       return newLedgerRef
